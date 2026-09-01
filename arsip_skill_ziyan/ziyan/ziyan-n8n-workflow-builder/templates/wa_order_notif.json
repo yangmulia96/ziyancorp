@@ -1,0 +1,47 @@
+{
+  "name": "ziyan_wa_order_notif",
+  "nodes": [
+    {
+      "parameters": { "httpMethod": "POST", "path": "ziyan-wa-2026-xyz" },
+      "id": "w1", "name": "WebhookOrder", "type": "n8n-nodes-base.webhook", "typeVersion": 1, "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const body = $json;\nconst phoneRaw = String(body.phone || \"\");\nlet phone = \"\";\nfor (const ch of phoneRaw) { if (ch >= \"0\" && ch <= \"9\") phone += ch; }\nconst oid = body.order_id || \"ORD-1\";\nconst order = { orderId: oid, customer: body.customer_name || \"Pelanggan\", product: body.product || \"Produk\", total: body.total || 0, phone: phone };\nconst valid = phone.startsWith(\"62\") && phone.length >= 10 && phone.length <= 15;\nif (!valid) {\n  return [{ json: { error: \"INVALID_PHONE\", phone: phone } }];\n}\nreturn [{ json: order }];"
+      },
+      "id": "f1", "name": "ParseOrder", "type": "n8n-nodes-base.function", "typeVersion": 1, "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const o = $json;\nconst msg = \"Halo \" + o.customer + \"! Order \" + o.orderId + \" diterima. Produk: \" + o.product + \". Total: Rp \" + o.total + \". Kami proses segera.\";\nreturn [{ json: { target: o.phone, message: msg } }];"
+      },
+      "id": "f2", "name": "FormatMsg", "type": "n8n-nodes-base.function", "typeVersion": 1, "position": [710, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.WA_API_URL || 'https://api.fonnte.com/send' }}",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [ { "name": "Authorization", "value": "={{ $env.FONNTE_KEY }}" } ] },
+        "sendBody": true, "specifyBody": "json",
+        "jsonBody": "={ \"target\": \"{{ $json.target }}\", \"message\": \"{{ $json.message }}\" }",
+        "options": {},
+        "continueOnFail": true,
+        "onError": "continueRegularOutput"
+      },
+      "id": "h1", "name": "SendWA", "type": "n8n-nodes-base.httpRequest", "typeVersion": 1, "position": [940, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const r = $json;\nconst status = (r.status === 'success' || r.kicked) ? 'OK' : 'FAILED';\nreturn [{ json: { status: status, resp: r } }];"
+      },
+      "id": "f3", "name": "LogResp", "type": "n8n-nodes-base.function", "typeVersion": 1, "position": [1170, 300]
+    }
+  ],
+  "connections": {
+    "WebhookOrder": { "main": [[{ "node": "ParseOrder", "type": "main", "index": 0 }]] },
+    "ParseOrder": { "main": [[{ "node": "FormatMsg", "type": "main", "index": 0 }]] },
+    "FormatMsg": { "main": [[{ "node": "SendWA", "type": "main", "index": 0 }]] },
+    "SendWA": { "main": [[{ "node": "LogResp", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

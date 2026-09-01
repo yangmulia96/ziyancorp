@@ -1,0 +1,178 @@
+
+    <!DOCTYPE html>
+    <html lang="id">
+    <head>
+        <meta charset="UTF-8">
+        <title>The 10-Hour Workweek: n8n Automation</title>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+            body {
+                font-family: 'Inter', sans-serif;
+                background-color: #F8FAFC;
+                color: #334155;
+                line-height: 1.7;
+                padding: 50px;
+                max-width: 800px;
+                margin: 0 auto;
+            }
+            h1, h2, h3, h4 {
+                color: #0F172A;
+                margin-top: 2em;
+                font-weight: 700;
+            }
+            h1 {
+                font-size: 2.8em;
+                border-bottom: 3px solid #2563EB;
+                padding-bottom: 15px;
+                color: #2563EB;
+                line-height: 1.2;
+            }
+            h2 {
+                color: #1E293B;
+                border-bottom: 2px solid #E2E8F0;
+                padding-bottom: 8px;
+                font-size: 1.8em;
+            }
+            blockquote {
+                background: #FEF3C7;
+                border-left: 5px solid #F59E0B;
+                padding: 20px 25px;
+                margin: 25px 0;
+                border-radius: 0 12px 12px 0;
+                color: #92400E;
+                font-weight: 500;
+            }
+            hr {
+                border: 0;
+                height: 2px;
+                background: #E2E8F0;
+                margin: 50px 0;
+            }
+            strong {
+                color: #0F172A;
+                font-weight: 600;
+            }
+            ul, ol {
+                margin-left: 20px;
+                padding-left: 15px;
+            }
+            li {
+                margin-bottom: 12px;
+            }
+            code {
+                background: #F1F5F9;
+                padding: 3px 8px;
+                border-radius: 6px;
+                color: #EA580C;
+                font-family: 'Courier New', Courier, monospace;
+                font-weight: 600;
+                border: 1px solid #E2E8F0;
+            }
+            pre code {
+                display: block;
+                padding: 15px;
+                background: #0F172A;
+                color: #38BDF8;
+                border-radius: 8px;
+                overflow-x: auto;
+                border: none;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>📘 E-BOOK: The 10-Hour Workweek</h1>
+<p><strong>Panduan Visual Solopreneur Membangun "Pasukan AI" dengan n8n</strong></p>
+<hr />
+<h2>🎨 PANDUAN VISUAL UNTUK LAYOUTER</h2>
+<blockquote>
+<ul>
+<li><strong>Tema Warna:</strong> Putih/Terang (Minimalis) dengan aksen Biru Elektrik (Kepercayaan) dan Kuning (Peringatan/Tips).</li>
+<li><strong>Font:</strong> Sans-serif modern (Inter atau Roboto).</li>
+<li><strong>Elemen Visual:</strong> <ul>
+<li>Gunakan ikon ilustrasi (bukan sekadar teks) untuk merepresentasikan JSON, Webhook, dan Database.</li>
+<li>Setiap <em>screenshot</em> kanvas n8n <strong>WAJIB</strong> diberi kotak merah dan panah tebal yang menunjuk tepat ke tombol yang sedang dibahas.</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<hr />
+<h2>📑 DAFTAR ISI</h2>
+<ol>
+<li><strong>Bab 1:</strong> Menjinakkan Kanvas n8n (Membaca JSON tanpa Pusing)</li>
+<li><strong>Bab 2:</strong> Kunci Master Aplikasi (Webhook &amp; HTTP Request)</li>
+<li><strong>Bab 3:</strong> Memberi "Otak" pada Robot (IF, Switch, &amp; Loops)</li>
+<li><strong>Bab 4:</strong> Mengelola Risiko (Biaya API, Limit, &amp; Banned)</li>
+</ol>
+<hr />
+<h2>📖 BAB 1: Menjinakkan Kanvas n8n (Apa itu JSON?)</h2>
+<p><em>(Ilustrasi: Gambar koper terbuka, di dalamnya ada label nama, umur, dan alamat)</em></p>
+<p>Masalah terbesar pemula saat membuka n8n adalah melihat deretan teks aneh berbentuk kurung kurawal <code>{ }</code> yang disebut <strong>JSON</strong> (<em>JavaScript Object Notation</em>).</p>
+<p><strong>Jangan Panik! Anggap JSON sebagai Koper.</strong>
+Ketika ada data masuk dari WhatsApp ke n8n, data itu dibungkus dalam "Koper JSON". Di dalam koper itu, ada label-label yang jelas:</p>
+<pre><code class="language-json">{
+  &quot;nama_pengirim&quot;: &quot;Budi&quot;,
+  &quot;isi_pesan&quot;: &quot;Saya mau beli produk A&quot;,
+  &quot;nomor_hp&quot;: &quot;0812345678&quot;
+}
+</code></pre>
+<p><strong>Cara Mengambil Isi Koper di n8n:</strong>
+Jika kamu ingin memasukkan nama Budi ke Google Sheets, kamu tidak perlu mengetik manual. Di n8n, kamu cukup menggunakan trik <em>Drag &amp; Drop</em> di panel kiri, atau mengetik ekspresi:
+👉 <code>{{ $json.nama_pengirim }}</code></p>
+<p><strong>TIPS VISUAL:</strong> Di kanvas n8n, selalu perhatikan panel sebelah kanan (Output). Itu adalah isi koper yang sedang dibawa oleh robotmu di langkah tersebut.</p>
+<hr />
+<h2>📖 BAB 2: Kunci Master (Webhook &amp; HTTP Request)</h2>
+<p><em>(Ilustrasi: Kunci emas yang membuka gerbang ke berbagai logo sosmed/aplikasi)</em></p>
+<p>Banyak orang menyerah pakai n8n karena aplikasinya tidak ada di daftar <em>Node</em> resmi. <em>"Gimana cara sambungin ke TikTok? Kok gak ada logonya?"</em></p>
+<p>Perkenalkan dua senjata rahasiamu:</p>
+<h3>1. Webhook (Penerima Bola)</h3>
+<p>Webhook adalah sebuah <em>link</em> URL kosong yang diberikan oleh n8n. 
+*   <strong>Fungsi:</strong> Menunggu aplikasi lain melempar data ke URL tersebut.
+*   <strong>Contoh Kasus:</strong> Kamu pakai aplikasi kasir lokal. Kamu taruh <em>link</em> Webhook n8n di pengaturan kasir. Setiap ada pembeli, kasir melempar data ke Webhook, dan n8n otomatis menyimpan datanya ke Google Sheets.</p>
+<h3>2. HTTP Request (Pelempar Bola)</h3>
+<p>Jika Webhook itu menangkap, HTTP Request itu melempar.
+*   <strong>Fungsi:</strong> Memaksa n8n mengetuk pintu aplikasi apa pun di dunia ini, asalkan aplikasi itu punya API.
+*   <strong>Contoh Kasus:</strong> Mengirim pesan otomatis ke grup Telegram menggunakan API Bot Telegram, tanpa perlu <em>node</em> resmi.</p>
+<hr />
+<h2>📖 BAB 3: Memberi "Otak" pada Robot (IF &amp; Loops)</h2>
+<p><em>(Ilustrasi: Robot di persimpangan jalan dengan rambu-rambu lalu lintas)</em></p>
+<p>Robot yang pintar tidak hanya berjalan lurus. Ia harus bisa mengambil keputusan.</p>
+<h3>🚦 Node IF (Persimpangan Jalan)</h3>
+<p>Gunakan <em>node</em> <strong>IF</strong> untuk membuat aturan kondisi.
+*   <strong>Syarat:</strong> JIKA (IF) <code>isi_pesan</code> mengandung kata "Komplain".
+*   <strong>Jalur True (Benar):</strong> Kirim pesan ke grup Telegram Tim Support.
+*   <strong>Jalur False (Salah):</strong> Balas dengan AI Auto-Reply (Katalog Produk).</p>
+<h3>🔄 Node Loop (Mesin Pengulang)</h3>
+<p><em>(Ilustrasi: Mesin pabrik yang memasukkan barang satu per satu ke dalam kardus)</em>
+Apa yang terjadi jika kamu mengambil 50 baris data dari Google Sheets sekaligus? Jika kamu langsung memprosesnya, n8n bisa macet (<em>error</em>).
+*   <strong>Solusi:</strong> Gunakan <em>node</em> <strong>Loop</strong>. 
+*   <strong>Cara Kerja:</strong> Loop akan mengambil 50 data tersebut, lalu memprosesnya <strong>SATU PER SATU</strong>. (Misal: Kirim WhatsApp ke pelanggan 1, tunggu 2 detik, lalu kirim ke pelanggan 2). Ini mencegah WhatsApp-mu diblokir karena <em>spam</em>.</p>
+<hr />
+<h2>📖 BAB 4: Risiko, Biaya, &amp; Keamanan (Mitos vs Fakta)</h2>
+<p><em>(Ilustrasi: Tameng keamanan dengan simbol gembok dan koin)</em></p>
+<p>Sebelum merilis "Pasukan AI"-mu ke publik, pastikan kamu paham aturannya:</p>
+<ol>
+<li><strong>Apakah n8n Berbayar?</strong></li>
+<li>Versi <em>Cloud</em> (dari pusat) berbayar bulanan.</li>
+<li>
+<p><strong>Solusi Kreator:</strong> Gunakan <em>Self-Hosted</em> (Install di VPS / Server sendiri). Biayanya hanya seharga sewa server (sekitar Rp 75.000 - Rp 150.000 / bulan), dan kamu bebas memproses jutaan data tanpa tagihan tambahan!</p>
+</li>
+<li>
+<p><strong>Tagihan API OpenAI / Gemini Bisa Jebol?</strong></p>
+</li>
+<li>Mitos! Kamu bisa membatasi <em>budget</em> di <em>dashboard</em> OpenAI (misal maksimal $5/bulan).</li>
+<li>
+<p><strong>TIPS PRO:</strong> Jangan gunakan ChatGPT-4 untuk tugas sepele seperti merapikan teks. Gunakan GPT-3.5 atau Gemini Flash yang harganya hampir gratis (sepersekian sen dolar).</p>
+</li>
+<li>
+<p><strong>Nomor WhatsApp Bot Bisa Diblokir (Banned)?</strong></p>
+</li>
+<li>Fakta! Mengirim 100 pesan promosi dalam 1 menit lewat WhatsApp Unofficial (WAHA) pasti akan diblokir Meta.</li>
+<li><strong>Solusi:</strong> Gunakan <em>Node</em> <strong>Wait</strong> di dalam n8n. Beri jeda acak (15-30 detik) di antara setiap pengiriman pesan agar terlihat seperti manusia asli yang sedang mengetik.</li>
+</ol>
+<hr />
+<p><strong>PENUTUP:</strong> 
+Sekarang kamu bukan lagi pemula yang asal menempel balok. Kamu sudah memahami "bahasa koper" (JSON), cara menembus batas aplikasi (Webhook), dan cara berpikir seperti programmer (IF &amp; Loop) tanpa perlu menulis satu baris kode pun. </p>
+<p>Saatnya mengeksekusi idemu!</p>
+    </body>
+    </html>
+    

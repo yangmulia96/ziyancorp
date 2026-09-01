@@ -1,0 +1,81 @@
+# Hermes Gateway Configuration for Free Tier
+
+## Complete config.yaml (~/.hermes/config.yaml)
+
+```yaml
+model:
+  default: channel-researcher
+  provider: 9router
+
+providers:
+  9router:
+    name: 9router
+    base_url: http://127.0.0.1:20128/v1
+    model: channel-researcher
+    discover_models: true
+    models:
+      channel-researcher: {}
+      gemini/gemini-3.6-flash: {}
+      groq/llama-3.3-70b-versatile: {}
+      openrouter/openrouter/free: {}
+    key_env: HERMES_CUSTOM_9ROUTER_API_KEY
+
+auxiliary:
+  vision:
+    provider: custom
+    model: gemini/gemini-3.6-flash
+    base_url: http://127.0.0.1:20128/v1
+    api_key: ${HERMES_CUSTOM_9ROUTER_API_KEY}
+    key_env: ''
+
+agent:
+  max_turns: 500
+  service_tier: auto
+  verbose: false
+  reasoning_effort: high
+
+delegation:
+  model: channel-researcher
+  provider: 9router
+  max_iterations: 50
+  reasoning_effort: high
+  max_concurrent_children: 12
+
+terminal:
+  backend: local
+  cwd: .
+  timeout: 180
+  home_mode: auto
+
+compression:
+  enabled: true
+  progress_notices: false
+  threshold: 0.5
+  target_ratio: 0.2
+  protect_last_n: 20
+  min_tail_user_messages: 1
+  max_attempts: 3
+  proactive_prune_tokens: 0
+  proactive_prune_min_result_chars: 8000
+  proactive_prune_min_reclaim_tokens: 4096
+  protect_first_n: 3
+  codex_gpt55_autoraise: true
+  codex_app_server_auto: native
+  idle_compact_after_seconds: 0
+```
+
+## Key Settings Explained
+
+| Setting | Value | Reason |
+|---------|-------|--------|
+| `model.default` | `channel-researcher` | Round-robin 120+ free models |
+| `vision.model` | `gemini/gemini-3.6-flash` | Free, reliable vision |
+| `service_tier` | `auto` | Let 9Router choose best |
+| `discover_models` | `true` | Auto-detect available models |
+
+## Restart After Config Change
+```bash
+hermes gateway restart
+# or
+hermes gateway run --replace
+```

@@ -1,0 +1,85 @@
+{
+  "name": "ZAS - 04 Generic Omnichannel Content Syndicator",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "publish-content-webhook",
+        "options": {}
+      },
+      "name": "Content Inbound Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {
+          "systemMessage": "Kamu adalah Head of Social Media B2B. Ubah artikel/naskah sumber menjadi 3 format spesifik:\n1. LinkedIn Post (Professional, storytelling, insightful).\n2. Telegram Broadcast (Bullet points, rapi, langsung ke inti).\n3. Twitter / X Thread (Maksimal 280 karakter per tweet, catchy).\n\nFormat output JSON:\n{\n  \"linkedin_post\": \"...\",\n  \"telegram_post\": \"...\",\n  \"twitter_posts\": [\"...\", \"...\"]\n}"
+        }
+      },
+      "name": "AI Format Adapter",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_BROADCAST_CHANNEL_ID }}",
+        "text": "={{ $json.telegram_post }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "name": "Publish to Telegram Channel",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [720, 200]
+    },
+    {
+      "parameters": {
+        "requestMethod": "POST",
+        "url": "https://api.linkedin.com/v2/ugcPosts",
+        "jsonParameters": true,
+        "bodyParametersJson": "={\n  \"author\": \"urn:li:person:{{ $env.LINKEDIN_AUTHOR_URN }}\",\n  \"lifecycleState\": \"PUBLISHED\",\n  \"specificContent\": {\n    \"com.linkedin.ugc.ShareContent\": {\n      \"shareCommentary\": {\n        \"text\": \"{{ $json.linkedin_post }}\"\n      },\n      \"shareMediaCategory\": \"NONE\"\n    }\n  },\n  \"visibility\": {\n    \"com.linkedin.ugc.MemberNetworkVisibility\": \"PUBLIC\"\n  }\n}"
+      },
+      "name": "Publish to LinkedIn",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [720, 400]
+    }
+  ],
+  "connections": {
+    "Content Inbound Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Format Adapter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Format Adapter": {
+      "main": [
+        [
+          {
+            "node": "Publish to Telegram Channel",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Publish to LinkedIn",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

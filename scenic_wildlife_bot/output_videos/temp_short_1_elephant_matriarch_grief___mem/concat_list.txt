@@ -1,0 +1,7 @@
+file 'C:/Users/arija/ziyancorp/scenic_wildlife_bot/output_videos/temp_short_1_elephant_matriarch_grief___mem/trimmed_0.mp4'
+file 'C:/Users/arija/ziyancorp/scenic_wildlife_bot/output_videos/temp_short_1_elephant_matriarch_grief___mem/trimmed_1.mp4'
+file 'C:/Users/arija/ziyancorp/scenic_wildlife_bot/output_videos/temp_short_1_elephant_matriarch_grief___mem/trimmed_2.mp4'
+file 'C:/Users/arija/ziyancorp/scenic_wildlife_bot/output_videos/temp_short_1_elephant_matriarch_grief___mem/trimmed_3.mp4'
+file 'C:/Users/arija/ziyancorp/scenic_wildlife_bot/output_videos/temp_short_1_elephant_matriarch_grief___mem/trimmed_4.mp4'
+file 'C:/Users/arija/ziyancorp/scenic_wildlife_bot/output_videos/temp_short_1_elephant_matriarch_grief___mem/trimmed_5.mp4'
+file 'C:/Users/arija/ziyancorp/scenic_wildlife_bot/output_videos/temp_short_1_elephant_matriarch_grief___mem/trimmed_6.mp4'

@@ -1,0 +1,55 @@
+{
+  "name": "ZAS: Omnichannel Python Bot Runner",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "id": "76ec2da6-735f-4a0b-9366-ebfe3ce4f056",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        380,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "command": "cd C:\\Users\\arija\\ziyancorp\\abangjal_archive_bot && python distribute_agent.py"
+      },
+      "id": "fcbe9401-dc95-46f9-bc8c-2f91572c6cfb",
+      "name": "Run Python Bot",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        600,
+        240
+      ]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Run Python Bot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Jakarta"
+  }
+}

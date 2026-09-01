@@ -1,2 +1,48 @@
-node_modules
-dist
+# Node & Build artifacts
+node_modules/
+dist/
+build/
+.next/
+.vercel/
+
+# Python & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+*.bak
+*token*.json
+*credentials*.json
+*secret*.json
+ZiyanCorp-firebase-adminsdk.json
+ziyancorp-*.json
+credentials/
+Ziyan_Brain_Vault/credentials/
+Ziyan_Brain_Vault/token_vault.json
+
+# Databases & local logs
+*.db
+*.sqlite
+*.sqlite3
+*.log
+*.log.*
+quick_archive.db
+ecosystem_supervisor.log
+batch_render.log
+
+# OS & Editor temp files
+.DS_Store
+Thumbs.db
+*.tmp
+.idea/
+.vscode/

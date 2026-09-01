@@ -1,295 +1,221 @@
 #!/usr/bin/env python3
 """
-AbangJal Distributor - baca produk dari Sheet ARSIP_MASTER, generate caption alami
-via 9Router, lalu distribusi ke platform.
-Tahap 1: Telegram channel (credential ada). FB/IG/Threads/YT = butuh token Bos.
+AbangJal / Arijal Meutuwah Distributor - Orchestrator Distribusi Multi-Platform
+Persona: AI Influencer "Arijal Meutuwah" (Pria / Affiliate TikTok / Lifestyle / Gadget)
+Target Akun: Khusus Ekosistem Arijal Meutuwah (Bebas dari campur tangan akun Celine Aurel).
 """
-import os, json, sys
+import os, json, sys, re
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from pathlib import Path
 from dotenv import load_dotenv
 import requests
 
-ROOT = Path(r"C:\Users\arija\abangjalcorp\abangjal_archive_bot")
+ROOT = Path(r"C:\Users\arija\ziyancorp\abangjal_archive_bot")
 load_dotenv(ROOT / ".env")
 sys.path.insert(0, str(ROOT))
+
 from abangjal_bot.google_workspace import GoogleWorkspace
 from abangjal_bot.config import Settings
 
 NINE_ROUTER = "http://127.0.0.1:20128/v1/chat/completions"
 
-def gen_caption(product: dict, persona: str = "Celine Aurel") -> str:
-    """Caption untuk akun AI influencer Celine Aurel.
-    Format: link affiliate -> deskripsi -> link lain -> hashtag. TANPA harga."""
-    prompt = f"""Buat caption produk untuk akun AI influencer "{persona}" (lifestyle/fashion).
-FORMAT WAJIB (urutan persis, pisahkan tiap bagian dengan 1 baris kosong):
-[baris 1: link affiliate Shopee]
-[baris kosong]
-[1-2 kalimat deskripsi produk alami: sebutkan nama produk, varian ukuran, dan kapan/situasi cocok dipakai. Gaya santai tapi informatif, BUKAN hard-sell]
-[baris kosong]
-[baris: link affiliate lain (TikTok/Social) kalau ada, kalau tidak tulis -]
-[baris kosong]
-[5 hashtag relevan, masing-masing diawali #, dipisah spasi]
+
+def gen_caption(product: dict, persona: str = "Arijal Meutuwah") -> str:
+    """Caption terstruktur untuk AI Influencer 'Arijal Meutuwah' (Shopee Affiliate).
+    Format Baku:
+    [Link Affiliate Shopee/Tautan Produk]
+
+    [Deskripsi/Ulasan Produk yang Menarik & Persuasif]
+
+    #HashtagRelevan #ArijalMeutuwah #ShopeeAffiliate
+    """
+    url = (product.get('shopee_url') or product.get('tiktok_url') or '').strip()
+    title = product.get('title') or ''
+    orig_desc = product.get('description') or ''
+    
+    # Bersihkan teks kotor harga
+    clean_title = re.sub(r"dengan harga Rp[0-9.]+", "", title, flags=re.I).strip()
+    clean_title = re.sub(r"\. Dapatkan di Shopee sekarang!.*", "", clean_title, flags=re.I).strip()
+    clean_title = re.sub(r"^Cek\s+", "", clean_title, flags=re.I).strip()
+
+    prompt = f"""Buat caption produk untuk akun AI influencer Pria "{persona}".
+FORMAT WAJIB PERSIS (pisahkan tiap bagian dengan 1 baris kosong):
+{url}
+
+[1-2 kalimat deskripsi/ulasan produk yang menarik, meyakinkan & santai gaya {persona}, jelaskan keunggulan dan situasi pemakaian]
+
+#RekomendasiProduk #ArijalMeutuwah #ShopeeAffiliate #OutfitPria #StyleHarian
 
 ATURAN KETAT:
-- JANGAN SEKALI-KALI menyebut harga, diskon, atau angka rupiah.
-- Jangan pakai gaya robotik / capslock berlebih.
+- Baris pertama HARUS link produk: {url}
+- JANGAN menyebut nominal harga, diskon, atau angka rupiah.
+- Jangan pakai gaya robotik.
 
-Produk: {product.get('title')}
-Deskripsi asli: {product.get('description')}
-Link Shopee: {product.get('shopee_url') or ''}
-Link TikTok/Social: {product.get('tiktok_url') or ''}"""
-    key = os.environ.get("HERMES_CUSTOM_9ROUTER_API_KEY", "")
-    headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
+Produk: {clean_title}"""
+
+    # 1. Coba 9Router Local
+    nine_key = os.environ.get("NINEROUTER_API_KEY") or os.environ.get("HERMES_CUSTOM_9ROUTER_API_KEY", "")
+    if nine_key:
+        try:
+            headers = {"Authorization": f"Bearer {nine_key}", "Content-Type": "application/json"}
+            r = requests.post(NINE_ROUTER, headers=headers, json={
+                "model": "google/gemini-2.0-flash-exp:free",
+                "messages": [{"role": "user", "content": prompt}],
+                "max_tokens": 300, "temperature": 0.7, "stream": False
+            }, timeout=15)
+            if r.status_code == 200:
+                data = r.json()
+                content = data["choices"][0]["message"]["content"].strip()
+                if content:
+                    return content
+        except Exception:
+            pass
+
+    # 2. Coba OpenRouter Gateway (:free)
+    openrouter_key = os.environ.get("OPENROUTER_API_KEY", "")
+    if openrouter_key:
+        try:
+            headers = {
+                "Authorization": f"Bearer {openrouter_key}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://ziyancorp.internal",
+                "X-Title": "Ziyan Pipeline"
+            }
+            r = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json={
+                "model": "meta-llama/llama-3.3-70b-instruct:free",
+                "messages": [{"role": "user", "content": prompt}],
+                "max_tokens": 300, "temperature": 0.7
+            }, timeout=20)
+            if r.status_code == 200:
+                data = r.json()
+                content = data["choices"][0]["message"]["content"].strip()
+                if content:
+                    return content
+        except Exception:
+            pass
+
+    # 3. Fallback Template Baku Arijal Meutuwah ($0 / Offline)
+    desc_text = orig_desc if orig_desc else f"Rekomendasi terbaik hari ini: {clean_title}. Kualitas bahan mantap, potongan pas, dan siap upgrade penampilanmu!"
+    return f"{url}\n\n{desc_text}\n\n#RekomendasiProduk #ArijalMeutuwah #ShopeeAffiliate #OutfitPria"
+
+
+def post_telegram_channel(text: str, channel_id: str, bot_token: str) -> dict:
+    if not channel_id or not bot_token:
+        return {"status": "skipped", "reason": "no_token_or_channel"}
+    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
     try:
-        r = requests.post(NINE_ROUTER, headers=headers, json={
-            "model": "kr/claude-sonnet-4.5",
-            "messages": [{"role": "user", "content": prompt}],
-            "max_tokens": 300, "temperature": 0.8, "stream": False
-        }, timeout=40)
-        # 9Router may return SSE even with stream=False; parse both
-        text = r.text
-        if text.strip().startswith("data:"):
-            content = ""
-            for line in text.splitlines():
-                line = line.strip()
-                if line.startswith("data:") and "[DONE]" not in line:
-                    try:
-                        obj = json.loads(line[5:].strip())
-                        delta = obj["choices"][0]["delta"].get("content", "")
-                        content += delta
-                    except: pass
-            return content.strip() or prompt[:50]
-        return r.json()["choices"][0]["message"]["content"].strip()
-    except Exception as e:
-        return f"[{product.get('title')}] {product.get('shopee_url') or ''} {product.get('tiktok_url') or ''}"
-
-def get_products(sheet_id: str, limit: int = 5):
-    """Ambil produk terbaru dari tab PRODUCT_MASTER."""
-    s = Settings.from_env()
-    gw = GoogleWorkspace(s.google_credentials_file, s.google_token_file, s.google_root_folder_id, s.google_spreadsheet_id)
-    res = gw.sheets.spreadsheets().values().get(spreadsheetId=s.google_spreadsheet_id, range="PRODUCT_MASTER!A2:K").execute()
-    rows = res.get("values", [])[:limit]
-    products = []
-    for r in rows:
-        products.append({
-            "product_id": r[0] if len(r) > 0 else "",
-            "title": r[1] if len(r) > 1 else "",
-            "description": r[2] if len(r) > 2 else "",
-            "shopee_url": r[3] if len(r) > 3 else "",
-            "tiktok_url": r[4] if len(r) > 4 else "",
-        })
-    return products
-
-
-# ===== MODUL DISTRIBUSI MULTI-PLATFORM (Celine Aurel) =====
-
-def post_telegram_channel(caption: str, channel_id: str, bot_token: str) -> dict:
-    r = requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage",
-                      json={"chat_id": channel_id, "text": caption, "disable_web_page_preview": False}, timeout=30)
-    return r.json()
-
-
-def post_facebook(caption: str, page_id: str, page_token: str) -> dict:
-    r = requests.post(f"https://graph.facebook.com/v20.0/{page_id}/feed",
-                      data={"message": caption, "access_token": page_token}, timeout=30)
-    return r.json()
-
-
-def post_instagram(caption: str, image_url: str, ig_id: str, access_token: str) -> dict:
-    """Post gambar + caption ke Instagram via Instagram Graph API (graph.instagram.com).
-    Token dari Instagram Login (bukan FB Graph) -> endpoint graph.instagram.com."""
-    if not image_url:
-        return {"status": "skipped", "reason": "image_url_required"}
-    
-    # 1. Create Media Container (graph.instagram.com)
-    container_url = f"https://graph.instagram.com/v20.0/{ig_id}/media"
-    res1 = requests.post(container_url, data={
-        "caption": caption,
-        "image_url": image_url,
-        "access_token": access_token
-    }, timeout=30).json()
-    
-    creation_id = res1.get("id")
-    if not creation_id:
-        return {"status": "error", "error_container": res1}
-    
-    # 2. Publish Media Container (graph.instagram.com)
-    publish_url = f"https://graph.instagram.com/v20.0/{ig_id}/media_publish"
-    res2 = requests.post(publish_url, data={
-        "creation_id": creation_id,
-        "access_token": access_token
-    }, timeout=30).json()
-    
-    return {"status": "success", "container_id": creation_id, "publish_response": res2}
-
-
-def post_youtube(title: str, description: str, video_path: str, token_path: str = None) -> dict:
-    """Upload video ke YouTube Celine Aurel Official via OAuth API resmi (fail-closed preflight)."""
-    if not video_path or not os.path.exists(video_path):
-        return {"status": "skipped", "reason": f"video_file_not_found: {video_path}"}
-    try:
-        import subprocess, sys
-        expected = os.environ.get("YT_CELINE_CHANNEL", "UC0h3xyafx6P6J_CjpzhpSeg")
-        client = os.environ.get("YT_CLIENT", "client_secret.json")
-        tok = token_path or os.environ.get("YT_TOKEN", "token_celine.json")
-        out = subprocess.run(
-            [sys.executable, "youtube_upload_celine.py",
-             "--file", video_path, "--title", title, "--description", description,
-             "--privacy", "private", "--client", client, "--token", tok,
-             "--expected-channel", expected],
-            capture_output=True, text=True, timeout=180, cwd=os.path.dirname(os.path.abspath(__file__)))
-        if "UPLOAD_OK" in out.stdout:
-            for line in out.stdout.splitlines():
-                if line.startswith("URL="):
-                    return {"status": "success", "url": line.split("=",1)[1]}
-            return {"status": "success", "raw": out.stdout.strip()}
-        return {"status": "error", "stdout": out.stdout[:500], "stderr": out.stderr[:500]}
-    except Exception as e:
-        return {"status": "error", "error": str(e)}
-
-
-def post_threads(text: str, image_url: str = None, token: str = None) -> dict:
-    """Post otomatis ke Threads API v1.0 via Threads user token."""
-    if not token:
-        token = os.environ.get("THREADS_USER_TOKEN") or os.environ.get("THREADS_USER_TOKEN_VAULT", "")
-        
-    if not token:
-        return {"status": "skipped", "reason": "no_meta_token_for_threads"}
-        
-    try:
-        url_create = "https://graph.threads.net/v1.0/me/threads"
-        payload = {
-            "media_type": "IMAGE" if image_url else "TEXT",
-            "text": text[:500],
-            "access_token": token
-        }
-        if image_url:
-            payload["image_url"] = image_url
-            
-        r1 = requests.post(url_create, data=payload, timeout=30).json()
-        if "id" not in r1:
-            # Fallback to graph.facebook.com endpoint for threads
-            url_fb = f"https://graph.facebook.com/v20.0/me/threads"
-            r1 = requests.post(url_fb, data=payload, timeout=30).json()
-            
-        if "id" not in r1:
-            return {"status": "error", "response": r1}
-            
-        creation_id = r1["id"]
-        url_pub = "https://graph.threads.net/v1.0/me/threads_publish"
-        r2 = requests.post(url_pub, data={
-            "creation_id": creation_id,
-            "access_token": token
+        r = requests.post(url, json={
+            "chat_id": channel_id,
+            "text": text,
+            "disable_web_page_preview": False
         }, timeout=30).json()
-        
-        return {"status": "success", "creation_id": creation_id, "publish_response": r2}
+        return {"status": "success" if r.get("ok") else "error", "response": r}
     except Exception as e:
         return {"status": "error", "error": str(e)}
 
 
-def distribute_to_platforms(product: dict, caption: str, targets: list, bot_token: str, fb_page_id: str, fb_token: str) -> dict:
+def post_youtube_arijal(title: str, description: str, video_path: str) -> dict:
+    """Upload khusus channel YouTube Arijal Meutuwah menggunakan token_arijal.json."""
+    token_file = ROOT / "token_arijal.json"
+    if not token_file.exists():
+        return {
+            "status": "skipped",
+            "reason": "token_arijal_not_found",
+            "message": "Token YouTube Arijal Meutuwah (token_arijal.json) belum diotentikasi. Sistem menolak menggunakan token Celine demi menjaga isolasi channel."
+        }
+    
+    if not video_path or not os.path.exists(video_path):
+        return {"status": "skipped", "reason": "video_file_not_found"}
+        
+    try:
+        from google.oauth2.credentials import Credentials
+        from google.auth.transport.requests import Request
+        from googleapiclient.discovery import build
+        from googleapiclient.http import MediaFileUpload
+        
+        creds = Credentials.from_authorized_user_file(str(token_file))
+        if creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+            
+        yt = build("youtube", "v3", credentials=creds)
+        body = {
+            "snippet": {
+                "title": f"{title[:70]} #Shorts",
+                "description": description,
+                "tags": ["ArijalMeutuwah", "ShopeeAffiliate", "Shorts", "OutfitPria"],
+                "categoryId": "26"
+            },
+            "status": {
+                "privacyStatus": "public",
+                "selfDeclaredMadeForKids": False
+            }
+        }
+        media = MediaFileUpload(video_path, mimetype="video/mp4", resumable=True)
+        req = yt.videos().insert(part="snippet,status", body=body, media_body=media)
+        res = req.execute()
+        vid_id = res.get("id")
+        return {"status": "success", "platform": "youtube_arijal", "video_id": vid_id, "url": f"https://youtube.com/shorts/{vid_id}"}
+    except Exception as e:
+        return {"status": "error", "platform": "youtube_arijal", "error": str(e)}
+
+
+def post_twitter_x_arijal(caption: str) -> dict:
+    """Post tweet otomatis ke akun Twitter / X @Abangjal (Arijal Meutuwah)."""
+    token_file = ROOT / "x_token_arijal.json"
+    if not token_file.exists():
+        return {"status": "skipped", "reason": "x_token_arijal_not_found"}
+        
+    try:
+        data = json.loads(token_file.read_text(encoding="utf-8"))
+        token = data.get("access_token")
+        if not token:
+            return {"status": "skipped", "reason": "no_x_access_token"}
+            
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json"
+        }
+        payload = {"text": caption[:280]}
+        r = requests.post("https://api.x.com/2/tweets", headers=headers, json=payload, timeout=30)
+        res = r.json()
+        if r.status_code in (200, 201) and "data" in res:
+            tweet_id = res["data"]["id"]
+            return {"status": "success", "platform": "twitter_x_arijal", "tweet_id": tweet_id, "url": f"https://x.com/Abangjal/status/{tweet_id}"}
+        else:
+            return {"status": "error", "platform": "twitter_x_arijal", "response": res, "http_status": r.status_code}
+    except Exception as e:
+        return {"status": "error", "platform": "twitter_x_arijal", "error": str(e)}
+
+
+def distribute_to_platforms_arijal(product: dict, caption: str, targets: list = None, video_path: str = None) -> dict:
+    """Distributor Khusus Persona Arijal Meutuwah - Target: YouTube Shorts Saja."""
+    if targets is None:
+        targets = ["youtube"]
     results = {}
     
-    if "telegram" in targets or "all" in targets:
-        ch = os.environ.get("CHANNEL_CELINE", "-1004373452633")
-        results["telegram"] = post_telegram_channel(caption, ch, bot_token)
-        
-    if "facebook" in targets or "all" in targets:
-        results["facebook"] = post_facebook(caption, fb_page_id, fb_token)
-        
-    if "instagram" in targets or "all" in targets:
-        ig_id = os.environ.get("IG_BUSINESS_ID", "17841444876830769")
-        ig_token = os.environ.get("META_USER_TOKEN", fb_token)
-        img_url = product.get("image_url") or "https://picsum.photos/800/1000"
-        results["instagram"] = post_instagram(caption, img_url, ig_id, ig_token)
-        
+    # YouTube Shorts Arijal Saja
     if "youtube" in targets or "all" in targets:
-        vid_path = product.get("video_path")
-        title = product.get("title") or "Celine Aurel Fashion Shorts"
-        results["youtube"] = post_youtube(title, caption, vid_path)
-        
-    if "threads" in targets or "all" in targets:
-        img_url = product.get("image_url") or "https://picsum.photos/800/1000"
-        token = os.environ.get("META_USER_TOKEN", fb_token)
-        results["threads"] = post_threads(caption, img_url, token)
+        yt_title = product.get("title") or ""
+        import re
+        yt_title = re.sub(r"dengan harga Rp[0-9.]+", "", yt_title, flags=re.I)
+        yt_title = re.sub(r"\. Dapatkan di Shopee sekarang!.*", "", yt_title, flags=re.I)
+        yt_title = re.sub(r"http\S+", "", yt_title).strip()
+        if not yt_title or len(yt_title) < 3:
+            yt_title = "Rekomendasi Fashion & Outfit Pria Keren 🔥"
+        results["youtube"] = post_youtube_arijal(yt_title, caption, video_path)
         
     return results
 
 
+
 if __name__ == "__main__":
-    print("=== TEST: generate caption dari 1 produk terbaru ===")
-    prods = get_products("", limit=1)
-    if not prods:
-        print("Belum ada produk di Sheet.")
-    else:
-        p = prods[0]
-        print(f"Produk: {p['title']}")
-        cap = gen_caption(p)
-        print("\n--- CAPTION (AI, natural) ---")
-        print(cap)
-        print("\n--- TEST OK, distributor siap dipasang ke Telegram channel ---")
-
-
-# ===== SCHEDULER PRIME-TIME (anti-deteksi bot) =====
-# Jam upload target (WIB): 08:57, 13:03, 16:24, 20:29
-# Tiap slot: ambil 1 produk PENDING -> post ke 5 platform -> status PUBLISHED
-
-def get_pending_products(sheet_id: str = "", limit: int = 1):
-    """Ambil produk dengan status PENDING dari PRODUCT_MASTER (kolom J = status)."""
-    s = Settings.from_env()
-    gw = GoogleWorkspace(s.google_credentials_file, s.google_token_file, s.google_root_folder_id, s.google_spreadsheet_id)
-    res = gw.sheets.spreadsheets().values().get(
-        spreadsheetId=s.google_spreadsheet_id, range="PRODUCT_MASTER!A2:K").execute()
-    rows = res.get("values", [])
-    out = []
-    for i, r in enumerate(rows):
-        status = r[9] if len(r) > 9 else ""
-        if status.upper() == "PENDING":
-            out.append({
-                "row": i + 2,
-                "product_id": r[0] if len(r) > 0 else "",
-                "title": r[1] if len(r) > 1 else "",
-                "description": r[2] if len(r) > 2 else "",
-                "shopee_url": r[3] if len(r) > 3 else "",
-                "tiktok_url": r[4] if len(r) > 4 else "",
-                "other_links": r[5] if len(r) > 5 else "",
-                "folder_url": r[6] if len(r) > 6 else "",
-                "asset_count": r[7] if len(r) > 7 else "",
-                "video_path": r[6] if len(r) > 6 else "",
-                "image_url": r[6] if len(r) > 6 else "",
-            })
-            if len(out) >= limit:
-                break
-    return out
-
-
-def mark_published(product_id: str, sheet_row: int):
-    """Update status kolom J (index 9) jadi PUBLISHED + timestamp kolom I."""
-    s = Settings.from_env()
-    gw = GoogleWorkspace(s.google_credentials_file, s.google_token_file, s.google_root_folder_id, s.google_spreadsheet_id)
-    ts = datetime.now(ZoneInfo("Asia/Jakarta")).isoformat(timespec="seconds")
-    rng = f"PRODUCT_MASTER!I{sheet_row}:J{sheet_row}"
-    gw.sheets.spreadsheets().values().update(
-        spreadsheetId=s.google_spreadsheet_id, range=rng,
-        valueInputOption="RAW", body={"values": [[ts, "PUBLISHED"]]}).execute()
-
-
-def post_one_pending() -> dict:
-    """Ambil 1 produk PENDING, post ke semua platform, mark PUBLISHED."""
-    pending = get_pending_products(limit=1)
-    if not pending:
-        return {"status": "no_pending", "message": "Tidak ada produk PENDING."}
-    prod = pending[0]
-    try:
-        caption = gen_caption(prod)
-    except Exception:
-        caption = f"[{prod['title']}] {prod['shopee_url']} {prod['tiktok_url']}"
-    bot_token = os.environ.get("TELEGRAM_BOT_TOKEN", "")
-    fb_page_id = os.environ.get("FB_PAGE_ID", "975723622288353")
-    fb_token = os.environ.get("FB_PAGE_TOKEN", "")
-    res = distribute_to_platforms(prod, caption, ["all"], bot_token, fb_page_id, fb_token)
-    ok = any(v.get("status") == "success" for v in res.values() if isinstance(v, dict))
-    if ok:
-        mark_published(prod["product_id"], prod["row"])
-        return {"status": "published", "product_id": prod["product_id"], "results": res}
-    return {"status": "failed", "product_id": prod["product_id"], "results": res}
+    print("=== Distributor Arijal Meutuwah (Strict Isolation Active) ===")
+    test_prod = {
+        "title": "Classic Henley Fitted T-Shirt",
+        "description": "Bahan katun combed 200 GSM",
+        "shopee_url": "https://s.shopee.co.id/8plAFEeqEI"
+    }
+    cap = gen_caption(test_prod)
+    print("\nCaption Preview:")
+    print(cap)

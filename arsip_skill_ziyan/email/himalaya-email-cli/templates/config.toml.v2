@@ -1,0 +1,32 @@
+# Himalaya v2.0.0 config template — copy, replace the 4 values per account.
+# Save to ~/.config/himalaya/config.toml
+# Uses SASL LOGIN with raw (app) password. For Gmail 2FA use an App Password.
+
+[accounts.default]
+default = true
+email = "user@example.com"
+display-name = "Your Name"
+
+[accounts.default.imap]
+server = "imap.example.com:993"
+
+[accounts.default.imap.sasl.login]
+username = "user@example.com"
+password.raw = "APP-PASSWORD"
+
+[accounts.default.smtp]
+server = "smtp.example.com:587"
+starttls = true
+
+[accounts.default.smtp.sasl.login]
+username = "user@example.com"
+password.raw = "APP-PASSWORD"
+
+# Duplicate the [accounts.NAME], [*.imap], [*.smtp] blocks for more accounts.
+# Only ONE account should have `default = true`.
+
+[folder.aliases]
+inbox = "INBOX"
+sent = "[Gmail]/Sent Mail"
+drafts = "[Gmail]/Drafts"
+trash = "[Gmail]/Trash"

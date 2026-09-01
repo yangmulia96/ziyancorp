@@ -1,0 +1,65 @@
+{
+  "name": "ZAS - 05 Enterprise Error Monitoring & Telegram Sentinel",
+  "nodes": [
+    {
+      "parameters": {
+        "events": [
+          "workflowFailed"
+        ]
+      },
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const err = $json.execution.error || {};\nconst wf = $json.workflow || {};\n\nconst alertText = `\n🚨 <b>[ALERT] EKSEKUSI WORKFLOW GAGAL!</b>\n\n🏢 <b>Sistem:</b> Ziyan Automation Systems (ZAS)\n📋 <b>Nama Workflow:</b> ${wf.name || 'Unknown'}\n🆔 <b>Workflow ID:</b> <code>${wf.id || '-'}</code>\n⚠️ <b>Pesan Error:</b> <code>${err.message || 'Unknown Execution Error'}</code>\n⏱️ <b>Waktu Kejadian:</b> ${new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })} WIB\n🔗 <b>Link Investigasi:</b> <a href=\"${$env.N8N_INSTANCE_URL || 'http://localhost:5678'}/workflow/${wf.id}/executions/${$json.execution.id}\">Lihat Detail Execution</a>\n`;\n\nreturn [{\n  json: {\n    alert_message: alertText,\n    workflow_name: wf.name,\n    error_message: err.message,\n    execution_id: $json.execution.id\n  }\n}];"
+      },
+      "name": "Format Error Alert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_OPS_ALERT_CHAT_ID }}",
+        "text": "={{ $json.alert_message }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "name": "Send Alert to Telegram Ops",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [680, 300]
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Format Error Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Error Alert": {
+      "main": [
+        [
+          {
+            "node": "Send Alert to Telegram Ops",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

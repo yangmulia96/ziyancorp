@@ -1,0 +1,7 @@
+file 'C:/Users/arija/ziyancorp/scenic_wildlife_bot/output_videos/temp_short_2_arctic_wolf_pack_survival___un/trimmed_0.mp4'
+file 'C:/Users/arija/ziyancorp/scenic_wildlife_bot/output_videos/temp_short_2_arctic_wolf_pack_survival___un/trimmed_1.mp4'
+file 'C:/Users/arija/ziyancorp/scenic_wildlife_bot/output_videos/temp_short_2_arctic_wolf_pack_survival___un/trimmed_2.mp4'
+file 'C:/Users/arija/ziyancorp/scenic_wildlife_bot/output_videos/temp_short_2_arctic_wolf_pack_survival___un/trimmed_3.mp4'
+file 'C:/Users/arija/ziyancorp/scenic_wildlife_bot/output_videos/temp_short_2_arctic_wolf_pack_survival___un/trimmed_4.mp4'
+file 'C:/Users/arija/ziyancorp/scenic_wildlife_bot/output_videos/temp_short_2_arctic_wolf_pack_survival___un/trimmed_5.mp4'
+file 'C:/Users/arija/ziyancorp/scenic_wildlife_bot/output_videos/temp_short_2_arctic_wolf_pack_survival___un/trimmed_6.mp4'

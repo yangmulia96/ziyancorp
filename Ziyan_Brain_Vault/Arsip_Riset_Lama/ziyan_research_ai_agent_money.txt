@@ -1,0 +1,33 @@
+=== START RISKET: AI Agent Money Making (OpenRouter/9Router) ===
+Waktu: Sat, Aug  8, 2026  1:02:27 AM
+
+=== 1. DuckDuckGo: cara AI agent cuan ===
+--- QUERY: ai+agent+make+money+openrouter ---
+--- QUERY: ai+agent+monetization+freelance ---
+--- QUERY: ai+agent+saas+passive+income ---
+--- QUERY: autonomous+ai+agent+business+model ---
+
+=== 2. 9Router web search (jika support) ===
+
+=== 3. Cek skill 9router-web-search ===
+---
+name: 9router-web-search
+description: Web search via 9Router /v1/search using Tavily / Exa / Brave / Serper / SearXNG / Google PSE / Linkup / SearchAPI / You.com / Perplexity. Use when the user wants to search the web, look up information, find articles, or query a search engine.
+---
+
+# 9Router — Web Search
+
+Requires `NINEROUTER_URL` (and `NINEROUTER_KEY` if auth enabled). See https://raw.githubusercontent.com/decolua/9router/refs/heads/master/skills/9router/SKILL.md for setup.
+
+## Discover
+
+```bash
+curl $NINEROUTER_URL/v1/models/web | jq '.data[] | select(.kind=="webSearch") | .id'
+# Per-provider params (searchTypes, maxResults, required options like cx for google-pse)
+curl "$NINEROUTER_URL/v1/models/info?id=tavily/search"
+```
+
+IDs end in `/search` (e.g. `tavily/search`). Combos (`owned_by:"combo"`) chain providers with auto-fallback.
+
+## Endpoint
+=== DONE ===

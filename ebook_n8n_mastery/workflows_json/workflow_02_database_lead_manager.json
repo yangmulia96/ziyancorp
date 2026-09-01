@@ -1,0 +1,151 @@
+{
+  "name": "02 - Smart Lead Deduplication & Database Upsert",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "id": "node-cron-schedule",
+      "name": "Every 15 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.example.com/v1/new-leads",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "node-http-fetch-leads",
+      "name": "Fetch Leads from API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        420,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT email FROM leads WHERE email = ANY($1);",
+        "additionalFields": {
+          "queryParams": "={{ $json.leads.map(l => l.email) }}"
+        }
+      },
+      "id": "node-check-existing",
+      "name": "Check Existing Emails in DB",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Pisahkan leads baru vs yang sudah pernah terdaftar\nconst allLeads = $('Fetch Leads from API').first().json.leads || [];\nconst existingEmails = new Set($('Check Existing Emails in DB').all().map(item => item.json.email));\n\nconst newLeadsOnly = allLeads.filter(lead => !existingEmails.has(lead.email));\n\nreturn newLeadsOnly.map(lead => ({ json: lead }));"
+      },
+      "id": "node-filter-new",
+      "name": "Filter New Only",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        860,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "name"
+        },
+        "table": {
+          "__rl": true,
+          "value": "leads",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "name": "={{ $json.name }}",
+            "email": "={{ $json.email }}",
+            "phone": "={{ $json.phone }}",
+            "status": "NEW",
+            "created_at": "={{ $now.toISO() }}"
+          }
+        }
+      },
+      "id": "node-insert-leads",
+      "name": "Insert to Supabase/Postgres",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1080,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Every 15 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Fetch Leads from API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Leads from API": {
+      "main": [
+        [
+          {
+            "node": "Check Existing Emails in DB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Existing Emails in DB": {
+      "main": [
+        [
+          {
+            "node": "Filter New Only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter New Only": {
+      "main": [
+        [
+          {
+            "node": "Insert to Supabase/Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

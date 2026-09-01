@@ -1,0 +1,132 @@
+{
+  "name": "01 - Universal Webhook Receiver & Data Sanitizer",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "incoming-lead",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "node-webhook-1",
+      "name": "Webhook Catch Lead",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        300
+      ],
+      "webhookId": "universal-lead-catcher"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Sanitasi dan standardisasi data input\nconst body = $input.item.json.body || $input.item.json;\n\n// Format nomor telepon (standar internasional +62)\nlet rawPhone = (body.phone || body.telepon || '').toString().trim();\nrawPhone = rawPhone.replace(/[^0-9]/g, '');\nif (rawPhone.startsWith('0')) {\n  rawPhone = '62' + rawPhone.slice(1);\n} else if (!rawPhone.startsWith('62') && rawPhone.length > 5) {\n  rawPhone = '62' + rawPhone;\n}\n\n// Format nama (Title Case)\nconst rawName = (body.name || body.nama || 'Pelanggan').toString().trim();\nconst cleanName = rawName.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');\n\n// Format email\nconst cleanEmail = (body.email || '').toString().trim().toLowerCase();\n\nreturn {\n  json: {\n    customer_name: cleanName,\n    customer_phone: rawPhone,\n    customer_email: cleanEmail,\n    source: body.source || 'Website',\n    lead_score: body.total_order && body.total_order > 500000 ? 'HOT' : 'WARM',\n    created_at: new Date().toISOString()\n  }\n};"
+      },
+      "id": "node-code-sanitize",
+      "name": "Sanitize & Validate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.customer_phone }}",
+              "operation": "isNotEmpty"
+            }
+          ]
+        }
+      },
+      "id": "node-if-valid",
+      "name": "Is Phone Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"success\",\n  \"message\": \"Lead berhasil divalidasi dan dicatat.\",\n  \"data\": {\n    \"name\": \"{{ $json.customer_name }}\",\n    \"phone\": \"{{ $json.customer_phone }}\",\n    \"tier\": \"{{ $json.lead_score }}\"\n  }\n}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "node-respond-success",
+      "name": "Respond 200 Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        920,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"error\",\n  \"message\": \"Nomor telepon kosong atau format salah.\"\n}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "node-respond-error",
+      "name": "Respond 400 Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        920,
+        380
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Catch Lead": {
+      "main": [
+        [
+          {
+            "node": "Sanitize & Validate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sanitize & Validate": {
+      "main": [
+        [
+          {
+            "node": "Is Phone Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Phone Valid?": {
+      "main": [
+        [
+          {
+            "node": "Respond 200 Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond 400 Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

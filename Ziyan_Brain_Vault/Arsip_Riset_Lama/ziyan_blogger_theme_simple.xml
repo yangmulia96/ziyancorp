@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html b:version='2' class='v2' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
+<head>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+<b:include data='blog' name='all-head-content'/>
+<b:if cond='data:blog.metaDescription'>
+<meta expr:content='data:blog.metaDescription' name='description'/>
+</b:if>
+<title><data:blog.pageTitle/></title>
+<link href='https://fonts.googleapis.com' rel='preconnect'/>
+<link href='https://fonts.gstatic.com' rel='preconnect' crossorigin='anonymous'/>
+<link href='https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&amp;display=swap' rel='stylesheet'/>
+<b:skin><![CDATA[
+/* ============================================================
+   ZYN AI CORP - TEMA BLOGGER SIMPLE (RINGAN & SEO-FRIENDLY)
+   Font: Outfit | Dark theme (#0c0c0d / #e2e8f0)
+   Glow statis (text-shadow) | Glassmorphism ringan
+   TANPA: partikel, gradient bergerak, animasi, blur berat, canvas
+   ============================================================ */
+
+/* ---------- Variabel ---------- */
+:root {
+  --bg:#0c0c0d;
+  --text:#e2e8f0;
+  --text-dim:#94a3b8;
+  --surface:rgba(255,255,255,.04);
+  --surface-2:rgba(255,255,255,.06);
+  --border:rgba(255,255,255,.10);
+  --accent:#3b82f6;            /* biru */
+  --glow:0 0 14px rgba(59,130,246,.35);
+  --glow-soft:0 0 10px rgba(148,163,184,.25);
+  --radius:14px;
+  --maxw:1080px;
+}
+
+/* ---------- Reset dasar ---------- */
+* { box-sizing:border-box; }
+html,body { margin:0; padding:0; }
+body {
+  font-family:'Outfit', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color:var(--text);
+  background:var(--bg);
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- Layout ---------- */
+#outer-wrapper, .content-outer {
+  max-width:var(--maxw);
+  margin:0 auto;
+  padding:0 20px;
+}
+
+/* ---------- Header (glass ringan) ---------- */
+.header, #header, .Header {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  margin:18px auto;
+  padding:18px 26px;
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;
+}
+.Header h1, #header h1, .header h1 {
+  font-weight:800; font-size:1.9rem; letter-spacing:.5px; margin:0;
+  color:#fff;
+  text-shadow:var(--glow);     /* glow statis */
+}
+.Header p, #header .description {
+  color:var(--text-dim); margin:4px 0 0; font-size:.95rem; font-weight:300;
+}
+
+/* ---------- Post card (glass ringan, tanpa blur berat) ---------- */
+.post, .blog-posts .post, .post-outer, article.post {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:28px 30px;
+  margin:22px auto;
+}
+.post:hover { border-color:rgba(59,130,246,.45); }
+
+/* ---------- Judul post (glow statis) ---------- */
+.post-title, h1.post-title, h2.post-title, .entry-title {
+  font-weight:700; line-height:1.25; margin:0 0 12px;
+  font-size:1.7rem;
+  color:#fff;
+  text-shadow:0 0 16px rgba(59,130,246,.30);   /* glow statis */
+}
+.post-title a, .entry-title a { color:inherit; text-decoration:none; }
+
+.post-body { color:var(--text); font-weight:300; font-size:1.05rem; }
+.post-body p { margin:0 0 16px; }
+
+/* ---------- Link & tombol ---------- */
+a { color:var(--accent); text-decoration:none; transition:color .2s; }
+a:hover { color:#60a5fa; text-shadow:var(--glow); }
+
+.jump-link a, a.btn, .readmore {
+  display:inline-block; margin-top:8px; padding:10px 20px;
+  font-weight:600; color:#fff; border-radius:999px;
+  background:var(--accent);
+  box-shadow:var(--glow);
+}
+.jump-link a:hover, a.btn:hover { color:#fff; }
+
+/* ---------- Gambar ---------- */
+.post-body img, .post img {
+  max-width:100%; height:auto; border-radius:12px;
+  border:1px solid var(--border);
+}
+
+/* ---------- Kutipan & kode ---------- */
+blockquote {
+  margin:18px 0; padding:14px 20px;
+  border-left:3px solid var(--accent);
+  background:var(--surface-2); border-radius:0 12px 12px 0;
+  color:var(--text-dim); font-style:italic;
+}
+pre, code {
+  font-family:ui-monospace, Menlo, Consolas, monospace;
+  background:rgba(0,0,0,.45); border:1px solid var(--border);
+  border-radius:10px; color:#cfe3ff; padding:2px 6px;
+}
+pre { padding:16px; overflow:auto; }
+
+/* ---------- Tabel ---------- */
+table { width:100%; border-collapse:collapse; margin:18px 0; }
+th,td { border:1px solid var(--border); padding:10px 12px; }
+th { background:var(--surface-2); color:#fff; }
+
+/* ---------- Sidebar widget (glass ringan) ---------- */
+.sidebar, #sidebar, .column-right-outer, .column-left-outer {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px 22px; margin:22px auto;
+}
+.sidebar h2, .sidebar .widget h2, #sidebar h2 {
+  font-weight:700; font-size:1.15rem; margin:0 0 14px;
+  color:#fff; text-shadow:var(--glow-soft);
+}
+
+/* ---------- Pagination ---------- */
+.blog-pager, .pager, #blog-pager {
+  display:flex; justify-content:center; gap:14px; margin:26px 0;
+}
+.blog-pager a, #blog-pager a {
+  padding:9px 18px; border-radius:999px;
+  background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+}
+.blog-pager a:hover { box-shadow:var(--glow); color:#fff; }
+
+/* ---------- Komentar ---------- */
+.comments, #comments {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:22px 24px; margin:22px auto;
+}
+.comment-author { color:var(--accent); font-weight:600; }
+
+/* ---------- Footer (glass ringan) ---------- */
+.footer, #footer, .foot {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:24px; margin:30px auto;
+  text-align:center; color:var(--text-dim); font-weight:300;
+}
+
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar { width:10px; }
+::-webkit-scrollbar-track { background:#161619; }
+::-webkit-scrollbar-thumb { background:var(--accent); border-radius:99px; }
+
+/* ---------- Responsif ---------- */
+@media (max-width:900px) {
+  .post-title, h2.post-title { font-size:1.4rem; }
+  .Header h1 { font-size:1.5rem; }
+  #outer-wrapper { padding:0 14px; }
+}
+@media (max-width:600px) {
+  .post, .sidebar { padding:18px 16px; }
+}
+]]></b:skin>
+</head>
+<body>
+<div id='outer-wrapper'>
+<b:section class='header' id='header' maxwidgets='1' name='Header' showaddelement='false'>
+<b:widget id='Header1' locked='true' title='Header' type='Header' version='2' visible='true'>
+<b:includable id='main' var='this'>
+<div class='Header'>
+<b:if cond='data:this.image'><img class='Header-item' expr:src='data:this.image'/><br/></b:if>
+<h1 class='title'><a expr:href='data:blog.homepageUrl'><data:this.title/></a></h1>
+<b:if cond='data:this.description'><p class='description'><data:this.description/></p></b:if>
+</div>
+</b:includable>
+</b:widget>
+</b:section>
+<div class='content-outer'>
+<div class='column-center-outer'>
+<b:section class='main' id='main' name='Post' showaddelement='false'>
+<b:widget id='Blog1' locked='true' title='Blog Posts' type='Blog' version='2' visible='true'>
+<b:includable id='main' var='top'>
+<b:if cond='data:blog.pageType == "item"'>
+<b:include name='post'/>
+<b:include name='comments'/>
+<b:else/>
+<b:loop var='post' values='data:posts'>
+<b:include name='post'/>
+</b:loop>
+<b:include name='nextprev'/>
+</b:if>
+</b:includable>
+<b:includable id='post' var='post'>
+<div class='post-outer'>
+<article class='post'>
+<b:if cond='data:post.title'>
+<h1 class='post-title entry-title'>
+<b:if cond='data:post.link or data:post.url'>
+<a expr:href='data:post.url'><b:eval expr='data:post.title'/></a>
+<b:else/>
+<b:eval expr='data:post.title'/>
+</b:if>
+</h1>
+</b:if>
+<b:if cond='data:post.thumbnailUrl'>
+<img expr:src='data:post.thumbnailUrl'/>
+</b:if>
+<div class='post-body entry-content'>
+<data:post.body/>
+</div>
+<div class='jump-link'>
+<b:if cond='data:post.hasJumpLink'>
+<a expr:href='data:post.url'>Baca selengkapnya</a>
+</b:if>
+</div>
+</article>
+</div>
+</b:includable>
+<b:includable id='nextprev'>
+<div class='blog-pager'>
+<b:if cond='data:newerPageUrl'><a expr:href='data:newerPageUrl'>&#171; Lebih baru</a></b:if>
+<b:if cond='data:olderPageUrl'><a expr:href='data:olderPageUrl'>Lebih lama &#187;</a></b:if>
+</div>
+</b:includable>
+<b:includable id='comments' var='post'>
+<div id='comments'>
+<h3><data:post.commentLabel/></h3>
+</div>
+</b:includable>
+</b:widget>
+</b:section>
+</div>
+<div class='column-right-outer'>
+<b:section class='sidebar' id='sidebar' name='Sidebar' showaddelement='true'>
+<b:widget id='HTML1' locked='false' title='Tentang' type='HTML' version='2' visible='true'>
+<b:includable id='main' var='this'>
+<b:if cond='data:this.title'><h2><data:this.title/></h2></b:if>
+<div class='widget-content'><data:this.content/></div>
+</b:includable>
+</b:widget>
+</b:section>
+</div>
+</div>
+<b:section class='footer' id='footer' name='Footer' showaddelement='false'>
+<b:widget id='HTML2' locked='false' title='Footer' type='HTML' version='2' visible='true'>
+<b:includable id='main' var='this'>
+<div class='footer'>
+<p>&#169; <data:blog.title/> &#8212; Powered by ZYN AI Corp.</p>
+</div>
+</b:includable>
+</b:widget>
+</b:section>
+</div>
+</body>
+</html>

@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>The 10-Hour Workweek: n8n Automation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            color: #0f172a;
+            background-color: #f1f5f9;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 22mm 20mm;
+            margin: 0 auto 10mm auto;
+            background: #ffffff;
+            page-break-after: always;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+        
+        /* COVER PAGE */
+        .cover {
+            background: radial-gradient(circle at top right, #1e3a8a 0%, #0f172a 60%, #020617 100%);
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 25mm 22mm;
+        }
+        
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            background: rgba(37, 99, 235, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: #60a5fa;
+            text-transform: uppercase;
+        }
+        
+        .cover h1 {
+            font-size: 48px;
+            font-weight: 900;
+            line-height: 1.15;
+            margin: 25px 0 15px 0;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+        }
+        
+        .cover h1 span {
+            color: #38bdf8;
+        }
+        
+        .cover-subtitle {
+            font-size: 18px;
+            color: #94a3b8;
+            line-height: 1.6;
+            max-width: 580px;
+            margin-bottom: 30px;
+        }
+        
+        /* COVER DIAGRAM HERO */
+        .cover-diagram {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            padding: 24px;
+            backdrop-filter: blur(12px);
+            margin: 20px 0;
+        }
+        
+        .diagram-title {
+            font-size: 13px;
+            font-weight: 800;
+            color: #94a3b8;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+        
+        .cover-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        
+        .flow-node {
+            flex: 1;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 14px;
+            padding: 16px 12px;
+            text-align: center;
+        }
+        
+        .flow-icon-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #0284c7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px auto;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+        }
+        
+        .flow-node h5 {
+            font-size: 13px;
+            font-weight: 700;
+            color: #f8fafc;
+            margin-bottom: 3px;
+        }
+        
+        .flow-node p {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+        
+        .flow-arrow {
+            color: #38bdf8;
+            font-size: 20px;
+            font-weight: 900;
+        }
+        
+        .cover-footer {
+            width: 100%;
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+        
+        /* CONTENT PAGES */
+        .chapter-tag {
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #2563eb;
+            margin-bottom: 8px;
+        }
+        
+        h2 {
+            font-size: 30px;
+            font-weight: 900;
+            color: #0f172a;
+            line-height: 1.25;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+        
+        p {
+            font-size: 15px;
+            line-height: 1.75;
+            color: #475569;
+            margin-bottom: 18px;
+        }
+        
+        /* FEATURE CARDS WITH CIRCULAR ICON BADGES */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 24px 0;
+        }
+        
+        .feature-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            transition: all 0.2s;
+        }
+        
+        .icon-badge-blue {
+            flex-shrink: 0;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+        }
+        
+        .icon-badge-sky {
+            flex-shrink: 0;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);
+        }
+        
+        .icon-badge-indigo {
+            flex-shrink: 0;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25);
+        }
+        
+        .icon-badge-teal {
+            flex-shrink: 0;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(13, 148, 136, 0.25);
+        }
+        
+        .feature-card-content h4 {
+            font-size: 16px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 5px;
+        }
+        
+        .feature-card-content p {
+            font-size: 13.5px;
+            line-height: 1.55;
+            color: #64748b;
+            margin-bottom: 0;
+        }
+        
+        /* HORIZONTAL WORKFLOW STEP DIAGRAM */
+        .workflow-box {
+            background: #ffffff;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 18px;
+            padding: 22px 20px;
+            margin: 26px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+        
+        .workflow-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .workflow-header h5 {
+            font-size: 14px;
+            font-weight: 800;
+            color: #1e293b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .pill-badge {
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        
+        .workflow-steps {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        
+        .step-item {
+            flex: 1;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px 10px;
+            text-align: center;
+        }
+        
+        .step-icon-sm {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #eff6ff;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px auto;
+        }
+        
+        .step-item h6 {
+            font-size: 12px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 2px;
+        }
+        
+        .step-item span {
+            font-size: 10.5px;
+            color: #64748b;
+        }
+        
+        .step-arrow {
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* CALLOUT BOX WITH ICON */
+        .callout-box {
+            background: #eff6ff;
+            border-left: 5px solid #2563eb;
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin: 22px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+        }
+        
+        .callout-icon {
+            color: #2563eb;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        
+        .callout-box h5 {
+            font-size: 15px;
+            font-weight: 800;
+            color: #1e40af;
+            margin-bottom: 4px;
+        }
+        
+        .callout-box p {
+            font-size: 13.5px;
+            line-height: 1.6;
+            color: #1e3a8a;
+            margin-bottom: 0;
+        }
+        
+        /* KPI METRIC CARDS */
+        .kpi-row {
+            display: flex;
+            gap: 14px;
+            margin: 22px 0;
+        }
+        
+        .kpi-card {
+            flex: 1;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+        }
+        
+        .kpi-number {
+            font-size: 28px;
+            font-weight: 900;
+            color: #2563eb;
+            line-height: 1.1;
+            margin-bottom: 4px;
+        }
+        
+        .kpi-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .page-footer {
+            position: absolute;
+            bottom: 12mm;
+            left: 20mm;
+            right: 20mm;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- COVER -->
+    <div class="page cover">
+        <div>
+            <div class="brand-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                ZIYANCORP AUTOMATION BLUEPRINT 2026
+            </div>
+            <h1 class="cover-title" style="margin-top:40px; font-size:48px; color:white;">THE 10-HOUR<br>WORKWEEK</h1>
+            <p class="cover-subtitle" style="font-size:18px; color:#94a3b8; margin-top:20px; max-width:400px;">
+                Panduan Solopreneur Membangun "Pasukan AI" Tanpa Coding dengan n8n
+            </p>
+        </div>
+    </div>
+
+    <!-- HALAMAN 1 -->
+    <div class="page">
+        <div class="chapter-tag">BAB 01 — MENJINAKKAN KANVAS N8N</div>
+        <h2>Apa itu JSON? (Jangan Panik)</h2>
+        <p>Masalah terbesar pemula saat membuka n8n adalah melihat deretan teks aneh berbentuk kurung kurawal yang disebut <strong>JSON</strong> (JavaScript Object Notation).</p>
+        
+        <div class="callout-box">
+            <div class="callout-icon">💡</div>
+            <div>
+                <h5>Anggap JSON sebagai Koper</h5>
+                <p>Ketika ada pesan WhatsApp masuk, data itu dibungkus dalam "Koper JSON". Di dalamnya ada label jelas seperti: Nama, Isi Pesan, Nomor HP.</p>
+            </div>
+        </div>
+
+        <div class="feature-grid" style="margin-top: 15px;">
+            <div class="feature-card">
+                <div class="icon-badge-blue">📦</div>
+                <div class="feature-card-content">
+                    <h4>Isi Koper (JSON)</h4>
+                    <p><code>{ "nama": "Budi", "pesan": "Order" }</code></p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="icon-badge-sky">🎯</div>
+                <div class="feature-card-content">
+                    <h4>Cara Mengambilnya</h4>
+                    <p>Ketik ekspresi: <code>{{ $json.nama }}</code></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="page-footer"><span>The 10-Hour Workweek</span><span>Halaman 01</span></div>
+    </div>
+
+    <!-- HALAMAN 2 -->
+    <div class="page">
+        <div class="chapter-tag">BAB 02 — KUNCI MASTER APLIKASI</div>
+        <h2>Menembus Batas dengan Webhook & HTTP Request</h2>
+        <p>Banyak orang menyerah pakai n8n karena aplikasinya tidak ada di daftar Node resmi. "Gimana cara sambungin ke TikTok?" Gunakan dua senjata ini:</p>
+        
+        <div class="feature-grid" style="margin-top: 20px;">
+            <div class="feature-card">
+                <div class="icon-badge-indigo">🎣</div>
+                <div class="feature-card-content">
+                    <h4>1. Webhook (Si Penangkap)</h4>
+                    <p>Link kosong dari n8n untuk menangkap data dari luar (misal: notifikasi pembayaran dari website toko onlinemu).</p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="icon-badge-teal">🚀</div>
+                <div class="feature-card-content">
+                    <h4>2. HTTP Request (Si Pelempar)</h4>
+                    <p>Memaksa n8n mengetuk pintu aplikasi apa pun di dunia ini (API), seperti mengirim pesan Telegram secara kustom.</p>
+                </div>
+            </div>
+        </div>
+
+        <h3 style="margin-top: 30px; font-size: 18px; color: #334155;">Cara Kerja Cross-Posting</h3>
+        <div class="process-flow">
+            <div class="step-row">
+                <div class="step-item"><h6>1. Trigger</h6><span>Google Drive</span></div>
+                <div class="step-arrow">➔</div>
+                <div class="step-item"><h6>2. AI Node</h6><span>Gemini Caption</span></div>
+                <div class="step-arrow">➔</div>
+                <div class="step-item"><h6>3. HTTP Request</h6><span>Instagram/TikTok API</span></div>
+            </div>
+        </div>
+        
+        <div class="page-footer"><span>The 10-Hour Workweek</span><span>Halaman 02</span></div>
+    </div>
+
+    <!-- HALAMAN 3 -->
+    <div class="page">
+        <div class="chapter-tag">BAB 03 — MENGELOLA RISIKO</div>
+        <h2>Biaya API, Limit, & Banned WAHA</h2>
+        <p>Sebelum merilis "Pasukan AI"-mu ke publik, pastikan kamu paham mitos dan faktanya.</p>
+        
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <div class="kpi-number">Rp 0</div>
+                <div class="kpi-label">Biaya n8n (Self-Hosted)</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-number">$5</div>
+                <div class="kpi-label">Limit API Bulanan (Cukup)</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-number">30 dtk</div>
+                <div class="kpi-label">Jeda Node "Wait" (Anti Banned)</div>
+            </div>
+        </div>
+        
+        <div class="callout-box" style="margin-top: 20px;">
+            <div class="callout-icon">🛡️</div>
+            <div>
+                <h5>Amankan Nomor WhatsApp-mu!</h5>
+                <p>Mengirim 100 pesan dalam 1 menit lewat WAHA pasti dibanned Meta. Gunakan Node <strong>Wait</strong> di dalam Loop untuk memberi jeda acak (15-30 detik) agar terlihat seperti manusia.</p>
+            </div>
+        </div>
+        
+        <div class="page-footer"><span>The 10-Hour Workweek</span><span>Halaman 03</span></div>
+    </div>
+
+</body>
+</html>

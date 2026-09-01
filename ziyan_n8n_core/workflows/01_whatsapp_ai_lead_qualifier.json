@@ -1,0 +1,131 @@
+{
+  "name": "ZAS - 01 WhatsApp AI Lead Qualifier & CRM Sync",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "whatsapp-incoming-lead",
+        "options": {}
+      },
+      "name": "Webhook Inbound WhatsApp",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "sender_phone",
+              "value": "={{ $json.body.from || $json.body.phone || 'Unknown' }}"
+            },
+            {
+              "name": "sender_name",
+              "value": "={{ $json.body.name || $json.body.pushName || 'Valued Customer' }}"
+            },
+            {
+              "name": "message_text",
+              "value": "={{ $json.body.text || $json.body.message || '' }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Extract Inbound Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {
+          "systemMessage": "Kamu adalah AI Sales Assistant profesional untuk bisnis klien. Tugasmu:\n1. Analisis kebutuhan pesan pelanggan.\n2. Tentukan kualifikasi prospek: [HOT LEAD, WARM LEAD, COLD LEAD, GENERAL QUESTION].\n3. Ekstrak data: Nama, Produk yang Diminati, Estimasi Budget, Urgensi.\n4. Buat draf balasan ramah, persuasif, dan profesional dalam Bahasa Indonesia.\n\nFormat output JSON:\n{\n  \"lead_score\": \"HOT/WARM/COLD\",\n  \"product_interest\": \"...\",\n  \"estimated_budget\": \"...\",\n  \"ai_response_text\": \"...\"\n}"
+        }
+      },
+      "name": "AI Lead Qualifier & Drafter",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": "={{ $env.GOOGLE_SHEET_LEAD_DATABASE_ID }}",
+        "sheetName": "INCOMING_LEADS",
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $now.format('YYYY-MM-DD HH:mm:ss') }}",
+            "Customer_Name": "={{ $('Extract Inbound Data').item.json.sender_name }}",
+            "Phone_Number": "={{ $('Extract Inbound Data').item.json.sender_phone }}",
+            "Original_Message": "={{ $('Extract Inbound Data').item.json.message_text }}",
+            "Lead_Category": "={{ $json.lead_score }}",
+            "Product_Interest": "={{ $json.product_interest }}",
+            "Status": "NEW"
+          }
+        }
+      },
+      "name": "Sync to Google Sheets CRM",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [900, 200]
+    },
+    {
+      "parameters": {
+        "requestMethod": "POST",
+        "url": "={{ $env.WHATSAPP_GATEWAY_URL }}/send-message",
+        "jsonParameters": true,
+        "bodyParametersJson": "={\n  \"to\": \"{{ $('Extract Inbound Data').item.json.sender_phone }}\",\n  \"message\": \"{{ $json.ai_response_text }}\"\n}"
+      },
+      "name": "Send WhatsApp Auto-Reply",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [900, 420]
+    }
+  ],
+  "connections": {
+    "Webhook Inbound WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Extract Inbound Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Inbound Data": {
+      "main": [
+        [
+          {
+            "node": "AI Lead Qualifier & Drafter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Lead Qualifier & Drafter": {
+      "main": [
+        [
+          {
+            "node": "Sync to Google Sheets CRM",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send WhatsApp Auto-Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

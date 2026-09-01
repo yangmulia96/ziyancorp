@@ -1,0 +1,111 @@
+{
+  "name": "ZAS - 02 E-Commerce Invoice PDF Generator & Delivery",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "order-created-webhook",
+        "options": {}
+      },
+      "name": "Order Created Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const order = $json.body;\nconst itemsHtml = (order.items || []).map(it => `\n  <tr>\n    <td style='padding:8px; border-bottom:1px solid #ddd;'>${it.name}</td>\n    <td style='padding:8px; border-bottom:1px solid #ddd; text-align:center;'>${it.quantity}</td>\n    <td style='padding:8px; border-bottom:1px solid #ddd; text-align:right;'>Rp ${Number(it.price).toLocaleString('id-ID')}</td>\n    <td style='padding:8px; border-bottom:1px solid #ddd; text-align:right;'>Rp ${(it.quantity * it.price).toLocaleString('id-ID')}</td>\n  </tr>\n`).join('');\n\nconst total = (order.items || []).reduce((acc, it) => acc + (it.quantity * it.price), 0);\n\nconst html = `\n<!DOCTYPE html>\n<html>\n<head>\n<style>\nbody { font-family: Arial, sans-serif; padding: 20px; color: #333; }\n.header { border-bottom: 2px solid #2563eb; padding-bottom: 10px; margin-bottom: 20px; }\n.inv-title { font-size: 24px; font-weight: bold; color: #2563eb; }\ntable { width: 100%; border-collapse: collapse; margin-top: 15px; }\nth { background-color: #f3f4f6; padding: 8px; text-align: left; }\n.total-box { margin-top: 20px; text-align: right; font-size: 18px; font-weight: bold; }\n</style>\n</head>\n<body>\n<div class='header'>\n  <div class='inv-title'>INVOICE RESMI PESANAN</div>\n  <div>No. Invoice: <strong>#INV-${order.order_id || Date.now()}</strong></div>\n  <div>Tanggal: ${new Date().toLocaleDateString('id-ID')}</div>\n</div>\n<div>\n  <strong>Ditujukan Kepada:</strong><br>\n  ${order.customer_name || 'Pelanggan Setia'}<br>\n  ${order.customer_phone || '-'}<br>\n  ${order.customer_address || '-'}\n</div>\n<table>\n  <thead>\n    <tr>\n      <th>Nama Barang</th>\n      <th style='text-align:center;'>Qty</th>\n      <th style='text-align:right;'>Harga Satuan</th>\n      <th style='text-align:right;'>Subtotal</th>\n    </tr>\n  </thead>\n  <tbody>\n    ${itemsHtml}\n  </tbody>\n</table>\n<div class='total-box'>\n  Total Pembayaran: Rp ${total.toLocaleString('id-ID')}\n</div>\n</body>\n</html>\n`;\n\nreturn [{\n  json: {\n    order_id: order.order_id || Date.now(),\n    customer_name: order.customer_name,\n    customer_phone: order.customer_phone,\n    customer_email: order.customer_email,\n    total_amount: total,\n    invoice_html: html\n  }\n}];"
+      },
+      "name": "Build Invoice HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "operation": "htmlToPdf",
+        "html": "={{ $json.invoice_html }}",
+        "options": {}
+      },
+      "name": "Generate PDF Binary",
+      "type": "n8n-nodes-base.htmlToPdf",
+      "typeVersion": 1,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "operation": "upload",
+        "parents": [
+          "={{ $env.GOOGLE_DRIVE_INVOICE_FOLDER_ID }}"
+        ],
+        "name": "=Invoice_{{ $('Build Invoice HTML').item.json.order_id }}.pdf",
+        "options": {}
+      },
+      "name": "Save to Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [900, 200]
+    },
+    {
+      "parameters": {
+        "requestMethod": "POST",
+        "url": "={{ $env.WHATSAPP_GATEWAY_URL }}/send-document",
+        "jsonParameters": true,
+        "bodyParametersJson": "={\n  \"to\": \"{{ $('Build Invoice HTML').item.json.customer_phone }}\",\n  \"caption\": \"Halo kak {{ $('Build Invoice HTML').item.json.customer_name }}, terima kasih sudah berbelanja! Berikut terlampir invoice resmi pesanan #{{ $('Build Invoice HTML').item.json.order_id }}.\",\n  \"document_url\": \"{{ $json.webViewLink }}\"\n}"
+      },
+      "name": "Send Invoice via WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1120, 200]
+    }
+  ],
+  "connections": {
+    "Order Created Webhook": {
+      "main": [
+        [
+          {
+            "node": "Build Invoice HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Invoice HTML": {
+      "main": [
+        [
+          {
+            "node": "Generate PDF Binary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate PDF Binary": {
+      "main": [
+        [
+          {
+            "node": "Save to Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Send Invoice via WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

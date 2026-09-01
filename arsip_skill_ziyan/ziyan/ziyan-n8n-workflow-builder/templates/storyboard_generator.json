@@ -1,0 +1,17 @@
+{
+  "name": "ZIYAN_Storyboard_Generator",
+  "nodes": [
+    { "parameters": { "httpMethod": "POST", "path": "storyboard-gen", "responseMode": "onReceived" }, "name": "Webhook (Foto+Link+Produk)", "type": "n8n-nodes-base.webhook", "typeVersion": 2, "position": [250, 300], "webhookId": "REPLACE_WEBHOOK_ID" },
+    { "parameters": { "jsCode": "const d = $input.first().json;\nreturn [{ json: { produk: d.produk || 'Produk', link: d.link || '', foto: d.foto || '', style: d.style || 'ASMR Premium (10 scene)' }}];" }, "name": "Extract Input", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [450, 300] },
+    { "parameters": { "method": "POST", "url": "http://127.0.0.1:20128/v1/chat/completions", "sendHeaders": true, "headerParameters": { "parameters": [ { "name": "Content-Type", "value": "application/json" }, { "name": "Authorization", "value": "Bearer {{ $env.HERMES_CUSTOM_9ROUTER_API_KEY }}" } ] }, "sendBody": true, "specifyBody": "json", "jsonBody": "={\"model\":\"kr/claude-sonnet-4.5\",\"messages\":[{\"role\":\"user\",\"content\":\"Buat storyboard video 10 detik 9:16 untuk produk affiliate: {{ $json.produk }}. Link: {{ $json.link }}. Style: {{ $json.style }}. Output: 10 scene dengan kolom #, VISUAL, AKSI, ANGLE, SFX, TUJUAN. Format tabel Markdown. Tambahkan CTA di scene 10.\"}]}", "options": {} }, "name": "AI Generate Storyboard (9router)", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4, "position": [650, 300] },
+    { "parameters": { "jsCode": "const raw = $input.first().json.choices ? $input.first().json.choices[0].message.content : JSON.stringify($input.first().json);\nreturn [{ json: { storyboard: raw, produk: $('Extract Input').first().json.produk } }];" }, "name": "Parse Output", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [850, 300] },
+    { "parameters": { "method": "POST", "url": "=https://api.telegram.org/bot{{ $env.ZIYAN_CS_BOT_TOKEN }}/sendMessage", "sendBody": true, "specifyBody": "json", "jsonBody": "={\"chat_id\": {{ $env.ADMIN_CHAT_ID }}, \"text\": \"*Storyboard: {{ $json.produk }}*\\n\\n{{ $json.storyboard }}\"}", "options": {} }, "name": "Kirim ke Telegram", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4, "position": [1050, 450] }
+  ],
+  "connections": {
+    "Webhook (Foto+Link+Produk)": { "main": [ [ { "node": "Extract Input", "type": "main", "index": 0 } ] ] },
+    "Extract Input": { "main": [ [ { "node": "AI Generate Storyboard (9router)", "type": "main", "index": 0 } ] ] },
+    "AI Generate Storyboard (9router)": { "main": [ [ { "node": "Parse Output", "type": "main", "index": 0 } ] ] },
+    "Parse Output": { "main": [ [ { "node": "Kirim ke Telegram", "type": "main", "index": 0 } ] ] }
+  },
+  "settings": {}
+}

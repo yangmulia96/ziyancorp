@@ -1,0 +1,175 @@
+{
+  "name": "05 - Smart OCR Receipt Scanner & Accounting Logger",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ]
+      },
+      "id": "node-telegram-receipt-trigger",
+      "name": "Listen Receipt Photos",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.message.photo ? true : False }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "node-if-has-photo",
+      "name": "Is Image?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        420,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "fileId": "={{ $json.message.photo[$json.message.photo.length - 1].file_id }}"
+      },
+      "id": "node-get-telegram-file",
+      "name": "Download High-Res Photo",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        640,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gemini-1.5-flash",
+        "promptType": "define",
+        "text": "Analisis gambar struk belanja ini secara presisi. Ekstrak data dalam format JSON murni tanpa markdown:\n{\n  \"merchant_name\": \"Nama Toko/Resto\",\n  \"transaction_date\": \"YYYY-MM-DD\",\n  \"total_amount\": 150000,\n  \"tax_amount\": 15000,\n  \"category\": \"Makanan | Operasional | Transport | Belanja\",\n  \"items\": [\"Item 1\", \"Item 2\"]\n}"
+      },
+      "id": "node-vision-extract",
+      "name": "Vision AI Receipt Parser",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        860,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "name"
+        },
+        "table": {
+          "__rl": true,
+          "value": "financial_records",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "merchant": "={{ $json.merchant_name }}",
+            "amount": "={{ $json.total_amount }}",
+            "category": "={{ $json.category }}",
+            "date": "={{ $json.transaction_date }}",
+            "source": "Telegram OCR",
+            "created_at": "={{ $now.toISO() }}"
+          }
+        }
+      },
+      "id": "node-save-accounting-db",
+      "name": "Save to Supabase Accounting",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1080,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Listen Receipt Photos').item.json.message.chat.id }}",
+        "text": "=\u2705 *STRUK BERHASIL DICATAT!*\n\n\ud83c\udfea *Toko:* {{ $json.merchant }}\n\ud83d\udcb0 *Total:* Rp {{ $json.amount.toLocaleString('id-ID') }}\n\ud83c\udff7\ufe0f *Kategori:* {{ $json.category }}\n\ud83d\udcc5 *Tanggal:* {{ $json.date }}\n\n_Data telah aman tersimpan di Database Finansial._",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "node-reply-confirmation",
+      "name": "Send WhatsApp/TG Confirmation",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        1300,
+        240
+      ]
+    }
+  ],
+  "connections": {
+    "Listen Receipt Photos": {
+      "main": [
+        [
+          {
+            "node": "Is Image?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Image?": {
+      "main": [
+        [
+          {
+            "node": "Download High-Res Photo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download High-Res Photo": {
+      "main": [
+        [
+          {
+            "node": "Vision AI Receipt Parser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vision AI Receipt Parser": {
+      "main": [
+        [
+          {
+            "node": "Save to Supabase Accounting",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to Supabase Accounting": {
+      "main": [
+        [
+          {
+            "node": "Send Reply Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

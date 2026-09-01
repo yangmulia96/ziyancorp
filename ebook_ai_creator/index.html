@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAHASIA NGONTEN TANPA WAJAH - Panduan Karakter AI & Omni Flash</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-card-subtle: #f1f5f9;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --text-subtle: #94a3b8;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-light: #eff6ff;
+            --primary-border: #bfdbfe;
+            --accent-cyan: #06b6d4;
+            --accent-emerald: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-purple: #8b5cf6;
+            --border-color: #e2e8f0;
+            --border-hover: #cbd5e1;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08);
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+        [data-theme="dark"] {
+            --bg-body: #090d16;
+            --bg-card: #111827;
+            --bg-card-subtle: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-subtle: #64748b;
+            --primary: #3b82f6;
+            --primary-hover: #60a5fa;
+            --primary-light: #1e3a8a33;
+            --primary-border: #1e40af;
+            --border-color: #1f293d;
+            --border-hover: #334155;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.5);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: var(--font-sans); background-color: var(--bg-body); color: var(--text-main); line-height: 1.65; transition: background-color 0.3s ease, color 0.3s ease; }
+        .app-layout { display: flex; min-height: 100vh; }
+        .sidebar { width: 320px; background: var(--bg-card); border-right: 1px solid var(--border-color); position: fixed; top: 0; bottom: 0; left: 0; display: flex; flex-direction: column; z-index: 50; transition: transform 0.3s ease; }
+        .sidebar-header { padding: 24px 20px 16px 20px; border-bottom: 1px solid var(--border-color); }
+        .logo-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--primary-light); border: 1px solid var(--primary-border); border-radius: 100px; color: var(--primary); font-weight: 700; font-size: 0.78rem; text-transform: uppercase; margin-bottom: 12px; }
+        .sidebar-title { font-size: 1.1rem; font-weight: 800; color: var(--text-main); line-height: 1.35; }
+        .sidebar-nav { flex: 1; overflow-y: auto; padding: 16px 12px; }
+        .nav-group-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--text-subtle); padding: 12px 12px 6px 12px; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: var(--radius-sm); color: var(--text-muted); text-decoration: none; font-size: 0.88rem; font-weight: 600; transition: all 0.2s ease; margin-bottom: 4px; }
+        .nav-item:hover { background: var(--bg-card-subtle); color: var(--text-main); transform: translateX(3px); }
+        .nav-item.active { background: var(--primary-light); color: var(--primary); font-weight: 700; }
+        .nav-number { display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 6px; background: var(--bg-card-subtle); font-size: 0.75rem; font-weight: 700; color: var(--text-muted); }
+        .nav-item.active .nav-number { background: var(--primary); color: #fff; }
+        .sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
+        .btn-icon { background: var(--bg-card-subtle); border: 1px solid var(--border-color); color: var(--text-main); width: 36px; height: 36px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .btn-icon:hover { background: var(--border-color); }
+        .main-wrapper { flex: 1; margin-left: 320px; min-height: 100vh; display: flex; flex-direction: column; }
+        .topbar-mobile { display: none; position: sticky; top: 0; background: var(--bg-card); border-bottom: 1px solid var(--border-color); padding: 12px 16px; align-items: center; justify-content: space-between; z-index: 40; }
+        .content-container { max-width: 920px; margin: 0 auto; padding: 48px 32px 100px 32px; width: 100%; }
+        .ebook-hero { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #06b6d4 100%); border-radius: var(--radius-xl); padding: 48px 36px; color: #ffffff; margin-bottom: 48px; position: relative; overflow: hidden; box-shadow: var(--shadow-lg); }
+        .hero-tag { display: inline-block; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px); padding: 6px 14px; border-radius: 100px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 16px; border: 1px solid rgba(255, 255, 255, 0.3); }
+        .hero-title { font-size: 2.25rem; font-weight: 800; line-height: 1.25; margin-bottom: 16px; letter-spacing: -0.02em; }
+        .hero-subtitle { font-size: 1.05rem; color: rgba(255, 255, 255, 0.9); max-width: 650px; line-height: 1.6; margin-bottom: 28px; }
+        .hero-meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.2); }
+        .hero-meta-label { font-size: 0.72rem; text-transform: uppercase; color: rgba(255, 255, 255, 0.75); font-weight: 600; display: block; }
+        .hero-meta-value { font-size: 0.95rem; font-weight: 700; color: #ffffff; }
+        .chapter-section { margin-bottom: 64px; scroll-margin-top: 80px; }
+        .chapter-header { margin-bottom: 24px; }
+        .chapter-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: var(--primary-light); color: var(--primary); border-radius: var(--radius-sm); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
+        .chapter-title { font-size: 1.65rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.02em; line-height: 1.3; }
+        .chapter-desc { font-size: 1rem; color: var(--text-muted); margin-top: 6px; }
+        .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 28px 24px; margin-bottom: 24px; box-shadow: var(--shadow-sm); transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+        .card:hover { border-color: var(--border-hover); box-shadow: var(--shadow-md); }
+        .card-header-flex { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+        .card-title-group { display: flex; align-items: center; gap: 12px; }
+        .card-icon-pill { width: 42px; height: 42px; border-radius: var(--radius-md); background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0; }
+        .card-title { font-size: 1.15rem; font-weight: 700; color: var(--text-main); }
+        .step-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 20px 0; }
+        .step-card { background: var(--bg-card-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; }
+        .step-badge { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 0.82rem; font-weight: 800; margin-bottom: 12px; }
+        .step-card-title { font-size: 0.98rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main); }
+        .step-card-text { font-size: 0.85rem; color: var(--text-muted); line-height: 1.55; }
+        .prompt-container { background: var(--bg-card-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden; margin: 18px 0; }
+        .prompt-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: rgba(0, 0, 0, 0.03); border-bottom: 1px solid var(--border-color); }
+        .prompt-tag { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--primary); }
+        .btn-copy { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 4px 10px; font-size: 0.75rem; font-weight: 600; color: var(--text-main); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease; }
+        .btn-copy:hover { background: var(--primary); color: #ffffff; border-color: var(--primary); }
+        .prompt-content { padding: 16px; font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-main); white-space: pre-wrap; word-break: break-word; line-height: 1.6; }
+        .callout { padding: 18px 20px; border-radius: var(--radius-md); margin: 18px 0; display: flex; gap: 14px; align-items: flex-start; }
+        .callout-info { background: var(--primary-light); border: 1px solid var(--primary-border); color: var(--text-main); }
+        .callout-warning { background: #fef3c722; border: 1px solid #fde68a; color: var(--text-main); }
+        .callout-icon { font-size: 1.25rem; flex-shrink: 0; margin-top: 2px; }
+        .callout-body { font-size: 0.9rem; line-height: 1.6; }
+        .callout-title { font-weight: 700; margin-bottom: 4px; color: var(--text-main); }
+        .table-responsive { overflow-x: auto; margin: 20px 0; border-radius: var(--radius-md); border: 1px solid var(--border-color); }
+        table { width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left; }
+        th { background: var(--bg-card-subtle); padding: 12px 16px; font-weight: 700; color: var(--text-main); border-bottom: 1px solid var(--border-color); }
+        td { padding: 12px 16px; border-bottom: 1px solid var(--border-color); color: var(--text-muted); }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 700; }
+        .badge-success { background: #d1fae5; color: #065f46; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        .badge-blue { background: #dbeafe; color: #1e40af; }
+        .badge-purple { background: #ede9fe; color: #5b21b6; }
+        .check-list { list-style: none; margin: 16px 0; }
+        .check-list li { position: relative; padding-left: 28px; margin-bottom: 10px; font-size: 0.9rem; color: var(--text-main); }
+        .check-list li::before { content: '✓'; position: absolute; left: 0; top: 1px; width: 18px; height: 18px; border-radius: 50%; background: #10b98122; color: #10b981; font-size: 0.75rem; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+        @media (max-width: 900px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-wrapper { margin-left: 0; }
+            .topbar-mobile { display: flex; }
+            .content-container { padding: 24px 16px 80px 16px; }
+            .hero-title { font-size: 1.65rem; }
+            .hero-subtitle { font-size: 0.92rem; }
+            .ebook-hero { padding: 32px 20px; border-radius: var(--radius-lg); }
+            .card { padding: 20px 16px; }
+        }
+        @media print {
+            .sidebar, .topbar-mobile, .btn-copy, .btn-icon, .sidebar-footer { display: none !important; }
+            .main-wrapper { margin-left: 0 !important; }
+            .content-container { max-width: 100% !important; padding: 0 !important; }
+            .card { break-inside: avoid; box-shadow: none !important; border: 1px solid #ccc !important; }
+            .ebook-hero { background: #1e40af !important; color: #fff !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-layout">
+    <header class="topbar-mobile">
+        <button class="btn-icon" id="btnToggleSidebar" aria-label="Buka Menu">☰</button>
+        <span style="font-weight: 800; font-size: 0.95rem;">EBOOK AI CREATOR</span>
+        <button class="btn-icon" id="btnThemeMobile" aria-label="Ganti Tema">🌓</button>
+    </header>
+
+    <aside class="sidebar" id="sidebarNav">
+        <div class="sidebar-header">
+            <div class="logo-badge">🔥 E-Book Panduan Praktis</div>
+            <h1 class="sidebar-title">Rahasia Ngonten Tanpa Wajah</h1>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-group-title">Navigasi Bab</div>
+            <a href="#modul-1" class="nav-item active"><span class="nav-number">1</span><span>Mindset & Fondasi Faceless</span></a>
+            <a href="#modul-2" class="nav-item"><span class="nav-number">2</span><span>Kuasai Google Labs Flow</span></a>
+            <a href="#modul-3" class="nav-item"><span class="nav-number">3</span><span>Formula Prompt Realistis</span></a>
+            <a href="#modul-4" class="nav-item"><span class="nav-number">4</span><span>Konsistensi Karakter Wajah</span></a>
+            <a href="#modul-5" class="nav-item"><span class="nav-number">5</span><span>Video AI & Omni Flash</span></a>
+            <a href="#modul-6" class="nav-item"><span class="nav-number">6</span><span>Monetisasi di Lynk.id</span></a>
+            <a href="#modul-7" class="nav-item"><span class="nav-number">7</span><span>Katalog 20+ Master Prompt</span></a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Edisi 2026 • Lynk.id Ready</span>
+            <button class="btn-icon" id="btnThemeDesktop" title="Ganti Tema Gelap/Terang">🌓</button>
+        </div>
+    </aside>
+
+    <main class="main-wrapper">
+        <div class="content-container">
+
+            <section class="ebook-hero">
+                <span class="hero-tag">Panduan Resmi ZiyanCorp</span>
+                <h1 class="hero-title">RAHASIA NGONTEN TANPA WAJAH</h1>
+                <p class="hero-subtitle">
+                    Panduan Lengkap & Praktis Membuat Karakter AI Realistis Menggunakan Wajah Asli, Video Bergerak Omni Flash, dan Otomasi Konten Google Labs Flow untuk Kaum Pemalu & Introvert.
+                </p>
+                <div class="hero-meta-grid">
+                    <div class="hero-meta-item"><span class="hero-meta-label">Tingkat Kesulitan</span><span class="hero-meta-value">Pemula (No-Code)</span></div>
+                    <div class="hero-meta-item"><span class="hero-meta-label">Platform Utama</span><span class="hero-meta-value">Google Labs + Omni</span></div>
+                    <div class="hero-meta-item"><span class="hero-meta-label">Potensi Cuan</span><span class="hero-meta-value">Shopee / Lynk.id</span></div>
+                    <div class="hero-meta-item"><span class="hero-meta-label">Format File</span><span class="hero-meta-value">Responsive & Print PDF</span></div>
+                </div>
+            </section>
+
+            <!-- MODUL 1 -->
+            <section id="modul-1" class="chapter-section">
+                <div class="chapter-header">
+                    <span class="chapter-badge">Modul 1</span>
+                    <h2 class="chapter-title">Mindset & Fondasi Faceless Creator</h2>
+                    <p class="chapter-desc">Mengapa era tampil di depan kamera sudah tergantikan oleh Avatar AI.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header-flex">
+                        <div class="card-title-group">
+                            <div class="card-icon-pill">🎭</div>
+                            <div>
+                                <h3 class="card-title">Malu Tampil di Depan Kamera Bukan Lagi Hambatan</h3>
+                                <p style="font-size: 0.85rem; color: var(--text-muted);">90% orang gagal ngonten karena malu, tidak percaya diri, atau tidak punya studio bagus.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.92rem; color: var(--text-main); margin-bottom: 16px;">
+                        Di era AI tahun 2026, penonton media sosial tidak lagi peduli apakah seorang kreator itu manusia asli yang merekam dirinya sendiri atau <strong>Karakter AI Virtual (AI Influencer)</strong>. Yang penonton pedulikan adalah:
+                    </p>
+                    <ul class="check-list">
+                        <li><strong>Estetika Visual:</strong> Gambar dan videonya tajam, bersih, pencahayaan sinematik, dan memanjakan mata.</li>
+                        <li><strong>Relevansi Konten:</strong> Informasi produk Shopee/TikTok yang ditawarkan jelas dan bermanfaat.</li>
+                        <li><strong>Konsistensi Posting:</strong> Akun selalu aktif mengunggah 3–4 kali sehari tanpa pernah lelah atau mengeluh sakit.</li>
+                    </ul>
+                </div>
+
+                <div class="step-grid">
+                    <div class="step-card">
+                        <div class="step-badge">1</div>
+                        <h4 class="step-card-title">Pilih Niche Spesifik</h4>
+                        <p class="step-card-text">Fokus pada 1 bidang yang tinggi daya belinya: Fashion Wanita, Outfit Pria, Gadget/Meja Kerja, atau Skincare.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-badge">2</div>
+                        <h4 class="step-card-title">Rancang Persona AI</h4>
+                        <p class="step-card-text">Tentukan nama, gaya berpakaian, rentang usia, dan ciri khas visual karakter AI Anda agar mudah dikenali penonton.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-badge">3</div>
+                        <h4 class="step-card-title">Bangun Pabrik Konten</h4>
+                        <p class="step-card-text">Gunakan Google Labs Flow & Gemini Omni Flash untuk memproduksi 30 konten dalam 1 hari!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODUL 2 -->
+            <section id="modul-2" class="chapter-section">
+                <div class="chapter-header">
+                    <span class="chapter-badge">Modul 2</span>
+                    <h2 class="chapter-title">Menguasai Google Labs Flow & Ekosistem FX</h2>
+                    <p class="chapter-desc">Mekanisme kerja node visual Google Labs Flow untuk produksi foto & video kilat.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header-flex">
+                        <div class="card-title-group">
+                            <div class="card-icon-pill">🌐</div>
+                            <div>
+                                <h3 class="card-title">Apa Itu Google Labs Flow (Flow Workspace)?</h3>
+                                <span class="badge badge-blue">labs.google/fx/tools/flow</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.92rem; color: var(--text-main); margin-bottom: 16px;">
+                        <strong>Google Labs Flow</strong> adalah kanvas kerja visual berbasis blok (<em>Node-based pipeline</em>) buatan Google. Di sini Anda bisa menghubungkan berbagai mesin kecerdasan buatan Google secara visual tanpa perlu menulis koding rumit.
+                    </p>
+
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nama Node / Fitur</th>
+                                    <th>Mesin di Balik Layar</th>
+                                    <th>Fungsi Praktis untuk Kreator</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Image Generator</strong></td>
+                                    <td><span class="badge badge-blue">Imagen 3</span></td>
+                                    <td>Menghasilkan foto karakter fotorealistis kualitas 4K dalam hitungan detik.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Video Generator</strong></td>
+                                    <td><span class="badge badge-success">Veo 2 / Fast</span></td>
+                                    <td>Mengubah foto diam menjadi klip video gerak 1080p yang natural.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Reference Anchor</strong></td>
+                                    <td><span class="badge badge-warning">Style & Face Lock</span></td>
+                                    <td>Mengunci wajah asli agar tidak berubah saat dipindahkan ke pakaian/latar baru.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Text / Caption Assistant</strong></td>
+                                    <td><span class="badge badge-purple">Gemini 2.5 Flash</span></td>
+                                    <td>Menyusun deskripsi prompt dan naskah copywriting produk secara otomatis.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="callout callout-info">
+                        <div class="callout-icon">💡</div>
+                        <div class="callout-body">
+                            <div class="callout-title">Rahasia Alur Kerja (Flow) Tercepat:</div>
+                            Hubungkan <strong>[Foto Referensi Wajah] ➡️ [Node Image Generator + Prompt Baju Shopee] ➡️ [Node Video Generator Veo]</strong>. Anda akan mendapatkan 1 video promosi produk utuh hanya dengan 1 kali klik!
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODUL 3 -->
+            <section id="modul-3" class="chapter-section">
+                <div class="chapter-header">
+                    <span class="chapter-badge">Modul 3</span>
+                    <h2 class="chapter-title">Formula Prompting Realistis (Anti-Plastik)</h2>
+                    <p class="chapter-desc">Struktur kalimat wajib agar hasil AI terlihat 100% seperti foto kamera sungguhan.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header-flex">
+                        <div class="card-title-group">
+                            <div class="card-icon-pill">📸</div>
+                            <div>
+                                <h3 class="card-title">Rumus 5 Elemen Prompting Fotografi Nyata</h3>
+                                <p style="font-size: 0.85rem; color: var(--text-muted);">Jangan cuma tulis "beautiful girl", gunakan formula ini:</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-grid">
+                        <div class="step-card">
+                            <span class="badge badge-blue" style="margin-bottom: 8px;">Elemen 1</span>
+                            <h4 class="step-card-title">Subject & Ethnicity</h4>
+                            <p class="step-card-text">Definisikan usia, postur, etnis (misal: Indonesian young woman/man), dan gaya rambut spesifik.</p>
+                        </div>
+                        <div class="step-card">
+                            <span class="badge badge-blue" style="margin-bottom: 8px;">Elemen 2</span>
+                            <h4 class="step-card-title">Camera & Lens Realism</h4>
+                            <p class="step-card-text">Sebutkan tipe kamera nyata: <em>Sony A7IV, 85mm f/1.8 lens, shallow depth of field</em>.</p>
+                        </div>
+                        <div class="step-card">
+                            <span class="badge badge-blue" style="margin-bottom: 8px;">Elemen 3</span>
+                            <h4 class="step-card-title">Lighting Setup</h4>
+                            <p class="step-card-text">Gunakan pencahayaan natural: <em>Golden hour sunlight, soft natural window light, subtle rim light</em>.</p>
+                        </div>
+                        <div class="step-card">
+                            <span class="badge badge-blue" style="margin-bottom: 8px;">Elemen 4</span>
+                            <h4 class="step-card-title">Skin Texture Detail</h4>
+                            <p class="step-card-text">Kunci anti-plastik: <em>Realistic micro skin pores, natural skin texture, subtle freckles, no airbrushing</em>.</p>
+                        </div>
+                    </div>
+
+                    <h4 style="font-size: 1rem; font-weight: 700; margin: 24px 0 8px 0;">Contoh Penerapan Formula (Coba Salin):</h4>
+                    
+                    <div class="prompt-container">
+                        <div class="prompt-header">
+                            <span class="prompt-tag">Master Prompt: Persona Wanita Indonesia (OOTD Cafe)</span>
+                            <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                        </div>
+                        <div class="prompt-content">A candid street portrait of a 22-year-old Indonesian woman sitting at a modern minimalist cafe outdoor terrace. She is wearing an oversized beige knit sweater and high-waisted linen trousers, holding an iced matcha latte. Natural relaxed expression, genuine soft smile, authentic skin texture with visible micro-pores and delicate facial hair, no airbrushing, no plastic sheen. Shot on Sony A7 IV with 85mm f/1.4 lens, natural morning sunlight filtering through trees creating soft dappled shadows, creamy bokeh background, 8k resolution, photorealistic, cinematic color grading.</div>
+                    </div>
+
+                    <div class="prompt-container">
+                        <div class="prompt-header">
+                            <span class="prompt-tag">Master Prompt: Persona Pria Indonesia (Streetwear Casual)</span>
+                            <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                        </div>
+                        <div class="prompt-content">Authentic cinematic photo of a 24-year-old Indonesian man wearing a heavyweight 330gsm black streetwear hoodie and relaxed cargo pants, standing in an urban loft setting near a large glass window. Confident warm smile, clean short textured fade haircut, natural skin imperfections and authentic texture, sharp focused eyes. Shot on Fujifilm GFX 100S, 50mm lens at f/2.0, soft directional side lighting, hyper-realistic, rich contrast, filmic look.</div>
+                    </div>
+
+                    <div class="callout callout-warning">
+                        <div class="callout-icon">⚠️</div>
+                        <div class="callout-body">
+                            <div class="callout-title">Negative Prompt Wajib (Anti-Gagal):</div>
+                            Masukkan kata-kata ini ke kolom Negative Prompt: <em>plastic skin, 3d render, cartoon, doll, drawing, anime, smooth skin, wax figure, extra fingers, deformed eyes, over-saturated, blurry.</em>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODUL 4 -->
+            <section id="modul-4" class="chapter-section">
+                <div class="chapter-header">
+                    <span class="chapter-badge">Modul 4</span>
+                    <h2 class="chapter-title">Konsistensi Karakter Menggunakan Wajah Asli</h2>
+                    <p class="chapter-desc">Teknik mengunci struktur wajah agar tetap identik di 100 foto berbeda.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header-flex">
+                        <div class="card-title-group">
+                            <div class="card-icon-pill">🔒</div>
+                            <div>
+                                <h3 class="card-title">Metode Reference Anchoring (Kloning Wajah Asli)</h3>
+                                <p style="font-size: 0.85rem; color: var(--text-muted);">Cara mengubah foto selfie Anda menjadi avatar AI yang konsisten.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-grid">
+                        <div class="step-card">
+                            <div class="step-badge">1</div>
+                            <h4 class="step-card-title">Siapkan 3 Foto Wajah</h4>
+                            <p class="step-card-text">Ambil 3 foto selfie pencahayaan terang: 1 lurus menghadap kamera, 1 sudut 45 derajat kiri, 1 sudut 45 derajat kanan dengan ekspresi netral.</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-badge">2</div>
+                            <h4 class="step-card-title">Upload ke Reference Node</h4>
+                            <p class="step-card-text">Di Google Labs Flow / Omni Flash, masukkan foto ini ke dalam slot <code>Reference Image</code> atau <code>IP-Adapter</code>.</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-badge">3</div>
+                            <h4 class="step-card-title">Ganti Latar & Baju Bebas</h4>
+                            <p class="step-card-text">Ketik prompt baju Shopee baru. AI akan mempertahankan struktur mata, hidung, dan rahang asli Anda, tetapi mengganti outfit & lokasinya!</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODUL 5 -->
+            <section id="modul-5" class="chapter-section">
+                <div class="chapter-header">
+                    <span class="chapter-badge">Modul 5</span>
+                    <h2 class="chapter-title">Membuat Video Bergerak dengan Gemini Omni Flash</h2>
+                    <p class="chapter-desc">Mengubah foto diam menjadi video gerak hidup, transisi estetik, dan editing instan.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header-flex">
+                        <div class="card-title-group">
+                            <div class="card-icon-pill">🎥</div>
+                            <div>
+                                <h3 class="card-title">Kekuatan Gemini Omni Flash (gemini-omni-flash)</h3>
+                                <span class="badge badge-success">Google GenAI Interactions API</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.92rem; color: var(--text-main); margin-bottom: 16px;">
+                        Gemini Omni Flash adalah teknologi terbaru yang menggabungkan kemampuan pemahaman gambar dan pembuatan video generatif dalam satu tarikan napas.
+                    </p>
+
+                    <div class="step-grid">
+                        <div class="step-card">
+                            <h4 class="step-card-title">1. First-Frame to Video</h4>
+                            <p class="step-card-text">Masukkan foto karakter AI hasil Modul 3, lalu beri instruksi: <em>"The character slowly turns to camera, smiles warmly, and takes a sip of coffee"</em>. Video 5–10 detik langsung jadi!</p>
+                        </div>
+                        <div class="step-card">
+                            <h4 class="step-card-title">2. Video Interpolation</h4>
+                            <p class="step-card-text">Berikan 2 foto (Foto A: Baju Biasa ➡️ Foto B: Baju Shopee Mewah). AI akan membuatkan video transisi pergantian pakaian yang sangat halus!</p>
+                        </div>
+                        <div class="step-card">
+                            <h4 class="step-card-title">3. Add Editing Elements</h4>
+                            <p class="step-card-text">Ubah latar belakang video, tambahkan pencahayaan estetik, atau sesuaikan filter warna video tanpa merusak wajah karakter.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODUL 6 -->
+            <section id="modul-6" class="chapter-section">
+                <div class="chapter-header">
+                    <span class="chapter-badge">Modul 6</span>
+                    <h2 class="chapter-title">Monetisasi Otomatis di Lynk.id</h2>
+                    <p class="chapter-desc">Cara menjual panduan, preset prompt, dan hasil karya AI ke rekening bank lokal.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header-flex">
+                        <div class="card-title-group">
+                            <div class="card-icon-pill">💳</div>
+                            <div>
+                                <h3 class="card-title">Setup Toko Digital Lynk.id dalam 5 Menit</h3>
+                                <span class="badge badge-blue">QRIS & Auto-Delivery</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-grid">
+                        <div class="step-card">
+                            <div class="step-badge">1</div>
+                            <h4 class="step-card-title">Daftar di Lynk.id</h4>
+                            <p class="step-card-text">Buka <code>lynk.id</code> dan daftar gratis. Pasang foto profil dan bio yang menarik.</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-badge">2</div>
+                            <h4 class="step-card-title">Upload File E-Book / PDF</h4>
+                            <p class="step-card-text">Pilih menu <em>Add Block ➡️ Digital Product</em>. Unggah file PDF ini dan pasang harga (contoh: Rp 49.000).</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-badge">3</div>
+                            <h4 class="step-card-title">Pembeli Bayar via QRIS</h4>
+                            <p class="step-card-text">Pembeli scan QRIS dari HP mereka ➡️ Lynk.id otomatis mengirimkan file PDF ➡️ Uang masuk ke saldo Anda!</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODUL 7 -->
+            <section id="modul-7" class="chapter-section">
+                <div class="chapter-header">
+                    <span class="chapter-badge">Modul 7</span>
+                    <h2 class="chapter-title">Katalog 25 Master Prompt Siap Pakai</h2>
+                    <p class="chapter-desc">Koleksi 25 formula prompt fotorealistis lengkap dengan pengaturan kamera, lensa, tekstur kulit mikro, dan pencahayaan sinematik.</p>
+                </div>
+
+                <div class="card" style="margin-bottom: 24px;">
+                    <div class="card-header-flex">
+                        <div class="card-title-group">
+                            <div class="card-icon-pill">📚</div>
+                            <div>
+                                <h3 class="card-title">Koleksi Terlengkap 5 Kategori Konten Viral</h3>
+                                <p style="font-size: 0.85rem; color: var(--text-muted);">Tinggal ketuk tombol "Salin Prompt" dan tempelkan ke Google Labs Flow / ImageFX / Midjourney.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;">
+                        <span class="badge badge-blue">👗 Fashion & OOTD (5)</span>
+                        <span class="badge badge-success">📱 Gadget & Tech (5)</span>
+                        <span class="badge badge-purple">✨ Beauty & Skincare (5)</span>
+                        <span class="badge badge-warning">☕ Kuliner & Cafe (5)</span>
+                        <span class="badge badge-danger">🎙️ Storytelling & Edukasi (5)</span>
+                    </div>
+                </div>
+
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">1. Fashion OOTD Hijab Modern & Syar'i (Pastel Gallery)</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Full body portrait of a 23-year-old Indonesian Muslim woman wearing an elegant pastel sage green premium abaya with modern draped silk hijab. Standing inside a bright sunlit art gallery with marble floors and large architectural archways. Graceful poise, gentle confident smile, authentic smooth skin texture with realistic lighting, soft natural shadows. Shot on Leica SL2, 50mm lens at f/2.0, natural daylight, soft cinematic lighting, Vogue editorial style, 8k resolution.</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">2. Streetwear Casual Pria (Urban Loft Setting)</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Authentic cinematic photo of a 24-year-old Indonesian man wearing a heavyweight 330gsm black streetwear oversized hoodie and relaxed cargo pants, standing in an urban loft setting near a large glass window. Confident warm smile, clean short textured fade haircut, natural skin imperfections and authentic texture, sharp focused eyes. Shot on Fujifilm GFX 100S, 50mm lens at f/2.0, soft directional side lighting, hyper-realistic, rich contrast, filmic look.</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">3. Old Money / Quiet Luxury (Summer Linen Aesthetic)</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Medium shot of a 25-year-old Indonesian woman wearing an Italian cream linen tailored vest with matching trousers and delicate gold jewelry. Sitting at an outdoor European-style marble cafe table holding a vintage leather handbag. Soft golden hour sunlight casting warm glow, natural windswept hair, genuine relaxed laugh, realistic skin pores, subtle freckles. Shot on Hasselblad X2D 100C with 80mm f/1.9 lens, creamy bokeh, magazine editorial photography, 8k.</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">4. Casual Korean Minimalist (Boyfriend Look)</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Candid street photo of a 22-year-old Indonesian young man wearing an oversized striped poplin shirt over a clean white t-shirt and wide-leg denim jeans, carrying a canvas tote bag. Walking down a clean sunlit pedestrian street lined with trees. Casual mid-stride pose, friendly approachable expression, natural daylight with dappled tree shadows, realistic skin texture. Shot on Sony A7 IV, 35mm f/1.8 lens, commercial lifestyle photography, 8k.</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">5. Batik Modern Kontemporer (Smart Casual Event)</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Three-quarter portrait of an Indonesian professional woman wearing a modern slim-fit navy and terracotta silk batik blouse paired with tailored trousers. Standing in a sunlit modern atrium with lush indoor plants. Poised confident posture, warm pleasant smile, authentic skin tones and micro-pores. Shot on Canon EOS R5 with 85mm f/1.4 lens, soft diffused studio light, high-end corporate lifestyle, 8k.</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">6. Tech Reviewer Unboxing Wireless Headphone</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Close-up shot of a 25-year-old Indonesian tech reviewer holding a sleek matte-black wireless headphone in hands, showing build quality to the camera. Warm studio desk setup with neon accent lights in background, soft key light illuminating the product, ultra sharp details on fingertips and product texture. Shot on Canon EOS R5 with 50mm f/1.8 lens, natural skin tones, professional commercial photography, 8k resolution.</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">7. Minimalist Workspace & Mechanical Keyboard</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Over-the-shoulder POV shot of an Indonesian creator typing on a custom wooden mechanical keyboard at a clean walnut wood desk setup. Dual monitors with coding editor in background, ambient amber lightbar glowing over desk, warm cozy evening aesthetic. High detail on keycaps and hands with authentic skin texture. Shot on Sony FX3 with 35mm f/1.4 lens, cinematic moody lighting, 8k.</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">8. Smartwatch & Active Lifestyle Review</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Close-up wrist shot of a 26-year-old athletic Indonesian man wearing a titanium smartwatch with neon orange sports strap while holding a metal water bottle after a run. Outdoor running track background at sunrise, morning dew on skin, realistic arm hair and skin pores, sharp screen graphics on smartwatch. Shot on Nikon Z8, 50mm f/1.8, vibrant natural sunrise lighting, commercial sports ad quality.</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">9. Smartphone Camera Hands-on Test</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Medium close-up of a 23-year-old Indonesian content creator holding a premium titanium smartphone vertically as if vlogging, showing the camera lenses. Modern urban rooftop background during sunset, warm rim lighting highlighting the phone edges and hair, natural expressive smile, realistic skin detail. Shot on Leica Q3, 28mm f/1.7 lens, crisp sharp focus, 8k.</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">10. Wireless Earbuds Aesthetic Showcase</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Macro beauty shot of a young Indonesian woman wearing a minimalist ceramic white wireless earbud in her ear. Clean profile angle, tucked hair behind ear, natural skin glow with visible micro-texture, soft pastel studio backdrop, gentle softbox illumination. Shot on 100mm Macro lens f/2.8 on Canon R5, commercial product lifestyle, ultra clean 8k.</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">11. Skincare Serum Droplet Macro Glass Skin</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Extreme close-up macro beauty portrait of an Indonesian woman applying a drop of clear facial serum onto her cheekbone with a glass dropper. Dewy glass skin, authentic visible pores, natural hydration glow, glossy lips, soft catchlight in dark brown eyes. Clean pastel backdrop, soft diffused beauty dish lighting, macro 100mm lens shot, hyper-detailed skin texture, non-greasy natural glow, commercial skincare advertisement quality.</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">12. Lip Tint Natural Everyday Swatch</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Close-up shot of an Indonesian woman with plump dewy lips smiling gently, showing a subtle coral-red lip tint finish. Soft morning window light, authentic lip texture without artificial blurring, glowing healthy cheeks, natural dark brown eyes. Shot on Sony A7R V with 90mm Macro f/2.8 lens, high-end cosmetics editorial, hyper-realistic 8k.</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">13. Sunscreen Application Outdoor Sunlight</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Candid sunny portrait of a 24-year-old Indonesian woman lightly dabbing a white sunscreen lotion onto her cheek while smiling outdoor at a tropical garden terrace. Bright natural sunlight creating sun flare, dewy non-whitecast skin finish, genuine relaxed expression, realistic sun-kissed skin texture. Shot on 50mm f/1.4 lens, vibrant authentic colors, 8k.</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">14. Morning Wellness & Matcha Drink</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Intimate lifestyle photo of an Indonesian young woman in an oversized ribbed cream lounge set sitting cross-legged on a sofa, holding a warm ceramic bowl of bright green whisked matcha. Morning sunlight pouring in from sheer curtains, calm mindful expression, messy topknot hair, authentic morning skin texture. Shot on Kodak Portra 400 film style, 35mm f/2.0, cozy aesthetic, 8k.</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">15. Haircare Shiny Hair Studio Treatment</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Back-three-quarter portrait of an Indonesian woman running her fingers through her silky, glossy, waist-length black hair. Soft studio backlight illuminating hair strands with brilliant shine, clean minimalist studio background, elegant posture. Shot on Hasselblad H6D-100c with 120mm lens, luxury haircare commercial look, 8k.</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">16. Artisan Bakery & Iced Latte Pour</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Candid lifestyle photo of an Indonesian young woman in an oversized white cotton shirt and denim shorts, leaning against a clean kitchen island pouring oat milk into an iced coffee glass. Warm morning sunlight pouring through a window, tiny dust particles in light rays, natural un-staged pose, messy bun hair, micro skin texture, shot on 35mm film camera, Kodak Portra 400 aesthetic, hyper-realistic, intimate lifestyle vibe.</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">17. Indonesian Culinary Street Food Reviewer</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Candid medium shot of a 25-year-old Indonesian food enthusiast sitting at a vibrant night culinary market, smiling while holding a ceramic bowl of steaming hot noodles with chopsticks. Colorful neon street lights in background, authentic steam rising from food, genuine mouthwatering expression, realistic skin lighting. Shot on Sony A7S III, 50mm f/1.4, rich atmospheric street lighting, 8k.</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">18. Home Cooking Aesthetic Meal Prep</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">POV overhead medium shot of an Indonesian man in a dark grey linen apron chopping fresh herbs on a rustic wooden cutting board in a sunlit modern kitchen. Natural focused expression, hands showing authentic skin texture and movement, beautiful fresh vegetables on counter, morning side lighting. Shot on Canon R6, 35mm f/2.0, warm culinary lifestyle, 8k.</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">19. Co-Working Coffee Shop Laptop Routine</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Medium shot of an Indonesian female digital nomad working on a sleek aluminum laptop at a wooden cafe table with a glass of cold brew coffee beside her. Large glass windows overlooking a bustling city street, natural daylight, stylish casual blazer over graphic tee, friendly focused gaze. Shot on Nikon Z6 II, 50mm f/1.8, modern remote work lifestyle, 8k.</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">20. Sunset Rooftop Dining Golden Hour</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Portrait of a young Indonesian couple dressed in elegant smart-casual attire laughing together at a rooftop restaurant table during vibrant purple-orange sunset. City skyline glowing in background, warm candlelight on table, natural glowing skin tones, authentic happy emotion. Shot on Leica M11 with 50mm f/1.4 Summilux lens, cinematic movie still quality, 8k.</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">21. Podcast / Talkshow Studio Professional</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Medium shot of a 26-year-old Indonesian male speaker in a black turtleneck sitting in front of a professional Shure SM7B podcast microphone on an arm boom. Dark moody studio acoustic backdrop with subtle blue and orange rim lighting, confident storytelling expression, sharp focused eyes. Shot on Sony FX6, 50mm f/1.4, YouTube podcast studio quality, 8k.</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">22. Cozy Book Reader in Warm Library Nook</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Warm candid portrait of an Indonesian woman tucked in a deep velvet armchair reading an open hardcover book in a cozy corner library. Warm reading lamp illumination, wooden bookshelves filled with books in background, gentle contemplative smile, delicate facial details. Shot on Fujifilm X-T5, 35mm f/1.4, warm vintage literary atmosphere, 8k.</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">23. Solo Traveler Mountain Sunrise Panorama</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Wide-angle dynamic photo of a 24-year-old Indonesian backpacker wearing a weatherproof mustard yellow jacket, standing on a mountain ridge looking at the golden sunrise over a sea of clouds. Morning mist, golden sun flare, awe-inspiring adventurous expression, hyper-detailed clothing textures and outdoor lighting. Shot on Sony A7 IV, 24mm f/2.8, National Geographic travel photography style, 8k.</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">24. Moody Night City Street Cinematic Walk</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Cinematic night shot of an Indonesian man walking down a wet asphalt city street after rain, with colorful neon reflections on the ground. Wearing a dark trench coat, looking thoughtfully off-camera, dramatic contrast lighting from street lamps, sharp raindrops in air. Shot on ARRI Alexa Mini style, 50mm f/1.2, Blade Runner neo-noir aesthetic, 8k.</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">25. Studio Portrait Intense Eyes & Catchlight</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Close-up dramatic studio portrait of a 23-year-old Indonesian model looking directly into camera with intense captivating brown eyes with bright catchlights. Clean black background, strong Rembrandt lighting with soft shadows defining facial cheekbones, visible micro skin texture without artificial smoothing. Shot on Hasselblad H6D-100c with 100mm lens, iconic magazine cover portrait, hyper-realistic, 8k.</div>
+                </div>
+
+                <div class="callout callout-info" style="margin-top: 32px;">
+                    <div class="callout-icon">🎁</div>
+                    <div class="callout-body">
+                        <div class="callout-title">Selamat Berkarya & Bangun Aset Digital Anda!</div>
+                        Gunakan seluruh 25 formula dan prompt di dalam E-Book ini untuk membangun akun tanpa wajah Anda. Konsistensi mengunggah konten setiap hari adalah kunci utama kesuksesan affiliate dan penjualan produk digital!
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
+
+<script>
+    function copyPrompt(btn) {
+        const container = btn.closest('.prompt-container');
+        const content = container.querySelector('.prompt-content').innerText;
+        navigator.clipboard.writeText(content).then(() => {
+            const orig = btn.innerHTML;
+            btn.innerHTML = '✅ Tersalin!';
+            btn.style.background = '#10b981';
+            btn.style.color = '#ffffff';
+            setTimeout(() => {
+                btn.innerHTML = orig;
+                btn.style.background = '';
+                btn.style.color = '';
+            }, 2000);
+        });
+    }
+
+    const btnToggle = document.getElementById('btnToggleSidebar');
+    const sidebar = document.getElementById('sidebarNav');
+    if (btnToggle && sidebar) {
+        btnToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+            });
+        });
+    }
+
+    function toggleTheme() {
+        const curr = document.documentElement.getAttribute('data-theme');
+        const target = curr === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', target);
+        localStorage.setItem('theme', target);
+    }
+    document.getElementById('btnThemeMobile')?.addEventListener('click', toggleTheme);
+    document.getElementById('btnThemeDesktop')?.addEventListener('click', toggleTheme);
+
+    const saved = localStorage.getItem('theme');
+    if (saved) {
+        document.documentElement.setAttribute('data-theme', saved);
+    }
+
+    const sections = document.querySelectorAll('.chapter-section');
+    const navItems = document.querySelectorAll('.nav-item');
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            const top = section.offsetTop - 120;
+            if (window.pageYOffset >= top) {
+                current = section.getAttribute('id');
+            }
+        });
+        navItems.forEach(item => {
+            item.classList.remove('active');
+            if (item.getAttribute('href') === '#' + current) {
+                item.classList.add('active');
+            }
+        });
+    });
+</script>
+</body>
+</html>

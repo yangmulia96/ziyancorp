@@ -1,0 +1,139 @@
+{
+  "name": "04 - Content Repurposing & Multi-Channel Auto-Poster",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "folder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1BEgsyWU1y6OEDH4kZQDYZd-IVkWgjTjy",
+          "mode": "id"
+        },
+        "event": "fileCreated"
+      },
+      "id": "node-gdrive-trigger",
+      "name": "Watch GDrive Folder",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Buatkan naskah deskripsi media sosial dari video ini:\nJudul File: {{ $json.name }}\n\nFormat output JSON murni:\n{\n  \"hook\": \"Kalimat pembuka 3 detik yang bikin penasaran\",\n  \"caption_ig\": \"Caption Instagram lengkap dengan emoji dan CTA\",\n  \"hashtags\": \"#ai #automation #n8n #solopreneur\",\n  \"telegram_summary\": \"Ringkasan 2 paragraf untuk channel\"\n}",
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "id": "node-ai-caption-gen",
+      "name": "Generate Multi-Channel Copy",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "let raw = $input.item.json.text || '{}';\nraw = raw.replace(/```json/g, '').replace(/```/g, '').trim();\nconst parsed = JSON.parse(raw);\nreturn {\n  json: {\n    ...$input.item.json,\n    parsed_copy: parsed\n  }\n};"
+      },
+      "id": "node-parse-ai-json",
+      "name": "Parse JSON Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "@channel_bisnis_kamu",
+        "text": "=\ud83d\ude80 *KONTEN BARU RILIS!*\n\n{{ $json.parsed_copy.hook }}\n\n{{ $json.parsed_copy.telegram_summary }}\n\n{{ $json.parsed_copy.hashtags }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "node-post-telegram",
+      "name": "Broadcast to Telegram Channel",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        900,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.instagram.com/v19.0/me/media",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"caption\": \"{{ $json.parsed_copy.caption_ig }}\\n\\n{{ $json.parsed_copy.hashtags }}\",\n  \"media_type\": \"REELS\"\n}",
+        "options": {}
+      },
+      "id": "node-post-instagram",
+      "name": "Schedule Instagram Reels",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        900,
+        380
+      ]
+    }
+  ],
+  "connections": {
+    "Watch GDrive Folder": {
+      "main": [
+        [
+          {
+            "node": "Generate Multi-Channel Copy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Multi-Channel Copy": {
+      "main": [
+        [
+          {
+            "node": "Parse JSON Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse JSON Output": {
+      "main": [
+        [
+          {
+            "node": "Broadcast to Telegram Channel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Schedule Instagram Reels",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ZIYAN Affiliate Link Bundle",
+  "description": "Struktur standar link affiliate per konten, disimpan sebagai AFFILIATE.json di dalam folder arsip tiap konten di Google Drive.",
+  "type": "object",
+  "required": ["version", "platforms"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0",
+      "description": "Versi schema"
+    },
+    "content_id": {
+      "type": "string",
+      "description": "ID unik konten (format: ZA-YYYYMMDD-XXX)"
+    },
+    "title": {
+      "type": "string",
+      "description": "Judul/nama konten"
+    },
+    "currency": {
+      "type": "string",
+      "default": "IDR",
+      "description": "Mata uang default harga"
+    },
+    "platforms": {
+      "type": "object",
+      "description": "Map marketplace -> list link affiliate",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["label", "url"],
+          "properties": {
+            "label": {
+              "type": "string",
+              "description": "Nama produk / label tautan"
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL affiliate (pakai link persis, jangan diubah)"
+            },
+            "price": {
+              "type": "number",
+              "description": "Harga (opsional)"
+            },
+            "price_text": {
+              "type": "string",
+              "description": "Harga sebagai teks (mis. 'Rp 199.000') - WAJIB ikut SOP caption Bos"
+            },
+            "cta": {
+              "type": "string",
+              "description": "Call-to-action pendek (mis. 'Beli di Shopee')"
+            },
+            "tracking_ok": {
+              "type": "boolean",
+              "default": true,
+              "description": "True kalau link sudah pakai kode affiliate valid"
+            }
+          }
+        }
+      },
+      "properties": {
+        "shopee": {"type": "array", "items": {"type": "object"}},
+        "tiktok": {"type": "array", "items": {"type": "object"}},
+        "tokopedia": {"type": "array", "items": {"type": "object"}},
+        "amazon": {"type": "array", "items": {"type": "object"}},
+        "lazada": {"type": "array", "items": {"type": "object"}},
+        "other": {"type": "array", "items": {"type": "object"}}
+      }
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Catatan bebas"
+    }
+  },
+  "examples": [
+    {
+      "version": "1.0",
+      "content_id": "ZA-20260814-001",
+      "title": "Review Keyboard Mechanical RGB",
+      "currency": "IDR",
+      "platforms": {
+        "shopee": [
+          {
+            "label": "Keychron K8 Pro",
+            "url": "https://s.shopee.co.id/BUF123xyz?smtt=...",
+            "price_text": "Rp 1.299.000",
+            "cta": "Beli di Shopee",
+            "tracking_ok": true
+          }
+        ],
+        "tiktok": [
+          {
+            "label": "Keychron K8 Pro (TikTok Shop)",
+            "url": "https://vt.tiktok.com/ZSxyzabc/",
+            "price_text": "Rp 1.299.000",
+            "cta": "Beli di TikTok Shop"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+{
+  "sheet_name": "ZIYAN Content Dashboard",
+  "columns": ["ID", "Status", "Platform", "MediaPath", "LinkAffiliate", "Caption", "ScheduledTime"]
+}

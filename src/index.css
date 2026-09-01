@@ -2,5 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body, #root { min-height: 100%; }
-body { margin: 0; font-family: 'Outfit', ui-sans-serif, system-ui, sans-serif; }
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background-color: #DC2626;
+    color: white;
+  }
+
+  body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+@layer utilities { .animation-delay-2000 { animation-delay: 2s; } .animation-delay-4000 { animation-delay: 4s; } }

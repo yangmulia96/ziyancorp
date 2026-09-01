@@ -1,0 +1,413 @@
+{
+  "communities": {
+    "0": [
+      "application",
+      "distribute_agent",
+      "distribute_agent_build_caption",
+      "distribute_agent_download_asset",
+      "distribute_agent_drive_id_from_url",
+      "distribute_agent_get_affiliate_json",
+      "distribute_agent_get_pending_product",
+      "distribute_agent_main",
+      "distribute_agent_mark_published",
+      "distribute_agent_mark_status",
+      "distribute_agent_post_youtube_public",
+      "distribute_agent_rationale_161",
+      "distribute_agent_rationale_180",
+      "distribute_agent_rationale_46",
+      "distribute_agent_rationale_69",
+      "distribute_agent_reset_recent_published",
+      "distributor",
+      "distributor_distribute_to_platforms",
+      "distributor_gen_caption",
+      "distributor_get_pending_products",
+      "distributor_get_products",
+      "distributor_mark_published",
+      "distributor_post_facebook",
+      "distributor_post_instagram",
+      "distributor_post_one_pending",
+      "distributor_post_telegram_channel",
+      "distributor_post_threads",
+      "distributor_post_youtube",
+      "distributor_rationale_102",
+      "distributor_rationale_130",
+      "distributor_rationale_155",
+      "distributor_rationale_21",
+      "distributor_rationale_241",
+      "distributor_rationale_270",
+      "distributor_rationale_281",
+      "distributor_rationale_67",
+      "ziyan_bot_bot",
+      "ziyan_bot_bot_build_application",
+      "ziyan_bot_bot_main",
+      "ziyan_bot_config",
+      "ziyan_bot_config_settings",
+      "ziyan_bot_config_settings_from_env"
+    ],
+    "1": [
+      "scripts_logic_test",
+      "scripts_logic_test_main",
+      "scripts_smoke_test",
+      "scripts_smoke_test_main",
+      "ziyan_bot_archive",
+      "ziyan_bot_archive_archiveservice",
+      "ziyan_bot_archive_archiveservice_add_files",
+      "ziyan_bot_archive_archiveservice_archive_new_product",
+      "ziyan_bot_archive_archiveservice_cleanup",
+      "ziyan_bot_archive_archiveservice_folder_key",
+      "ziyan_bot_archive_archiveservice_ids",
+      "ziyan_bot_archive_archiveservice_now",
+      "ziyan_bot_archive_archiveservice_product_values",
+      "ziyan_bot_archive_archiveservice_temp_dir",
+      "ziyan_bot_archive_archiveservice_trash_asset",
+      "ziyan_bot_archive_archiveservice_update_product",
+      "ziyan_bot_archive_archiveservice_write_metadata",
+      "ziyan_bot_archive_localfile",
+      "ziyan_bot_archive_py_path",
+      "ziyan_bot_db",
+      "ziyan_bot_google_workspace",
+      "ziyan_bot_parser",
+      "ziyan_bot_parser_clean_url",
+      "ziyan_bot_parser_parse_caption",
+      "ziyan_bot_parser_productdraft",
+      "ziyan_bot_parser_safe_name"
+    ],
+    "2": [
+      "any",
+      "distribute_agent_get_products_latest",
+      "ziyan_bot_archive_archiveservice_init",
+      "ziyan_bot_google_workspace_googleworkspace",
+      "ziyan_bot_google_workspace_googleworkspace_append_asset",
+      "ziyan_bot_google_workspace_googleworkspace_append_log",
+      "ziyan_bot_google_workspace_googleworkspace_append_product",
+      "ziyan_bot_google_workspace_googleworkspace_create_folder",
+      "ziyan_bot_google_workspace_googleworkspace_ensure_headers",
+      "ziyan_bot_google_workspace_googleworkspace_find_or_create_folder",
+      "ziyan_bot_google_workspace_googleworkspace_find_row",
+      "ziyan_bot_google_workspace_googleworkspace_init",
+      "ziyan_bot_google_workspace_googleworkspace_load_credentials",
+      "ziyan_bot_google_workspace_googleworkspace_now",
+      "ziyan_bot_google_workspace_googleworkspace_trash_file",
+      "ziyan_bot_google_workspace_googleworkspace_update_asset_status",
+      "ziyan_bot_google_workspace_googleworkspace_update_product",
+      "ziyan_bot_google_workspace_googleworkspace_upload_file",
+      "ziyan_bot_google_workspace_googleworkspace_upload_text",
+      "ziyan_bot_google_workspace_googleworkspace_upsert_text",
+      "ziyan_bot_google_workspace_py_path"
+    ],
+    "3": [
+      "default_type",
+      "update",
+      "ziyan_bot_bot_archivebot",
+      "ziyan_bot_bot_archivebot_add_assets",
+      "ziyan_bot_bot_archivebot_allowed",
+      "ziyan_bot_bot_archivebot_cancel",
+      "ziyan_bot_bot_archivebot_delete_asset",
+      "ziyan_bot_bot_archivebot_delete_callback",
+      "ziyan_bot_bot_archivebot_distribute",
+      "ziyan_bot_bot_archivebot_edit_product",
+      "ziyan_bot_bot_archivebot_finalize_batch",
+      "ziyan_bot_bot_archivebot_new_product",
+      "ziyan_bot_bot_archivebot_on_media",
+      "ziyan_bot_bot_archivebot_on_text",
+      "ziyan_bot_bot_archivebot_reject_if_unauthorized",
+      "ziyan_bot_bot_archivebot_save_pending",
+      "ziyan_bot_bot_archivebot_search",
+      "ziyan_bot_bot_archivebot_session",
+      "ziyan_bot_bot_archivebot_show_product",
+      "ziyan_bot_bot_archivebot_start",
+      "ziyan_bot_bot_uploadsession"
+    ],
+    "4": [
+      "connection",
+      "ziyan_bot_bot_archivebot_init",
+      "ziyan_bot_db_database",
+      "ziyan_bot_db_database_connect",
+      "ziyan_bot_db_database_get_asset",
+      "ziyan_bot_db_database_get_product",
+      "ziyan_bot_db_database_init",
+      "ziyan_bot_db_database_insert_asset",
+      "ziyan_bot_db_database_insert_product",
+      "ziyan_bot_db_database_list_assets",
+      "ziyan_bot_db_database_mark_asset_deleted",
+      "ziyan_bot_db_database_mark_message",
+      "ziyan_bot_db_database_message_seen",
+      "ziyan_bot_db_database_search_products",
+      "ziyan_bot_db_database_update_product",
+      "ziyan_bot_db_py_path"
+    ],
+    "5": [
+      "basehttprequesthandler",
+      "scripts_autotube_api_server",
+      "scripts_autotube_api_server_fetch_image",
+      "scripts_autotube_api_server_generate_tts",
+      "scripts_autotube_api_server_handler",
+      "scripts_autotube_api_server_handler_do_get",
+      "scripts_autotube_api_server_handler_do_post",
+      "scripts_autotube_api_server_handler_log_message",
+      "scripts_autotube_api_server_handler_send_json",
+      "scripts_autotube_api_server_publish_video",
+      "scripts_autotube_api_server_rationale_1",
+      "scripts_autotube_api_server_render_short",
+      "scripts_autotube_api_server_tts_async"
+    ],
+    "6": [
+      "scripts_logic_test_fakegoogle",
+      "scripts_logic_test_fakegoogle_append_asset",
+      "scripts_logic_test_fakegoogle_append_log",
+      "scripts_logic_test_fakegoogle_append_product",
+      "scripts_logic_test_fakegoogle_create_folder",
+      "scripts_logic_test_fakegoogle_find_or_create_folder",
+      "scripts_logic_test_fakegoogle_init",
+      "scripts_logic_test_fakegoogle_trash_file",
+      "scripts_logic_test_fakegoogle_update_asset_status",
+      "scripts_logic_test_fakegoogle_update_product",
+      "scripts_logic_test_fakegoogle_upload_file",
+      "scripts_logic_test_fakegoogle_upsert_text"
+    ],
+    "7": [
+      "credentials",
+      "namespace",
+      "oauth_channel_check",
+      "oauth_channel_check_get_credentials",
+      "oauth_channel_check_get_my_channel",
+      "oauth_channel_check_main",
+      "oauth_channel_check_py_path",
+      "youtube_upload_celine",
+      "youtube_upload_celine_main",
+      "youtube_upload_celine_parse_args",
+      "youtube_upload_celine_resumable_upload"
+    ],
+    "8": [
+      "run_distribute",
+      "run_distribute_channel_celine",
+      "run_distribute_fb_page_token",
+      "run_distribute_google_credentials_file",
+      "run_distribute_hermes_custom_9router_api_key",
+      "run_distribute_instagram_user_token",
+      "run_distribute_sh__entry",
+      "run_distribute_threads_user_token"
+    ],
+    "9": [
+      "page",
+      "youtube_studio_upload",
+      "youtube_studio_upload_click_create_and_upload",
+      "youtube_studio_upload_fill_metadata",
+      "youtube_studio_upload_first_visible",
+      "youtube_studio_upload_main",
+      "youtube_studio_upload_wait_for_manual_login"
+    ],
+    "10": [
+      "threads_reauth",
+      "threads_reauth_code_to_short",
+      "threads_reauth_refresh",
+      "threads_reauth_req",
+      "threads_reauth_short_to_long",
+      "threads_reauth_vault",
+      "threads_reauth_vault_set"
+    ],
+    "11": [
+      "fb_reauth",
+      "fb_reauth_get_page_token",
+      "fb_reauth_get_user_token_from_code",
+      "fb_reauth_req"
+    ],
+    "12": [
+      "scripts_shorts_engine",
+      "scripts_shorts_engine_create_short",
+      "scripts_shorts_engine_generate_voiceover"
+    ],
+    "13": [
+      "peek_forward",
+      "peek_forward_api"
+    ],
+    "14": [
+      "run_bot",
+      "run_bot_sh__entry"
+    ],
+    "15": [
+      "yt_automator",
+      "yt_automator_upload_youtube_shorts_automator"
+    ],
+    "16": [
+      "oauth_manual"
+    ],
+    "17": [
+      "scripts_google_auth"
+    ],
+    "18": [
+      "start_yt_auth_server"
+    ],
+    "19": [
+      "ziyan_bot_init"
+    ]
+  },
+  "cohesion": {
+    "0": 0.10104529616724739,
+    "1": 0.19692307692307692,
+    "2": 0.16666666666666666,
+    "3": 0.30952380952380953,
+    "4": 0.21666666666666667,
+    "5": 0.24358974358974358,
+    "6": 0.16666666666666666,
+    "7": 0.36363636363636365,
+    "8": 0.25,
+    "9": 0.7142857142857143,
+    "10": 0.42857142857142855,
+    "11": 0.8333333333333334,
+    "12": 1.0,
+    "13": 1.0,
+    "14": 1.0,
+    "15": 1.0,
+    "16": 1.0,
+    "17": 1.0,
+    "18": 1.0,
+    "19": 1.0
+  },
+  "gods": [
+    {
+      "id": "ziyan_bot_google_workspace_googleworkspace",
+      "label": "GoogleWorkspace",
+      "degree": 33
+    },
+    {
+      "id": "ziyan_bot_bot_archivebot",
+      "label": "ArchiveBot",
+      "degree": 25
+    },
+    {
+      "id": "ziyan_bot_db_database",
+      "label": "Database",
+      "degree": 25
+    },
+    {
+      "id": "ziyan_bot_archive_archiveservice",
+      "label": "ArchiveService",
+      "degree": 23
+    },
+    {
+      "id": "ziyan_bot_config_settings",
+      "label": "Settings",
+      "degree": 18
+    },
+    {
+      "id": "ziyan_bot_parser_productdraft",
+      "label": "ProductDraft",
+      "degree": 14
+    },
+    {
+      "id": "scripts_logic_test_fakegoogle",
+      "label": "FakeGoogle",
+      "degree": 13
+    },
+    {
+      "id": "distribute_agent_main",
+      "label": "main()",
+      "degree": 13
+    },
+    {
+      "id": "ziyan_bot_archive_localfile",
+      "label": "LocalFile",
+      "degree": 9
+    },
+    {
+      "id": "distributor_distribute_to_platforms",
+      "label": "distribute_to_platforms()",
+      "degree": 8
+    }
+  ],
+  "surprises": [
+    {
+      "source": "get_products_latest()",
+      "target": "Settings",
+      "source_files": [
+        "distribute_agent.py",
+        "ziyan_bot/config.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities"
+    },
+    {
+      "source": "get_pending_product()",
+      "target": "Settings",
+      "source_files": [
+        "distribute_agent.py",
+        "ziyan_bot/config.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    },
+    {
+      "source": "main()",
+      "target": "Settings",
+      "source_files": [
+        "distribute_agent.py",
+        "ziyan_bot/config.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    },
+    {
+      "source": "mark_published()",
+      "target": "Settings",
+      "source_files": [
+        "distribute_agent.py",
+        "ziyan_bot/config.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    },
+    {
+      "source": "mark_status()",
+      "target": "Settings",
+      "source_files": [
+        "distribute_agent.py",
+        "ziyan_bot/config.py"
+      ],
+      "confidence": "INFERRED",
+      "relation": "uses",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `GoogleWorkspace` connect `GoogleWorkspace` to `distribute_agent.py`, `ArchiveService`?",
+      "why": "High betweenness centrality (0.171) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `ArchiveService` connect `ArchiveService` to `distribute_agent.py`, `GoogleWorkspace`, `ArchiveBot`, `Database`?",
+      "why": "High betweenness centrality (0.108) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `Database` connect `Database` to `distribute_agent.py`, `ArchiveService`, `GoogleWorkspace`, `ArchiveBot`?",
+      "why": "High betweenness centrality (0.105) - this node is a cross-community bridge."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 5 inferred relationships involving `ArchiveBot` (e.g. with `ArchiveService` and `LocalFile`) actually correct?",
+      "why": "`ArchiveBot` has 5 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 3 inferred relationships involving `Database` (e.g. with `ArchiveService` and `ArchiveBot`) actually correct?",
+      "why": "`Database` has 3 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 5 inferred relationships involving `ArchiveService` (e.g. with `Database` and `GoogleWorkspace`) actually correct?",
+      "why": "`ArchiveService` has 5 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 12 inferred relationships involving `Settings` (e.g. with `get_pending_product()` and `get_products_latest()`) actually correct?",
+      "why": "`Settings` has 12 INFERRED edges - model-reasoned connections that need verification."
+    }
+  ]
+}

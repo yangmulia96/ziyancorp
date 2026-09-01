@@ -1,0 +1,139 @@
+{
+  "name": "ZAS - 03 B2B Lead Scraper & AI Enricher",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtHour": 8,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "name": "Weekly Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "requestMethod": "GET",
+        "url": "https://maps.googleapis.com/maps/api/place/textsearch/json",
+        "options": {},
+        "queryParametersUi": {
+          "parameter": [
+            {
+              "name": "query",
+              "value": "={{ $env.SCRAPER_TARGET_KEYWORD || 'Klinik Kecantikan Jakarta' }}"
+            },
+            {
+              "name": "key",
+              "value": "={{ $env.GOOGLE_PLACES_API_KEY }}"
+            }
+          ]
+        }
+      },
+      "name": "Search Google Places API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "results",
+        "options": {}
+      },
+      "name": "Split Search Results",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 2.1,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {
+          "systemMessage": "Kamu adalah B2B Lead Enrichment Specialist. Analisis data bisnis berikut: nama bisnis, alamat, rating, dan website.\n1. Tentukan apakah bisnis ini prospek bernilai tinggi (*High-Value Client*).\n2. Buat pembuka percakapan dingin (*Icebreaker*) yang unik dan personal untuk pemilik bisnis tersebut.\n\nFormat output JSON:\n{\n  \"is_high_value\": true/false,\n  \"personalized_icebreaker\": \"...\",\n  \"proposed_solution\": \"...\"\n}"
+        }
+      },
+      "name": "AI Lead Enricher & Icebreaker",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": "={{ $env.GOOGLE_SHEET_B2B_PROSPECTS_ID }}",
+        "sheetName": "QUALIFIED_PROSPECTS",
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Business_Name": "={{ $('Split Search Results').item.json.name }}",
+            "Address": "={{ $('Split Search Results').item.json.formatted_address }}",
+            "Rating": "={{ $('Split Search Results').item.json.rating }}",
+            "Total_Reviews": "={{ $('Split Search Results').item.json.user_ratings_total }}",
+            "Is_High_Value": "={{ $json.is_high_value }}",
+            "Personalized_Icebreaker": "={{ $json.personalized_icebreaker }}",
+            "Status": "READY_FOR_OUTREACH"
+          }
+        }
+      },
+      "name": "Save to Prospects Database",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [1120, 300]
+    }
+  ],
+  "connections": {
+    "Weekly Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Search Google Places API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Google Places API": {
+      "main": [
+        [
+          {
+            "node": "Split Search Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Search Results": {
+      "main": [
+        [
+          {
+            "node": "AI Lead Enricher & Icebreaker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Lead Enricher & Icebreaker": {
+      "main": [
+        [
+          {
+            "node": "Save to Prospects Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

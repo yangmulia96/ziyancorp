@@ -1,0 +1,518 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html b:version='2' class='v2' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
+<head>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+<b:include data='blog' name='all-head-content'/>
+<b:if cond='data:blog.metaDescription'>
+<meta expr:content='data:blog.metaDescription' name='description'/>
+</b:if>
+<title><data:blog.pageTitle/></title>
+<b:skin><![CDATA[
+/* ============================================================
+   ZYN AI CORP - TEMA BLOGGER GAYA GEMINI
+   Font: Outfit | Dark theme | Luminous glow | Glassmorphism
+   Partikel & gradient: 100% CSS (tanpa JS)
+   Cara pasang: paste SELURUH isi file ini ke dalam
+   <b:skin><![CDATA[ ... ]]]]><![CDATA[></b:skin>  (Theme > Edit HTML)
+   ATAU ke Customize > Advanced > Add CSS.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+/* ---------- Variabel ---------- */
+:root {
+  --bg-0:#04050a;
+  --bg-1:#0a0e1a;
+  --surface:rgba(255,255,255,.045);
+  --surface-2:rgba(255,255,255,.07);
+  --border:rgba(255,255,255,.10);
+  --text:#e9edf7;
+  --text-dim:#9aa6c4;
+  --accent:#7c5cff;
+  --accent-2:#21d4fd;
+  --accent-3:#ff5c9d;
+  --glow:0 0 22px rgba(124,92,255,.45);
+  --glow-soft:0 0 40px rgba(33,212,253,.20);
+  --radius:18px;
+  --maxw:1100px;
+}
+
+/* ---------- Reset dasar ---------- */
+* { box-sizing:border-box; }
+html,body { margin:0; padding:0; }
+body {
+  font-family:'Outfit', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color:var(--text);
+  background:var(--bg-0);
+  background-image:
+    radial-gradient(1200px 600px at 15% -10%, rgba(124,92,255,.18), transparent 60%),
+    radial-gradient(1000px 500px at 110% 10%, rgba(33,212,253,.14), transparent 60%),
+    linear-gradient(180deg, #05060c 0%, #080b16 50%, #04050a 100%);
+  background-attachment:fixed;
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* ---------- Aurora / gradient bergerak (luminous glow) ---------- */
+body::before {
+  content:"";
+  position:fixed; inset:-25%; z-index:-2; pointer-events:none;
+  background:
+    radial-gradient(38% 48% at 22% 28%, rgba(124,92,255,.40), transparent 60%),
+    radial-gradient(32% 42% at 82% 18%, rgba(33,212,253,.32), transparent 60%),
+    radial-gradient(42% 52% at 60% 82%, rgba(255,92,157,.24), transparent 60%),
+    radial-gradient(28% 38% at 30% 72%, rgba(90,120,255,.22), transparent 60%);
+  filter:blur(28px) saturate(140%);
+  animation:aurora 22s ease-in-out infinite alternate;
+}
+@keyframes aurora {
+  0%   { transform:translate3d(0,0,0) scale(1);       filter:blur(28px) hue-rotate(0deg);   }
+  50%  { transform:translate3d(2%,-2%,0) scale(1.10); filter:blur(34px) hue-rotate(18deg); }
+  100% { transform:translate3d(-2%,2%,0) scale(1.05); filter:blur(30px) hue-rotate(-12deg);}
+}
+
+/* ---------- Partikel CSS-only (layer 1) ---------- */
+body::after {
+  content:"";
+  position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background-image:
+      radial-gradient(2px 2px at 331px 154px, rgba(255,255,255,0.66), transparent 4px),
+      radial-gradient(2px 2px at 548px 96px, rgba(120,150,255,0.62), transparent 4px),
+      radial-gradient(1px 1px at 219px 38px, rgba(255,255,255,0.54), transparent 3px),
+      radial-gradient(3px 3px at 246px 92px, rgba(120,150,255,0.53), transparent 5px),
+      radial-gradient(3px 3px at 126px 228px, rgba(120,150,255,0.82), transparent 5px),
+      radial-gradient(1px 1px at 599px 406px, rgba(255,255,255,0.84), transparent 3px),
+      radial-gradient(2px 2px at 570px 136px, rgba(120,150,255,0.53), transparent 4px),
+      radial-gradient(2px 2px at 120px 584px, rgba(124,92,255,0.61), transparent 4px),
+      radial-gradient(3px 3px at 105px 595px, rgba(33,212,253,0.65), transparent 5px),
+      radial-gradient(1px 1px at 99px 560px, rgba(120,150,255,0.61), transparent 3px),
+      radial-gradient(3px 3px at 210px 508px, rgba(33,212,253,0.54), transparent 5px),
+      radial-gradient(2px 2px at 476px 599px, rgba(124,92,255,0.5), transparent 4px),
+      radial-gradient(1px 1px at 184px 249px, rgba(120,150,255,0.62), transparent 3px),
+      radial-gradient(2px 2px at 506px 351px, rgba(255,255,255,0.46), transparent 4px),
+      radial-gradient(2px 2px at 120px 524px, rgba(33,212,253,0.39), transparent 4px),
+      radial-gradient(2px 2px at 155px 500px, rgba(255,255,255,0.32), transparent 4px),
+      radial-gradient(2px 2px at 571px 586px, rgba(33,212,253,0.49), transparent 4px),
+      radial-gradient(2px 2px at 508px 593px, rgba(255,255,255,0.34), transparent 4px),
+      radial-gradient(1px 1px at 276px 485px, rgba(33,212,253,0.33), transparent 3px),
+      radial-gradient(2px 2px at 591px 456px, rgba(33,212,253,0.69), transparent 4px),
+      radial-gradient(2px 2px at 23px 472px, rgba(255,255,255,0.39), transparent 4px),
+      radial-gradient(1px 1px at 505px 60px, rgba(124,92,255,0.72), transparent 3px),
+      radial-gradient(2px 2px at 253px 407px, rgba(255,92,157,0.8), transparent 4px),
+      radial-gradient(2px 2px at 82px 170px, rgba(33,212,253,0.52), transparent 4px),
+      radial-gradient(3px 3px at 140px 440px, rgba(255,92,157,0.45), transparent 5px),
+      radial-gradient(1px 1px at 367px 389px, rgba(124,92,255,0.38), transparent 3px),
+      radial-gradient(1px 1px at 154px 237px, rgba(120,150,255,0.31), transparent 3px),
+      radial-gradient(2px 2px at 186px 269px, rgba(255,92,157,0.3), transparent 4px),
+      radial-gradient(3px 3px at 547px 378px, rgba(124,92,255,0.61), transparent 5px),
+      radial-gradient(2px 2px at 527px 55px, rgba(120,150,255,0.79), transparent 4px),
+      radial-gradient(2px 2px at 401px 407px, rgba(255,92,157,0.52), transparent 4px),
+      radial-gradient(1px 1px at 410px 63px, rgba(124,92,255,0.34), transparent 3px),
+      radial-gradient(1px 1px at 451px 166px, rgba(255,255,255,0.49), transparent 3px),
+      radial-gradient(3px 3px at 104px 0px, rgba(255,255,255,0.38), transparent 5px),
+      radial-gradient(1px 1px at 372px 26px, rgba(120,150,255,0.78), transparent 3px),
+      radial-gradient(2px 2px at 385px 152px, rgba(120,150,255,0.83), transparent 4px),
+      radial-gradient(1px 1px at 372px 485px, rgba(255,92,157,0.36), transparent 3px),
+      radial-gradient(2px 2px at 477px 491px, rgba(124,92,255,0.47), transparent 4px),
+      radial-gradient(2px 2px at 104px 350px, rgba(124,92,255,0.56), transparent 4px),
+      radial-gradient(1px 1px at 528px 23px, rgba(120,150,255,0.82), transparent 3px),
+      radial-gradient(3px 3px at 370px 150px, rgba(120,150,255,0.8), transparent 5px),
+      radial-gradient(2px 2px at 305px 93px, rgba(124,92,255,0.59), transparent 4px),
+      radial-gradient(3px 3px at 364px 228px, rgba(120,150,255,0.6), transparent 5px),
+      radial-gradient(3px 3px at 337px 228px, rgba(124,92,255,0.75), transparent 5px),
+      radial-gradient(1px 1px at 245px 410px, rgba(255,92,157,0.41), transparent 3px),
+      radial-gradient(1px 1px at 364px 29px, rgba(255,92,157,0.73), transparent 3px),
+      radial-gradient(3px 3px at 265px 198px, rgba(255,92,157,0.83), transparent 5px),
+      radial-gradient(1px 1px at 357px 373px, rgba(124,92,255,0.42), transparent 3px),
+      radial-gradient(2px 2px at 481px 201px, rgba(120,150,255,0.41), transparent 4px),
+      radial-gradient(2px 2px at 1px 490px, rgba(255,255,255,0.74), transparent 4px),
+      radial-gradient(1px 1px at 122px 397px, rgba(124,92,255,0.56), transparent 3px),
+      radial-gradient(1px 1px at 444px 340px, rgba(255,92,157,0.74), transparent 3px),
+      radial-gradient(1px 1px at 474px 411px, rgba(124,92,255,0.7), transparent 3px),
+      radial-gradient(1px 1px at 130px 28px, rgba(255,92,157,0.62), transparent 3px),
+      radial-gradient(2px 2px at 149px 485px, rgba(120,150,255,0.39), transparent 4px),
+      radial-gradient(1px 1px at 134px 21px, rgba(255,255,255,0.74), transparent 3px),
+      radial-gradient(2px 2px at 539px 142px, rgba(124,92,255,0.84), transparent 4px),
+      radial-gradient(2px 2px at 216px 28px, rgba(120,150,255,0.42), transparent 4px),
+      radial-gradient(2px 2px at 246px 600px, rgba(255,92,157,0.44), transparent 4px),
+      radial-gradient(2px 2px at 134px 62px, rgba(120,150,255,0.79), transparent 4px),
+      radial-gradient(3px 3px at 529px 430px, rgba(124,92,255,0.37), transparent 5px),
+      radial-gradient(1px 1px at 536px 522px, rgba(124,92,255,0.78), transparent 3px),
+      radial-gradient(1px 1px at 4px 153px, rgba(120,150,255,0.38), transparent 3px),
+      radial-gradient(1px 1px at 123px 569px, rgba(120,150,255,0.48), transparent 3px),
+      radial-gradient(2px 2px at 543px 568px, rgba(255,255,255,0.73), transparent 4px),
+      radial-gradient(1px 1px at 573px 58px, rgba(255,255,255,0.41), transparent 3px),
+      radial-gradient(2px 2px at 100px 519px, rgba(255,255,255,0.61), transparent 4px),
+      radial-gradient(3px 3px at 453px 333px, rgba(120,150,255,0.84), transparent 5px),
+      radial-gradient(2px 2px at 524px 204px, rgba(120,150,255,0.55), transparent 4px),
+      radial-gradient(1px 1px at 489px 519px, rgba(33,212,253,0.68), transparent 3px),
+      radial-gradient(2px 2px at 572px 207px, rgba(255,255,255,0.38), transparent 4px),
+      radial-gradient(2px 2px at 401px 452px, rgba(124,92,255,0.34), transparent 4px),
+      radial-gradient(1px 1px at 438px 74px, rgba(255,255,255,0.67), transparent 3px),
+      radial-gradient(1px 1px at 158px 374px, rgba(124,92,255,0.44), transparent 3px),
+      radial-gradient(1px 1px at 478px 224px, rgba(255,92,157,0.52), transparent 3px),
+      radial-gradient(1px 1px at 166px 229px, rgba(120,150,255,0.69), transparent 3px),
+      radial-gradient(2px 2px at 413px 347px, rgba(33,212,253,0.41), transparent 4px),
+      radial-gradient(1px 1px at 94px 374px, rgba(255,92,157,0.49), transparent 3px),
+      radial-gradient(2px 2px at 451px 18px, rgba(120,150,255,0.48), transparent 4px),
+      radial-gradient(1px 1px at 302px 524px, rgba(124,92,255,0.36), transparent 3px);
+  background-size:600px 600px;
+  opacity:.9;
+  animation:drift 70s linear infinite;
+}
+
+/* ---------- Partikel CSS-only (layer 2, lebih kecil & lambat) ---------- */
+.zyn-particles {
+  position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background-image:
+      radial-gradient(2px 2px at 107px 86px, rgba(124,92,255,0.45), transparent 4px),
+      radial-gradient(2px 2px at 276px 132px, rgba(33,212,253,0.77), transparent 4px),
+      radial-gradient(3px 3px at 415px 152px, rgba(120,150,255,0.81), transparent 5px),
+      radial-gradient(1px 1px at 506px 334px, rgba(124,92,255,0.45), transparent 3px),
+      radial-gradient(2px 2px at 435px 74px, rgba(255,255,255,0.82), transparent 4px),
+      radial-gradient(3px 3px at 266px 85px, rgba(255,255,255,0.77), transparent 5px),
+      radial-gradient(2px 2px at 270px 124px, rgba(120,150,255,0.31), transparent 4px),
+      radial-gradient(3px 3px at 427px 274px, rgba(120,150,255,0.37), transparent 5px),
+      radial-gradient(1px 1px at 244px 112px, rgba(124,92,255,0.44), transparent 3px),
+      radial-gradient(2px 2px at 206px 319px, rgba(124,92,255,0.59), transparent 4px),
+      radial-gradient(3px 3px at 296px 456px, rgba(33,212,253,0.67), transparent 5px),
+      radial-gradient(2px 2px at 355px 18px, rgba(255,255,255,0.32), transparent 4px),
+      radial-gradient(1px 1px at 517px 564px, rgba(124,92,255,0.58), transparent 3px),
+      radial-gradient(2px 2px at 457px 108px, rgba(120,150,255,0.66), transparent 4px),
+      radial-gradient(2px 2px at 402px 518px, rgba(124,92,255,0.68), transparent 4px),
+      radial-gradient(1px 1px at 350px 203px, rgba(33,212,253,0.52), transparent 3px),
+      radial-gradient(1px 1px at 55px 132px, rgba(33,212,253,0.34), transparent 3px),
+      radial-gradient(1px 1px at 441px 167px, rgba(255,92,157,0.35), transparent 3px),
+      radial-gradient(3px 3px at 518px 288px, rgba(33,212,253,0.43), transparent 5px),
+      radial-gradient(1px 1px at 46px 470px, rgba(255,92,157,0.39), transparent 3px),
+      radial-gradient(2px 2px at 3px 269px, rgba(120,150,255,0.83), transparent 4px),
+      radial-gradient(1px 1px at 331px 250px, rgba(33,212,253,0.83), transparent 3px),
+      radial-gradient(1px 1px at 223px 365px, rgba(255,92,157,0.3), transparent 3px),
+      radial-gradient(2px 2px at 85px 486px, rgba(124,92,255,0.58), transparent 4px),
+      radial-gradient(1px 1px at 254px 516px, rgba(255,255,255,0.35), transparent 3px),
+      radial-gradient(3px 3px at 147px 409px, rgba(255,255,255,0.32), transparent 5px),
+      radial-gradient(1px 1px at 306px 311px, rgba(120,150,255,0.35), transparent 3px),
+      radial-gradient(2px 2px at 158px 398px, rgba(255,92,157,0.7), transparent 4px),
+      radial-gradient(3px 3px at 153px 290px, rgba(255,255,255,0.65), transparent 5px),
+      radial-gradient(3px 3px at 525px 439px, rgba(120,150,255,0.38), transparent 5px),
+      radial-gradient(1px 1px at 516px 582px, rgba(120,150,255,0.75), transparent 3px),
+      radial-gradient(1px 1px at 235px 87px, rgba(33,212,253,0.32), transparent 3px),
+      radial-gradient(2px 2px at 107px 385px, rgba(255,255,255,0.61), transparent 4px),
+      radial-gradient(2px 2px at 544px 250px, rgba(255,92,157,0.45), transparent 4px),
+      radial-gradient(3px 3px at 71px 515px, rgba(120,150,255,0.35), transparent 5px),
+      radial-gradient(2px 2px at 67px 485px, rgba(33,212,253,0.75), transparent 4px),
+      radial-gradient(1px 1px at 240px 210px, rgba(255,92,157,0.71), transparent 3px),
+      radial-gradient(1px 1px at 505px 391px, rgba(33,212,253,0.56), transparent 3px),
+      radial-gradient(1px 1px at 47px 203px, rgba(33,212,253,0.63), transparent 3px),
+      radial-gradient(3px 3px at 260px 311px, rgba(255,255,255,0.61), transparent 5px),
+      radial-gradient(2px 2px at 493px 62px, rgba(255,255,255,0.45), transparent 4px),
+      radial-gradient(2px 2px at 222px 501px, rgba(33,212,253,0.69), transparent 4px),
+      radial-gradient(2px 2px at 475px 477px, rgba(120,150,255,0.72), transparent 4px),
+      radial-gradient(1px 1px at 204px 319px, rgba(255,255,255,0.81), transparent 3px),
+      radial-gradient(1px 1px at 296px 469px, rgba(255,92,157,0.75), transparent 3px),
+      radial-gradient(1px 1px at 275px 396px, rgba(124,92,255,0.8), transparent 3px),
+      radial-gradient(1px 1px at 76px 595px, rgba(120,150,255,0.38), transparent 3px),
+      radial-gradient(1px 1px at 268px 368px, rgba(120,150,255,0.63), transparent 3px),
+      radial-gradient(2px 2px at 286px 115px, rgba(255,92,157,0.43), transparent 4px),
+      radial-gradient(1px 1px at 403px 25px, rgba(255,92,157,0.3), transparent 3px),
+      radial-gradient(2px 2px at 461px 415px, rgba(255,92,157,0.7), transparent 4px),
+      radial-gradient(2px 2px at 352px 385px, rgba(33,212,253,0.37), transparent 4px),
+      radial-gradient(2px 2px at 1px 332px, rgba(255,255,255,0.76), transparent 4px),
+      radial-gradient(2px 2px at 200px 12px, rgba(255,255,255,0.44), transparent 4px),
+      radial-gradient(3px 3px at 402px 399px, rgba(255,92,157,0.34), transparent 5px),
+      radial-gradient(2px 2px at 281px 49px, rgba(33,212,253,0.36), transparent 4px),
+      radial-gradient(2px 2px at 152px 255px, rgba(33,212,253,0.54), transparent 4px),
+      radial-gradient(2px 2px at 194px 382px, rgba(255,92,157,0.79), transparent 4px),
+      radial-gradient(1px 1px at 567px 562px, rgba(255,255,255,0.7), transparent 3px),
+      radial-gradient(3px 3px at 420px 461px, rgba(33,212,253,0.71), transparent 5px),
+      radial-gradient(3px 3px at 497px 50px, rgba(255,92,157,0.37), transparent 5px),
+      radial-gradient(2px 2px at 424px 351px, rgba(33,212,253,0.46), transparent 4px),
+      radial-gradient(2px 2px at 415px 244px, rgba(255,92,157,0.57), transparent 4px),
+      radial-gradient(1px 1px at 122px 171px, rgba(120,150,255,0.34), transparent 3px),
+      radial-gradient(1px 1px at 509px 563px, rgba(33,212,253,0.55), transparent 3px),
+      radial-gradient(1px 1px at 460px 437px, rgba(124,92,255,0.6), transparent 3px),
+      radial-gradient(2px 2px at 92px 178px, rgba(33,212,253,0.61), transparent 4px),
+      radial-gradient(2px 2px at 244px 377px, rgba(124,92,255,0.75), transparent 4px),
+      radial-gradient(2px 2px at 20px 422px, rgba(120,150,255,0.53), transparent 4px),
+      radial-gradient(2px 2px at 215px 385px, rgba(255,255,255,0.49), transparent 4px),
+      radial-gradient(3px 3px at 510px 284px, rgba(124,92,255,0.83), transparent 5px),
+      radial-gradient(1px 1px at 515px 541px, rgba(124,92,255,0.35), transparent 3px),
+      radial-gradient(2px 2px at 393px 409px, rgba(33,212,253,0.54), transparent 4px),
+      radial-gradient(1px 1px at 22px 130px, rgba(255,92,157,0.53), transparent 3px),
+      radial-gradient(1px 1px at 501px 0px, rgba(120,150,255,0.52), transparent 3px),
+      radial-gradient(1px 1px at 479px 459px, rgba(124,92,255,0.73), transparent 3px),
+      radial-gradient(3px 3px at 158px 155px, rgba(255,255,255,0.83), transparent 5px),
+      radial-gradient(3px 3px at 468px 87px, rgba(255,255,255,0.73), transparent 5px),
+      radial-gradient(3px 3px at 128px 238px, rgba(33,212,253,0.81), transparent 5px),
+      radial-gradient(3px 3px at 131px 257px, rgba(255,255,255,0.65), transparent 5px);
+  background-size:600px 600px;
+  opacity:.6;
+  animation:drift2 110s linear infinite;
+}
+@keyframes drift  { from{background-position:0 0;}        to{background-position:600px 1200px;} }
+@keyframes drift2 { from{background-position:0 0;}        to{background-position:-600px 600px;} }
+
+/* ---------- Layout ---------- */
+.content-outer, .container, #outer-wrapper, .region-inner {
+  position:relative; z-index:1;
+}
+#outer-wrapper, .content-outer {
+  max-width:var(--maxw);
+  margin:0 auto; padding:0 20px;
+}
+
+/* ---------- Header / Navbar (glass) ---------- */
+.header, #header, .Header, .navbar, #nav {
+  background:var(--surface);
+  backdrop-filter:blur(16px) saturate(140%);
+  -webkit-backdrop-filter:blur(16px) saturate(140%);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  margin:18px auto;
+  padding:18px 26px;
+  box-shadow:0 8px 32px rgba(0,0,0,.35);
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;
+}
+.Header h1, #header h1, .header h1 {
+  font-weight:800; font-size:1.9rem; letter-spacing:.5px; margin:0;
+  background:linear-gradient(120deg,#fff,var(--accent-2),var(--accent));
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  text-shadow:var(--glow-soft);
+}
+.Header p, #header .description {
+  color:var(--text-dim); margin:4px 0 0; font-size:.95rem; font-weight:300;
+}
+
+/* ---------- Post card (glassmorphism) ---------- */
+.post, .blog-posts .post, .post-outer, article.post {
+  background:var(--surface);
+  backdrop-filter:blur(14px) saturate(140%);
+  -webkit-backdrop-filter:blur(14px) saturate(140%);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:28px 30px;
+  margin:22px auto;
+  box-shadow:0 10px 40px rgba(0,0,0,.40);
+  transition:transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+}
+.post:hover {
+  transform:translateY(-4px);
+  border-color:rgba(124,92,255,.45);
+  box-shadow:0 14px 50px rgba(124,92,255,.25);
+}
+
+/* ---------- Judul post (luminous) ---------- */
+.post-title, h1.post-title, h2.post-title, .entry-title {
+  font-weight:700; line-height:1.25; margin:0 0 12px;
+  font-size:1.7rem;
+  background:linear-gradient(120deg,#ffffff,var(--accent-2));
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  text-shadow:0 0 26px rgba(124,92,255,.35);
+}
+.post-title a, .entry-title a { color:inherit; text-decoration:none; }
+
+.post-body, .post-body entry-content, .post-body div {
+  color:var(--text); font-weight:300; font-size:1.05rem;
+}
+.post-body p { margin:0 0 16px; }
+
+/* ---------- Link & tombol (glow) ---------- */
+a { color:var(--accent-2); text-decoration:none; transition:color .2s, text-shadow .2s; }
+a:hover { color:#fff; text-shadow:var(--glow); }
+
+.jump-link a, a.btn, .readmore, .continue, .post-more a {
+  display:inline-block; margin-top:8px; padding:10px 20px;
+  font-weight:600; color:#fff; border-radius:999px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  box-shadow:var(--glow);
+  transition:transform .2s, box-shadow .2s;
+}
+.jump-link a:hover, a.btn:hover {
+  transform:translateY(-2px); box-shadow:0 0 34px rgba(33,212,253,.55);
+  color:#fff;
+}
+
+/* ---------- Gambar ---------- */
+.post-body img, .post img {
+  max-width:100%; height:auto; border-radius:14px;
+  border:1px solid var(--border);
+  box-shadow:0 8px 30px rgba(0,0,0,.45);
+}
+
+/* ---------- Kutipan & kode ---------- */
+blockquote {
+  margin:18px 0; padding:14px 20px;
+  border-left:3px solid var(--accent);
+  background:var(--surface-2); border-radius:0 12px 12px 0;
+  color:var(--text-dim); font-style:italic;
+}
+pre, code {
+  font-family:'Fira Code', ui-monospace, Menlo, Consolas, monospace;
+  background:rgba(0,0,0,.45); border:1px solid var(--border);
+  border-radius:10px; color:#cfe3ff; padding:2px 6px;
+}
+pre { padding:16px; overflow:auto; }
+
+/* ---------- Tabel ---------- */
+table { width:100%; border-collapse:collapse; margin:18px 0; }
+th,td { border:1px solid var(--border); padding:10px 12px; }
+th { background:var(--surface-2); color:#fff; }
+
+/* ---------- Sidebar widget (glass) ---------- */
+.sidebar, #sidebar, .column-right-outer, .column-left-outer {
+  background:var(--surface);
+  backdrop-filter:blur(14px) saturate(140%);
+  -webkit-backdrop-filter:blur(14px) saturate(140%);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px 22px; margin:22px auto;
+  box-shadow:0 10px 40px rgba(0,0,0,.35);
+}
+.sidebar h2, .sidebar .widget h2, #sidebar h2 {
+  font-weight:700; font-size:1.15rem; margin:0 0 14px;
+  color:#fff; text-shadow:var(--glow-soft);
+}
+
+/* ---------- Pagination / nav bawah ---------- */
+.blog-pager, .pager, #blog-pager {
+  display:flex; justify-content:center; gap:14px; margin:26px 0;
+}
+.blog-pager a, #blog-pager a {
+  padding:9px 18px; border-radius:999px;
+  background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+}
+.blog-pager a:hover { box-shadow:var(--glow); color:#fff; }
+
+/* ---------- Komentar ---------- */
+.comments, #comments {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:22px 24px; margin:22px auto;
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+}
+.comment-author { color:var(--accent-2); font-weight:600; }
+
+/* ---------- Footer (glass) ---------- */
+.footer, #footer, .foot {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:24px; margin:30px auto;
+  text-align:center; color:var(--text-dim); font-weight:300;
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+}
+
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar { width:10px; }
+::-webkit-scrollbar-track { background:var(--bg-1); }
+::-webkit-scrollbar-thumb { background:linear-gradient(var(--accent),var(--accent-2)); border-radius:99px; }
+
+/* ---------- Responsif ---------- */
+@media (max-width:900px) {
+  .post-title, h2.post-title { font-size:1.4rem; }
+  .Header h1 { font-size:1.5rem; }
+  #outer-wrapper { padding:0 14px; }
+}
+@media (max-width:600px) {
+  .post, .sidebar { padding:18px 16px; }
+  body::after, .zyn-particles { opacity:.5; }
+}
+
+/* ---------- Aksesibilitas: kurangi gerakan ---------- */
+@media (prefers-reduced-motion:reduce) {
+  body::before, body::after, .zyn-particles { animation:none !important; }
+}
+
+]]></b:skin>
+</head>
+<body>
+<div class='zyn-particles'></div>
+<div id='outer-wrapper'>
+<b:section class='header' id='header' maxwidgets='1' name='Header' showaddelement='false'>
+<b:widget id='Header1' locked='true' title='Header' type='Header' version='2' visible='true'>
+<b:includable id='main' var='this'>
+<div class='Header'>
+<b:if cond='data:this.image'><img class='Header-item' expr:src='data:this.image'/><br/></b:if>
+<h1 class='title'><a expr:href='data:blog.homepageUrl'><data:this.title/></a></h1>
+<b:if cond='data:this.description'><p class='description'><data:this.description/></p></b:if>
+</div>
+</b:includable>
+</b:widget>
+</b:section>
+<div class='content-outer'>
+<div class='column-center-outer'>
+<b:section class='main' id='main' name='Post' showaddelement='false'>
+<b:widget id='Blog1' locked='true' title='Blog Posts' type='Blog' version='2' visible='true'>
+<b:includable id='main' var='top'>
+<b:if cond='data:blog.pageType == "item"'>
+<b:include name='post'/>
+<b:include name='comments'/>
+<b:else/>
+<b:loop var='post' values='data:posts'>
+<b:include name='post'/>
+</b:loop>
+<b:include name='nextprev'/>
+</b:if>
+</b:includable>
+<b:includable id='post' var='post'>
+<div class='post-outer'>
+<article class='post'>
+<b:if cond='data:post.title'>
+<h1 class='post-title entry-title'>
+<b:if cond='data:post.link or data:post.url'>
+<a expr:href='data:post.url'><b:eval expr='data:post.title'/></a>
+<b:else/>
+<b:eval expr='data:post.title'/>
+</b:if>
+</h1>
+</b:if>
+<b:if cond='data:post.thumbnailUrl'>
+<img expr:src='data:post.thumbnailUrl'/>
+</b:if>
+<div class='post-body entry-content'>
+<data:post.body/>
+</div>
+<div class='jump-link'>
+<b:if cond='data:post.hasJumpLink'>
+<a expr:href='data:post.url'>Baca selengkapnya</a>
+</b:if>
+</div>
+</article>
+</div>
+</b:includable>
+<b:includable id='nextprev'>
+<div class='blog-pager'>
+<b:if cond='data:newerPageUrl'><a expr:href='data:newerPageUrl'>&#171; Lebih baru</a></b:if>
+<b:if cond='data:olderPageUrl'><a expr:href='data:olderPageUrl'>Lebih lama &#187;</a></b:if>
+</div>
+</b:includable>
+<b:includable id='comments' var='post'>
+<div id='comments'>
+<h3><data:post.commentLabel/></h3>
+</div>
+</b:includable>
+</b:widget>
+</b:section>
+</div>
+<div class='column-right-outer'>
+<b:section class='sidebar' id='sidebar' name='Sidebar' showaddelement='true'>
+<b:widget id='HTML1' locked='false' title='Tentang' type='HTML' version='2' visible='true'>
+<b:includable id='main' var='this'>
+<b:if cond='data:this.title'><h2><data:this.title/></h2></b:if>
+<div class='widget-content'><data:this.content/></div>
+</b:includable>
+</b:widget>
+</b:section>
+</div>
+</div>
+<b:section class='footer' id='footer' name='Footer' showaddelement='false'>
+<b:widget id='HTML2' locked='false' title='Footer' type='HTML' version='2' visible='true'>
+<b:includable id='main' var='this'>
+<div class='footer'>
+<p>&#169; <data:blog.title/> &#8212; Powered by ZYN AI Corp.</p>
+</div>
+</b:includable>
+</b:widget>
+</b:section>
+</div>
+</body>
+</html>

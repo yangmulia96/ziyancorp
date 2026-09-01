@@ -1,0 +1,272 @@
+{
+ "name": "ZIYAN Affiliate Auto-Post",
+ "nodes": [
+  {
+   "parameters": {
+    "updates": [
+     "message"
+    ],
+    "additionalFields": {}
+   },
+   "id": "telegram_trigger",
+   "name": "Telegram Trigger",
+   "type": "n8n-nodes-base.telegramTrigger",
+   "typeVersion": 1,
+   "position": [
+    250,
+    300
+   ],
+   "credentials": {
+    "telegramApi": "ziyan_clipperbot_cred"
+   }
+  },
+  {
+   "parameters": {
+    "functionCode": "const msg = $json.message || {};\nconst text = msg.text || '';\nconst linkMatch = text.match(/https?:\\/\\/\\S+/);\nconst link = linkMatch ? linkMatch[0] : '';\nconst files = [];\nif (msg.photo) { msg.photo.forEach(p => files.push({ type: 'photo', file_id: p.file_id })); }\nif (msg.video) { files.push({ type: 'video', file_id: msg.video.file_id }); }\nif (msg.document) { files.push({ type: 'document', file_id: msg.document.file_id }); }\n// Kalau banyak file, tiap file = 1 konten (caption sama dari link)\nconst items = (files.length > 0 ? files : [{ type: 'none', file_id: null }]).map(f => ({\n  json: { link, file_type: f.type, file_id: f.file_id, caption: '', status: 'PENDING', timestamp: new Date().toISOString() }\n}));\nreturn items;"
+   },
+   "id": "split_files",
+   "name": "Split by File Count",
+   "type": "n8n-nodes-base.function",
+   "typeVersion": 1,
+   "position": [
+    450,
+    300
+   ]
+  },
+  {
+   "parameters": {
+    "url": "http://127.0.0.1:20128/v1/chat/completions",
+    "method": "POST",
+    "authentication": "genericCredentialType",
+    "genericAuthType": "httpHeaderAuth",
+    "sendHeaders": true,
+    "headerParameters": {
+     "parameters": [
+      {
+       "name": "Content-Type",
+       "value": "application/json"
+      },
+      {
+       "name": "Authorization",
+       "value": "Bearer sk-d231c002faa2bdf9-04pu8i-4bc99d6d"
+      }
+     ]
+    },
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={{ {'model': 'channel-researcher', 'messages': [{'role': 'user', 'content': 'Generate caption Shopee affiliate dari link: ' + $json.link + '. Format persis:\\n[LINK]\\n\\n[NAMA PRODUK] [deskripsi singkat 1 kalimat] [harga]. Cek sekarang!\\n\\n#hashtag1 #hashtag2 #hashtag3 #hashtag4\\nJawab HANYA caption, tanpa penjelasan.'}] } }}",
+    "options": {}
+   },
+   "id": "caption_gen",
+   "name": "Caption Generator (9Router)",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4,
+   "position": [
+    650,
+    300
+   ]
+  },
+  {
+   "parameters": {
+    "functionCode": "const resp = $json.choices?.[0]?.message?.content || '';\nreturn [{ json: { ...$json, caption: resp.trim() } }];"
+   },
+   "id": "parse_caption",
+   "name": "Parse Caption",
+   "type": "n8n-nodes-base.function",
+   "typeVersion": 1,
+   "position": [
+    850,
+    300
+   ]
+  },
+  {
+   "id": "sheet_append",
+   "name": "Google Sheets Append",
+   "type": "n8n-nodes-base.googleSheets",
+   "typeVersion": 4,
+   "position": [
+    1050,
+    300
+   ],
+   "credentials": {
+    "googleSheetsOAuth2Api": "0d3897aa-0100-4c8d-8b90-1d4a0384d3b9"
+   },
+   "parameters": {
+    "operation": "append",
+    "sheetId": "1lsyqnE51_eT2JFf0nuLNuT4AjOo4-VvXLMvEdr8hSSs",
+    "range": "A:F",
+    "options": {}
+   }
+  },
+  {
+   "parameters": {
+    "rule": {
+     "interval": [
+      {
+       "field": "minutes",
+       "minutesInterval": 8
+      }
+     ]
+    }
+   },
+   "id": "cron_8m",
+   "name": "Cron 8 Menit (Cek Pending)",
+   "type": "n8n-nodes-base.cron",
+   "typeVersion": 1,
+   "position": [
+    250,
+    500
+   ]
+  },
+  {
+   "id": "sheet_read",
+   "name": "Read Pending Rows",
+   "type": "n8n-nodes-base.googleSheets",
+   "typeVersion": 4,
+   "position": [
+    450,
+    500
+   ],
+   "credentials": {
+    "googleSheetsOAuth2Api": "0d3897aa-0100-4c8d-8b90-1d4a0384d3b9"
+   }
+  },
+  {
+   "parameters": {
+    "functionCode": "return $json.filter(row => row.status === 'PENDING').map((row, i) => ({ json: { ...row, publish_at: new Date(Date.now() + i * 77 * 60000).toISOString() } }));"
+   },
+   "id": "schedule_77m",
+   "name": "Schedule 77 Menit",
+   "type": "n8n-nodes-base.function",
+   "typeVersion": 1,
+   "position": [
+    650,
+    500
+   ]
+  },
+  {
+   "parameters": {
+    "url": "https://graph.facebook.com/v19.0/me/photos",
+    "method": "POST",
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={{ {\"url\": .file_id, \"caption\": .caption, \"access_token\": \"EAAcWJcVdZCxEBSB46OVzFh6Cu6ZByKzQkHNL4yXvaxMGJaOs4eHj8SXl4iDwz0GyopM0cOAxp3YrVRZA3zdiwwsYfowgRMABFnk8osBXnveWGICdPbi11DtXn5AAcJ9Ta9nbo578Kkti4fVZB7klxm08jCtmYSWynfdbZC7rLAI7nRp7mzTTn1FZCMPMSwbwW4KTPQ\"} }}",
+    "options": {}
+   },
+   "id": "upload_fb",
+   "name": "Upload ke FB Page",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4,
+   "position": [
+    850,
+    500
+   ]
+  },
+  {
+   "id": "sheet_update",
+   "name": "Mark PUBLISHED",
+   "type": "n8n-nodes-base.googleSheets",
+   "typeVersion": 4,
+   "position": [
+    1050,
+    500
+   ],
+   "credentials": {
+    "googleSheetsOAuth2Api": "0d3897aa-0100-4c8d-8b90-1d4a0384d3b9"
+   }
+  }
+ ],
+ "connections": {
+  "Telegram Trigger": {
+   "main": [
+    [
+     {
+      "node": "Split by File Count",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Split by File Count": {
+   "main": [
+    [
+     {
+      "node": "Caption Generator (9Router)",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Caption Generator (9Router)": {
+   "main": [
+    [
+     {
+      "node": "Parse Caption",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Parse Caption": {
+   "main": [
+    [
+     {
+      "node": "Google Sheets Append",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Cron 8 Menit (Cek Pending)": {
+   "main": [
+    [
+     {
+      "node": "Read Pending Rows",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Read Pending Rows": {
+   "main": [
+    [
+     {
+      "node": "Schedule 77 Menit",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Schedule 77 Menit": {
+   "main": [
+    [
+     {
+      "node": "Upload ke FB Page",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Upload ke FB Page": {
+   "main": [
+    [
+     {
+      "node": "Mark PUBLISHED",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  }
+ },
+ "settings": {
+  "executionOrder": "v1"
+ }
+}

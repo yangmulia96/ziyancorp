@@ -1,0 +1,12 @@
+services:
+  ziyan-archive-bot:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./credentials.json:/app/credentials.json:ro
+      - ./token.json:/app/token.json
+      - ./archive-data:/app/archive-data
+    environment:
+      DATABASE_FILE: /app/archive-data/archive.db

@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MESIN PENCETAK UANG YOUTUBE - Pabrik Video AI Otomatis Tanpa Coding</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-card-subtle: #f1f5f9;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --text-subtle: #94a3b8;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-light: #eff6ff;
+            --primary-border: #bfdbfe;
+            --accent-cyan: #06b6d4;
+            --accent-emerald: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-purple: #8b5cf6;
+            --border-color: #e2e8f0;
+            --border-hover: #cbd5e1;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08);
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+        [data-theme="dark"] {
+            --bg-body: #090d16;
+            --bg-card: #111827;
+            --bg-card-subtle: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-subtle: #64748b;
+            --primary: #3b82f6;
+            --primary-hover: #60a5fa;
+            --primary-light: #1e3a8a33;
+            --primary-border: #1e40af;
+            --border-color: #1f293d;
+            --border-hover: #334155;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.5);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: var(--font-sans); background-color: var(--bg-body); color: var(--text-main); line-height: 1.65; transition: background-color 0.3s ease, color 0.3s ease; }
+        .app-layout { display: flex; min-height: 100vh; }
+        .sidebar { width: 320px; background: var(--bg-card); border-right: 1px solid var(--border-color); position: fixed; top: 0; bottom: 0; left: 0; display: flex; flex-direction: column; z-index: 50; transition: transform 0.3s ease; }
+        .sidebar-header { padding: 24px 20px 16px 20px; border-bottom: 1px solid var(--border-color); }
+        .logo-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--primary-light); border: 1px solid var(--primary-border); border-radius: 100px; color: var(--primary); font-weight: 700; font-size: 0.78rem; text-transform: uppercase; margin-bottom: 12px; }
+        .sidebar-title { font-size: 1.1rem; font-weight: 800; color: var(--text-main); line-height: 1.35; }
+        .sidebar-nav { flex: 1; overflow-y: auto; padding: 16px 12px; }
+        .nav-group-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--text-subtle); padding: 12px 12px 6px 12px; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: var(--radius-sm); color: var(--text-muted); text-decoration: none; font-size: 0.88rem; font-weight: 600; transition: all 0.2s ease; margin-bottom: 4px; }
+        .nav-item:hover { background: var(--bg-card-subtle); color: var(--text-main); transform: translateX(3px); }
+        .nav-item.active { background: var(--primary-light); color: var(--primary); font-weight: 700; }
+        .nav-number { display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 6px; background: var(--bg-card-subtle); font-size: 0.75rem; font-weight: 700; color: var(--text-muted); }
+        .nav-item.active .nav-number { background: var(--primary); color: #fff; }
+        .sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
+        .btn-icon { background: var(--bg-card-subtle); border: 1px solid var(--border-color); color: var(--text-main); width: 36px; height: 36px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .btn-icon:hover { background: var(--border-color); }
+        .main-wrapper { flex: 1; margin-left: 320px; min-height: 100vh; display: flex; flex-direction: column; }
+        .topbar-mobile { display: none; position: sticky; top: 0; background: var(--bg-card); border-bottom: 1px solid var(--border-color); padding: 12px 16px; align-items: center; justify-content: space-between; z-index: 40; }
+        .content-container { max-width: 920px; margin: 0 auto; padding: 48px 32px 100px 32px; width: 100%; }
+        .ebook-hero { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #06b6d4 100%); border-radius: var(--radius-xl); padding: 48px 36px; color: #ffffff; margin-bottom: 48px; position: relative; overflow: hidden; box-shadow: var(--shadow-lg); }
+        .hero-tag { display: inline-block; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px); padding: 6px 14px; border-radius: 100px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 16px; border: 1px solid rgba(255, 255, 255, 0.3); }
+        .hero-title { font-size: 2.25rem; font-weight: 800; line-height: 1.25; margin-bottom: 16px; letter-spacing: -0.02em; }
+        .hero-subtitle { font-size: 1.05rem; color: rgba(255, 255, 255, 0.9); max-width: 650px; line-height: 1.6; margin-bottom: 28px; }
+        .hero-meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.2); }
+        .hero-meta-label { font-size: 0.72rem; text-transform: uppercase; color: rgba(255, 255, 255, 0.75); font-weight: 600; display: block; }
+        .hero-meta-value { font-size: 0.95rem; font-weight: 700; color: #ffffff; }
+        .chapter-section { margin-bottom: 64px; scroll-margin-top: 80px; }
+        .chapter-header { margin-bottom: 24px; }
+        .chapter-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: var(--primary-light); color: var(--primary); border-radius: var(--radius-sm); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
+        .chapter-title { font-size: 1.65rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.02em; line-height: 1.3; }
+        .chapter-desc { font-size: 1rem; color: var(--text-muted); margin-top: 6px; }
+        .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 28px 24px; margin-bottom: 24px; box-shadow: var(--shadow-sm); transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+        .card:hover { border-color: var(--border-hover); box-shadow: var(--shadow-md); }
+        .card-header-flex { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+        .card-title-group { display: flex; align-items: center; gap: 12px; }
+        .card-icon-pill { width: 42px; height: 42px; border-radius: var(--radius-md); background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0; }
+        .card-title { font-size: 1.15rem; font-weight: 700; color: var(--text-main); }
+        .step-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 20px 0; }
+        .step-card { background: var(--bg-card-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; }
+        .step-badge { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 0.82rem; font-weight: 800; margin-bottom: 12px; }
+        .step-card-title { font-size: 0.98rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main); }
+        .step-card-text { font-size: 0.85rem; color: var(--text-muted); line-height: 1.55; }
+        .prompt-container { background: var(--bg-card-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden; margin: 18px 0; }
+        .prompt-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: rgba(0, 0, 0, 0.03); border-bottom: 1px solid var(--border-color); }
+        .prompt-tag { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--primary); }
+        .btn-copy { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 4px 10px; font-size: 0.75rem; font-weight: 600; color: var(--text-main); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease; }
+        .btn-copy:hover { background: var(--primary); color: #ffffff; border-color: var(--primary); }
+        .prompt-content { padding: 16px; font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-main); white-space: pre-wrap; word-break: break-word; line-height: 1.6; }
+        .callout { padding: 18px 20px; border-radius: var(--radius-md); margin: 18px 0; display: flex; gap: 14px; align-items: flex-start; }
+        .callout-info { background: var(--primary-light); border: 1px solid var(--primary-border); color: var(--text-main); }
+        .callout-warning { background: #fef3c722; border: 1px solid #fde68a; color: var(--text-main); }
+        .callout-icon { font-size: 1.25rem; flex-shrink: 0; margin-top: 2px; }
+        .callout-body { font-size: 0.9rem; line-height: 1.6; }
+        .callout-title { font-weight: 700; margin-bottom: 4px; color: var(--text-main); }
+        .table-responsive { overflow-x: auto; margin: 20px 0; border-radius: var(--radius-md); border: 1px solid var(--border-color); }
+        table { width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left; }
+        th { background: var(--bg-card-subtle); padding: 12px 16px; font-weight: 700; color: var(--text-main); border-bottom: 1px solid var(--border-color); }
+        td { padding: 12px 16px; border-bottom: 1px solid var(--border-color); color: var(--text-muted); }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 700; }
+        .badge-success { background: #d1fae5; color: #065f46; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        .badge-blue { background: #dbeafe; color: #1e40af; }
+        .badge-purple { background: #ede9fe; color: #5b21b6; }
+        .check-list { list-style: none; margin: 16px 0; }
+        .check-list li { position: relative; padding-left: 28px; margin-bottom: 10px; font-size: 0.9rem; color: var(--text-main); }
+        .check-list li::before { content: '✓'; position: absolute; left: 0; top: 1px; width: 18px; height: 18px; border-radius: 50%; background: #10b98122; color: #10b981; font-size: 0.75rem; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+        @media (max-width: 900px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-wrapper { margin-left: 0; }
+            .topbar-mobile { display: flex; }
+            .content-container { padding: 24px 16px 80px 16px; }
+            .hero-title { font-size: 1.65rem; }
+            .hero-subtitle { font-size: 0.92rem; }
+            .ebook-hero { padding: 32px 20px; border-radius: var(--radius-lg); }
+            .card { padding: 20px 16px; }
+        }
+        @media print {
+            .sidebar, .topbar-mobile, .btn-copy, .btn-icon, .sidebar-footer { display: none !important; }
+            .main-wrapper { margin-left: 0 !important; }
+            .content-container { max-width: 100% !important; padding: 0 !important; }
+            .card { break-inside: avoid; box-shadow: none !important; border: 1px solid #ccc !important; }
+            .ebook-hero { background: #1e40af !important; color: #fff !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-layout">
+    <header class="topbar-mobile">
+        <button class="btn-icon" id="btnToggleSidebar" aria-label="Buka Menu">☰</button>
+        <span style="font-weight: 800; font-size: 0.95rem;">PABRIK VIDEO AI</span>
+        <button class="btn-icon" id="btnThemeMobile" aria-label="Ganti Tema">🌓</button>
+    </header>
+
+    <aside class="sidebar" id="sidebarNav">
+        <div class="sidebar-header">
+            <div class="logo-badge">🤖 Auto-YouTube Mastery</div>
+            <h1 class="sidebar-title">Mesin Pencetak Uang YouTube</h1>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-group-title">Navigasi Modul</div>
+            <a href="#modul-1" class="nav-item active"><span class="nav-number">1</span><span>Mindset & Arsitektur System</span></a>
+            <a href="#modul-2" class="nav-item"><span class="nav-number">2</span><span>Command Center Google Sheets</span></a>
+            <a href="#modul-3" class="nav-item"><span class="nav-number">3</span><span>Naskah AI via ChatGPT API</span></a>
+            <a href="#modul-4" class="nav-item"><span class="nav-number">4</span><span>Sulih Suara & Audio Suno/Eleven</span></a>
+            <a href="#modul-5" class="nav-item"><span class="nav-number">5</span><span>Otomasi Video AI & Rendering</span></a>
+            <a href="#modul-6" class="nav-item"><span class="nav-number">6</span><span>Auto-Upload YouTube API</span></a>
+            <a href="#modul-7" class="nav-item"><span class="nav-number">7</span><span>Blueprint n8n & Master Prompt</span></a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Edisi 2026 • No-Code Automation</span>
+            <button class="btn-icon" id="btnThemeDesktop" title="Ganti Tema Gelap/Terang">🌓</button>
+        </div>
+    </aside>
+
+    <main class="main-wrapper">
+        <div class="content-container">
+
+            <section class="ebook-hero">
+                <span class="hero-tag">Panduan Otomasi No-Code 2026</span>
+                <h1 class="hero-title">MESIN PENCETAK UANG YOUTUBE</h1>
+                <p class="hero-subtitle">
+                    Cara Membangun Pabrik Video AI Otomatis Tanpa Coding Menggunakan n8n, Google Sheets, ChatGPT API, Suno AI, dan Video Generator untuk Channel Faceless Beromset Pasif.
+                </p>
+                <div class="hero-meta-grid">
+                    <div class="hero-meta-item"><span class="hero-meta-label">Tingkat Kesulitan</span><span class="hero-meta-value">Pemula / Intermediate</span></div>
+                    <div class="hero-meta-item"><span class="hero-meta-label">Core Automation</span><span class="hero-meta-value">n8n + GSheets API</span></div>
+                    <div class="hero-meta-item"><span class="hero-meta-label">Output Konten</span><span class="hero-meta-value">Shorts & Longform</span></div>
+                    <div class="hero-meta-item"><span class="hero-meta-label">Target Revenue</span><span class="hero-meta-value">AdSense & Affiliate</span></div>
+                </div>
+            </section>
+
+            <!-- MODUL 1 -->
+            <section id="modul-1" class="chapter-section">
+                <div class="chapter-header">
+                    <span class="chapter-badge">Modul 1</span>
+                    <h2 class="chapter-title">Mindset & Arsitektur Pabrik Video AI</h2>
+                    <p class="chapter-desc">Transformasi dari pembuat konten manual menjadi pemilik pabrik media otomatis 24/7.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header-flex">
+                        <div class="card-title-group">
+                            <div class="card-icon-pill">⚙️</div>
+                            <div>
+                                <h3 class="card-title">Mengapa Era Konten Manual Sudah Berakhir?</h3>
+                                <p style="font-size: 0.85rem; color: var(--text-muted);">Membangun pasokan konten tanpa batas tanpa rasa lelah dan tanpa menyewa tim editor mahal.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.92rem; color: var(--text-main); margin-bottom: 16px;">
+                        Channel Faceless YouTube (tanpa menampilkan wajah) adalah salah satu model bisnis digital paling menguntungkan saat ini. Namun, hambatan terbesarnya adalah <strong>konsistensi produksi</strong>. Mengedit 1 video Shorts bisa memakan waktu 1–2 jam.
+                    </p>
+                    <p style="font-size: 0.92rem; color: var(--text-main); margin-bottom: 16px;">
+                        Dengan <strong>Arsitektur Pabrik Video AI (Automated Video Pipeline)</strong>, kita menghubungkan kecerdasan buatan ke dalam alur kerja n8n. Hasilnya: Anda cukup mengisi 1 baris ide di Google Sheets, dan sistem akan memproses seluruh pembuatan naskah, audio, klip video, subtitle, hingga mengunggahnya ke YouTube secara otomatis!
+                    </p>
+                    <ul class="check-list">
+                        <li><strong>100% Autopilot:</strong> Berjalan di cloud server tanpa menyalakan laptop setiap saat.</li>
+                        <li><strong>Skalabilitas Tanpa Batas:</strong> Kelola 5 hingga 10 channel YouTube Faceless sekaligus dari 1 dashboard n8n.</li>
+                        <li><strong>Bebas Hak Cipta:</strong> Menggunakan suara AI premium, musik Suno berlisensi, dan visual AI orisinal.</li>
+                    </ul>
+                </div>
+
+                <div class="step-grid">
+                    <div class="step-card">
+                        <div class="step-badge">1</div>
+                        <h4 class="step-card-title">Trigger (Google Sheets)</h4>
+                        <p class="step-card-text">Pemicu alur kerja berdasarkan jadwal atau status baris baru di tabel spreadsheet Anda.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-badge">2</div>
+                        <h4 class="step-card-title">Brain (ChatGPT API)</h4>
+                        <p class="step-card-text">Riset keyword, buat naskah berstruktur JSON, buat prompt gambar/video, dan buat judul viral.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-badge">3</div>
+                        <h4 class="step-card-title">Voice & Visual (AI Engine)</h4>
+                        <p class="step-card-text">Konversi teks ke suara natural via ElevenLabs/OpenAI TTS & ubah prompt menjadi video AI.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-badge">4</div>
+                        <h4 class="step-card-title">Publish (YouTube API)</h4>
+                        <p class="step-card-text">Video dirender otomatis, ditambahkan subtitle, lalu diunggah ke YouTube sebagai Draft atau Public.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODUL 2 -->
+            <section id="modul-2" class="chapter-section">
+                <div class="chapter-header">
+                    <span class="chapter-badge">Modul 2</span>
+                    <h2 class="chapter-title">Command Center Google Sheets</h2>
+                    <p class="chapter-desc">Menjadikan Google Sheets sebagai otak pengendali & database seluruh channel Anda.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header-flex">
+                        <div class="card-title-group">
+                            <div class="card-icon-pill">📊</div>
+                            <div>
+                                <h3 class="card-title">Struktur Database Tabel Konten Utama</h3>
+                                <span class="badge badge-blue">Google Sheets + n8n Trigger</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.92rem; color: var(--text-main); margin-bottom: 16px;">
+                         Google Sheets bekerja sebagai <em>Control Panel</em>. Anda tidak perlu membongkar kode n8n setiap kali ingin membuat konten baru. Cukup perbarui data di tabel ini.
+                    </p>
+
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nama Kolom Header</th>
+                                    <th>Tipe Data</th>
+                                    <th>Fungsi Otomasi n8n</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>ID_Konten</strong></td>
+                                    <td><span class="badge badge-purple">TEXT</span></td>
+                                    <td>Kode unik video (misal: <code>FACT-001</code>). Digunakan untuk penamaan file rendering.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Topik_Ide</strong></td>
+                                    <td><span class="badge badge-blue">TEXT</span></td>
+                                    <td>Ide kasar konten (misal: "5 Fakta Unik Luar Angkasa yang Mengerikan").</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Status_Proses</strong></td>
+                                    <td><span class="badge badge-warning">ENUM</span></td>
+                                    <td>Nilai: <code>READY</code>, <code>PROCESSING</code>, <code>DONE</code>, <code>ERROR</code>. Trigger n8n hanya membaca baris 'READY'.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Naskah_ChatGPT</strong></td>
+                                    <td><span class="badge badge-success">LONG TEXT</span></td>
+                                    <td>Diisi otomatis oleh n8n setelah ChatGPT API selesai menghasilkan script & visual prompt.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Audio_URL</strong></td>
+                                    <td><span class="badge badge-blue">URL</span></td>
+                                    <td>Link cloud storage hasil output MP3 dari ElevenLabs / OpenAI TTS API.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Video_Render_URL</strong></td>
+                                    <td><span class="badge badge-success">URL</span></td>
+                                    <td>Link file MP4 akhir yang siap diunggah ke YouTube API.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="callout callout-info">
+                        <div class="callout-icon">💡</div>
+                        <div class="callout-body">
+                            <div class="callout-title">Aturan Emas Otomasi Trigger:</div>
+                            Pastikan n8n menggunakan node <strong>Google Sheets Trigger (On Row Updated/Added)</strong> dengan filter kondisi <code>Status_Proses = READY</code>. Begitu n8n mengeksekusi baris tersebut, ubah statusnya menjadi <code>PROCESSING</code> agar tidak terjadi duplikasi pengerjaan!
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODUL 3 -->
+            <section id="modul-3" class="chapter-section">
+                <div class="chapter-header">
+                    <span class="chapter-badge">Modul 3</span>
+                    <h2 class="chapter-title">Otomasi Naskah dengan ChatGPT API (JSON Format)</h2>
+                    <p class="chapter-desc">Membuat script terstruktur dengan AI yang langsung bisa dipahami oleh node visual n8n.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header-flex">
+                        <div class="card-title-group">
+                            <div class="card-icon-pill">🧠</div>
+                            <div>
+                                <h3 class="card-title">Prompt Engineering Berbasis Output JSON Clean</h3>
+                                <p style="font-size: 0.85rem; color: var(--text-muted);">Memaksa ChatGPT mengembalikan naskah dalam format kode yang presisi.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p style="font-size: 0.92rem; color: var(--text-main); margin-bottom: 16px;">
+                        Agar n8n dapat memisahkan kalimat mana yang akan diubah menjadi suara (voiceover) dan kalimat mana yang dijadikan prompt gambar/video, kita wajib meminta ChatGPT untuk mengembalikan response berformat <strong>JSON (JavaScript Object Notation)</strong>.
+                    </p>
+
+                    <div class="prompt-container">
+                        <div class="prompt-header">
+                            <span class="prompt-tag">System Prompt ChatGPT API (Master Script Generator)</span>
+                            <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                        </div>
+                        <div class="prompt-content">You are an expert viral YouTube Shorts scriptwriter. 
+Generate a high-retention 30-second YouTube Shorts script about: "{{ $json.Topik_Ide }}"
+
+Strictly output ONLY a valid JSON object without markdown syntax or formatting wrapped inside brackets. Use the following JSON schema:
+
+{
+  "title": "Viral YouTube Shorts Title with Emojis",
+  "description": "SEO optimized description with #hashtags",
+  "tags": ["tag1", "tag2", "tag3"],
+  "voiceover_text": "Full continuous text to be read by TTS engine without visual notes.",
+  "scenes": [
+    {
+      "scene_number": 1,
+      "audio_segment": "Hook text for scene 1",
+      "visual_prompt": "Cinematic AI video prompt describing scene 1 in vivid detail, 8k, photorealistic --ar 9:16"
+    },
+    {
+      "scene_number": 2,
+      "audio_segment": "Body text for scene 2",
+      "visual_prompt": "Cinematic AI video prompt describing scene 2 in vivid detail, 8k, photorealistic --ar 9:16"
+    }
+  ]
+}</div>
+                    </div>
+
+                    <div class="callout callout-warning">
+                        <div class="callout-icon">⚠️</div>
+                        <div class="callout-body">
+                            <div class="callout-title">Pengaturan Penting di Node OpenAI n8n:</div>
+                            Aktifkan fitur <strong>JSON Mode</strong> pada parameter API OpenAI (Gunakan model <code>gpt-4o-mini</code> atau <code>gpt-4o</code>) dengan menyetel <code>response_format: { "type": "json_object" }</code> untuk menjamin hasil 100% tidak pernah error parser!
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODUL 4 -->
+            <section id="modul-4" class="chapter-section">
+                <div class="chapter-header">
+                    <span class="chapter-badge">Modul 4</span>
+                    <h2 class="chapter-title">Generasi Voiceover & Musik Latar AI (Suno & ElevenLabs)</h2>
+                    <p class="chapter-desc">Menghasilkan audio berkualitas radio sinematik secara otomatis via API Webhook.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header-flex">
+                        <div class="card-title-group">
+                            <div class="card-icon-pill">🎙️</div>
+                            <div>
+                                <h3 class="card-title">Arsitektur Pengolahan Suara & Background Music</h3>
+                                <p style="font-size: 0.85rem; color: var(--text-muted);">Suara ekspresif dan musik bebas hak cipta buatan AI.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-grid">
+                        <div class="step-card">
+                            <div class="step-badge">1</div>
+                            <h4 class="step-card-title">ElevenLabs API Node</h4>
+                            <p class="step-card-text">Mengirimkan string <code>voiceover_text</code> dari ChatGPT ke ElevenLabs API. Menggunakan voice model seperti 'Adam' atau 'Rachel' untuk intonasi manusiawi.</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-badge">2</div>
+                            <h4 class="step-card-title">Suno AI / Music API</h4>
+                            <p class="step-card-text">Menghasilkan musik latar instrumental pendek tanpa vokal sesuai mood video (Dark Ambient, Energetic Corporate, Lo-Fi Chill) via API/Webhook.</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-badge">3</div>
+                            <h4 class="step-card-title">Audio Mixer Integration</h4>
+                            <p class="step-card-text">Menggabungkan file suara utama (Volume 100%) dengan musik latar Suno (Volume 12-15%) secara presisi agar dialog tetap terdengar jelas.</p>
+                        </div>
+                    </div>
+
+                    <div class="prompt-container">
+                        <div class="prompt-header">
+                            <span class="prompt-tag">Prompt Generator Lirik & Style BGM Suno AI</span>
+                            <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                        </div>
+                        <div class="prompt-content">[Style: Cinematic Dark Tension Instrumental, Deep Bass, Suspenseful Synth Strings, 110 BPM, No Vocals]
+[Instrumental Breakdown]
+Dramatic opening pulse, crescendo building up with subtle percussion ticks, transitioning to smooth mysterious background atmospheric sound suitable for documentary voiceover.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODUL 5 -->
+            <section id="modul-5" class="chapter-section">
+                <div class="chapter-header">
+                    <span class="chapter-badge">Modul 5</span>
+                    <h2 class="chapter-title">Otomasi Generasi Video AI & Stitching Rendering</h2>
+                    <p class="chapter-desc">Menggabungkan klip video AI, sulih suara, dan subtitle animasi otomatis.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header-flex">
+                        <div class="card-title-group">
+                            <div class="card-icon-pill">🎬</div>
+                            <div>
+                                <h3 class="card-title">Integrasi Engine Video AI & Cloud Renderer</h3>
+                                <span class="badge badge-purple">Creatomate / Shotstack / FFmpeg API</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p style="font-size: 0.92rem; color: var(--text-main); margin-bottom: 16px;">
+                        Untuk menggabungkan klip video, audio, dan teks caption animasi berwarna-warni secara otomatis, kita menggunakan Cloud Video Rendering Service seperti <strong>Creatomate API</strong> atau <strong>Shotstack API</strong> melalui n8n HTTP Request node.
+                    </p>
+
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Visual Provider</th>
+                                    <th>Keunggulan</th>
+                                    <th>Metode Integrasi n8n</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Luma Dream Machine / Runway API</strong></td>
+                                    <td>Kualitas gerak video AI 3D/Realistis paling tinggi.</td>
+                                    <td>HTTP Request POST ke endpoint Async Video Generation.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Leonardo AI / Midjourney API</strong></td>
+                                    <td>Gambar konsisten, siap diubah jadi Motion Video 9:16.</td>
+                                    <td>REST API Payload dengan Webhook Callback.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Creatomate Cloud Renderer</strong></td>
+                                    <td>Auto-subtitle Word-by-Word ala Alex Hormozi + Auto Edit.</td>
+                                    <td>Official n8n Node atau JSON Template Render API.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="step-grid">
+                        <div class="step-card">
+                            <h4 class="step-card-title">Langkah A: Gen Video AI</h4>
+                            <p class="step-card-text">n8n mengulang (loop) array <code>scenes</code> dari JSON ChatGPT dan mengirim <code>visual_prompt</code> ke API Generator Video.</p>
+                        </div>
+                        <div class="step-card">
+                            <h4 class="step-card-title">Langkah B: Subtitle Synchronization</h4>
+                            <p class="step-card-text">Engine Renderer mendeteksi timestamp audio dari ElevenLabs untuk menampilkan teks kata demi kata secara otomatis di layar.</p>
+                        </div>
+                        <div class="step-card">
+                            <h4 class="step-card-title">Langkah C: Export File MP4</h4>
+                            <p class="step-card-text">Server Cloud menyelesaikan rendering video dalam waktu kurang dari 60 detik dan mengembalikan URL download MP4 siap pakai.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODUL 6 -->
+            <section id="modul-6" class="chapter-section">
+                <div class="chapter-header">
+                    <span class="chapter-badge">Modul 6</span>
+                    <h2 class="chapter-title">Auto-Upload via YouTube API & Monetisasi</h2>
+                    <p class="chapter-desc">Publikasi otomatis tanpa membuka browser dan strategi lipat gandakan income.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header-flex">
+                        <div class="card-title-group">
+                            <div class="card-icon-pill">🚀</div>
+                            <div>
+                                <h3 class="card-title">Setup YouTube Data API v3 di n8n</h3>
+                                <span class="badge badge-success">OAuth2 Credentials</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-grid">
+                        <div class="step-card">
+                            <div class="step-badge">1</div>
+                            <h4 class="step-card-title">Google Cloud Project</h4>
+                            <p class="step-card-text">Buat project baru di Google Cloud Console, aktifkan <code>YouTube Data API v3</code>, dan buat OAuth2 Client ID.</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-badge">2</div>
+                            <h4 class="step-card-title">Hubungkan ke Node YouTube</h4>
+                            <p class="step-card-text">Di n8n, tambahkan Node <strong>YouTube</strong> ➡️ Pilih Operation: <em>Upload Video</em> ➡️ Masukkan URL MP4 dari Modul 5.</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-badge">3</div>
+                            <h4 class="step-card-title">Map Metadata Otomatis</h4>
+                            <p class="step-card-text">Isi Judul, Deskripsi, Tags, dan Status Publikasi (<code>Public</code> atau <code>Scheduled</code>) langsung dari variabel JSON ChatGPT Modul 3!</p>
+                        </div>
+                    </div>
+
+                    <h4 style="font-size: 1rem; font-weight: 700; margin: 24px 0 12px 0;">3 Keran Penghasilan Pasif Pabrik Video AI:</h4>
+                    <ul class="check-list">
+                        <li><strong>YouTube AdSense (Shorts Feed & Longform):</strong> Dapatkan pendapatan iklan rutin tiap tanggal 21 dari jutaan views otomatis.</li>
+                        <li><strong>Shopee & Tokopedia Affiliate:</strong> Biarkan n8n menyisipkan link produk affiliate secara otomatis di deskripsi dan Pinned Comment video!</li>
+                        <li><strong>Penjualan Asset Digital / Course:</strong> Promosikan produk digital Lynk.id Anda di setiap video yang diproduksi oleh AI.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- MODUL 7 -->
+            <section id="modul-7" class="chapter-section">
+                <div class="chapter-header">
+                    <span class="chapter-badge">Modul 7</span>
+                    <h2 class="chapter-title">Blueprint Workflow n8n & Master Prompt</h2>
+                    <p class="chapter-desc">Koleksi prompt dan skema JSON siap pakai untuk langsung diimpor ke n8n Anda.</p>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">1. System Prompt Niche: Fakta Horor & Misteri Dunia</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Act as a documentary horror narrator. Write a gripping 30-second YouTube Shorts script about creepy unsolved mysteries.
+Topic: "{{ $json.Topik_Ide }}"
+Tone: Mysterious, dark, fast-paced, high retention.
+Output MUST be raw JSON:
+{
+  "title": "Misteri Tergelap Yang Dirahasiakan! 😱 #Shorts",
+  "description": "Fakta mengerikan yang jarang diketahui orang. Simak selengkapnya! #Misteri #FaktaHoror #Unsolved",
+  "tags": ["misteri", "horor", "fakta unik", "viral"],
+  "voiceover_text": "Di tahun 1928, sebuah kapal ditemukan terapung tanpa satu pun awak kapal di dalamnya. Semua makanan masih hangat di atas meja.",
+  "visual_prompt_scene_1": "Creepy abandoned vintage ship fog floating in mysterious ocean night, cinematic lighting, 8k --ar 9:16",
+  "visual_prompt_scene_2": "Detailed close up of untouched warm food on old wooden table inside dark wooden ship cabin, dramatic shadows --ar 9:16"
+}</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">2. System Prompt Niche: Edukasi Finansial & Bisnis Anak Muda</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Prompt</button>
+                    </div>
+                    <div class="prompt-content">Act as a high-energy financial mentor. Create a high-converting 30-second Shorts script.
+Topic: "{{ $json.Topik_Ide }}"
+Tone: Inspiring, energetic, actionable, punchy.
+Output MUST be raw JSON:
+{
+  "title": "Stop Lakukan Ini Kalau Mau Cepat Kaya di 2026! 💡 #Finansial",
+  "description": "Ubah kebiasaan finansialmu sekarang juga sebelum terlambat. #TipsKeuangan #SuksesMuda #Bisnis",
+  "tags": ["finansial", "investasi", "tips bisnis", "edukasi"],
+  "voiceover_text": "Jangan pernah simpan 100% tabunganmu di bank jika tidak ingin tergerus inflasi. Lakukan 3 langkah emas ini!",
+  "visual_prompt_scene_1": "Futuristic 3D gold coins stack growing infinitely, glowing neon charts background, cinematic composition --ar 9:16",
+  "visual_prompt_scene_2": "Confident young entrepreneur looking at futuristic holographic stock charts on smartphone, clean aesthetic --ar 9:16"
+}</div>
+                </div>
+
+                <div class="prompt-container">
+                    <div class="prompt-header">
+                        <span class="prompt-tag">3. n8n Master Node Code Snippet (HTTP Request OpenAI API)</span>
+                        <button class="btn-copy" onclick="copyPrompt(this)">📋 Salin Code</button>
+                    </div>
+                    <div class="prompt-content">{
+  "name": "OpenAI Script Generator",
+  "type": "n8n-nodes-base.httpRequest",
+  "position": [450, 300],
+  "parameters": {
+    "method": "POST",
+    "url": "https://api.openai.com/v1/chat/completions",
+    "authentication": "genericCredentialType",
+    "genericAuthType": "httpHeaderAuth",
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "{\n  \"model\": \"gpt-4o-mini\",\n  \"response_format\": { \"type\": \"json_object\" },\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are an automated YouTube script writer. Respond in strict JSON format.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Create a script about {{ $json.Topik_Ide }}\"\n    }\n  ]\n}"
+  }
+}</div>
+                </div>
+
+                <div class="callout callout-info" style="margin-top: 32px;">
+                    <div class="callout-icon">🏆</div>
+                    <div class="callout-body">
+                        <div class="callout-title">Langkah Eksekusi Hari Pertama Anda:</div>
+                        1. Install n8n di VPS lokal/cloud (Render/Railway/DigitalOcean).<br>
+                        2. Dapatkan API Key dari OpenAI, ElevenLabs, dan Google Cloud.<br>
+                        3. Buat 1 spreadsheet Google Sheets dengan 10 ide video pertama Anda.<br>
+                        4. Jalankan alur kerja n8n dan saksikan video YouTube Anda terbuat otomatis!
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+</div>
+
+<script>
+    function copyPrompt(btn) {
+        const container = btn.closest('.prompt-container');
+        const content = container.querySelector('.prompt-content').innerText;
+        navigator.clipboard.writeText(content).then(() => {
+            const orig = btn.innerHTML;
+            btn.innerHTML = '✅ Tersalin!';
+            btn.style.background = '#10b981';
+            btn.style.color = '#ffffff';
+            setTimeout(() => {
+                btn.innerHTML = orig;
+                btn.style.background = '';
+                btn.style.color = '';
+            }, 2000);
+        });
+    }
+
+    const btnToggle = document.getElementById('btnToggleSidebar');
+    const sidebar = document.getElementById('sidebarNav');
+    if (btnToggle && sidebar) {
+        btnToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+            });
+        });
+    }
+
+    function toggleTheme() {
+        const curr = document.documentElement.getAttribute('data-theme');
+        const target = curr === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', target);
+        localStorage.setItem('theme', target);
+    }
+    document.getElementById('btnThemeMobile')?.addEventListener('click', toggleTheme);
+    document.getElementById('btnThemeDesktop')?.addEventListener('click', toggleTheme);
+
+    const saved = localStorage.getItem('theme');
+    if (saved) {
+        document.documentElement.setAttribute('data-theme', saved);
+    }
+
+    const sections = document.querySelectorAll('.chapter-section');
+    const navItems = document.querySelectorAll('.nav-item');
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            const top = section.offsetTop - 120;
+            if (window.pageYOffset >= top) {
+                current = section.getAttribute('id');
+            }
+        });
+        navItems.forEach(item => {
+            item.classList.remove('active');
+            if (item.getAttribute('href') === '#' + current) {
+                item.classList.add('active');
+            }
+        });
+    });
+</script>
+</body>
+</html>

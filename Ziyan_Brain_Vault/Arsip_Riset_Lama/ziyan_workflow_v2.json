@@ -1,0 +1,390 @@
+{
+  "name": "ZIYAN Shopee Affiliate -> FB Page Carousel (Firestore + 9router + PIL)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "triggerAtMinuteInterval": 87
+            }
+          ]
+        }
+      },
+      "name": "Schedule (tiap hari 09:00)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        250,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1wLqdaYcjdaxXD1nEXPIv9PHObFhQPCi80cSiUHqEG8w"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Sheet1"
+        },
+        "options": {
+          "filter": "posted != TRUE"
+        }
+      },
+      "name": "Sheets: Ambil 1 belum posted",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        500,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const r = items[0].json;\nreturn [{ json: {\n  docId: r.rowNumber || r.id,\n  link_affiliate: r.link_affiliate || '',\n  url_foto_asli: r.url_foto_asli || '',\n  kategori: r.kategori || '',\n  harga: r.harga || '',\n  diskon: r.diskon || '',\n  caption: r.caption || '',\n  is_video: (r.url_foto_asli||'').match(/\\.(mp4|mov|webm)$/i) ? true : false\n}}];"
+      },
+      "name": "Parse Sheet Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        750,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = items[0].json;\n// caption dari AI response\nconst aiCaption = (d.choices?.[0]?.message?.content || d.caption || '').trim();\nconst bgPrompt = `Hyper-realistic lifestyle background for a ${d.kategori} product, soft studio lighting, premium e-commerce look, no text, no watermark`;\nconst promoPrompt = `Clean minimal promo card background, ${d.kategori} theme, modern, elegant, space for product photo, no text`;\nreturn [{ json: { bg_prompt: bgPrompt, promo_prompt: promoPrompt, caption: aiCaption, link: d.link_affiliate, foto: d.url_foto_asli, kategori: d.kategori, harga: d.harga, diskon: d.diskon, docId: d.docId } }];"
+      },
+      "name": "Build Prompts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:20128/v1/images/generations",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.HERMES_CUSTOM_9ROUTER_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"model\":\"cf/@cf/black-forest-labs/flux-1-schnell\",\"prompt\":\"{{ $json.bg_prompt }}\",\"size\":\"1024x1024\",\"n\":1}",
+        "options": {}
+      },
+      "name": "9router: Generate BG",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:20128/v1/images/generations",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.HERMES_CUSTOM_9ROUTER_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"model\":\"cf/@cf/black-forest-labs/flux-1-schnell\",\"prompt\":\"{{ $json.promo_prompt }}\",\"size\":\"1024x1024\",\"n\":1}",
+        "options": {}
+      },
+      "name": "9router: Generate Promo BG",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1250,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const py = require('child_process');\nconst item = items[0].json;\nconst bgUrl = (item.bg_data && (item.bg_data.data?.[0]?.url || item.bg_data.data?.[0]?.b64_json)) ? (item.bg_data.data[0].url || item.bg_data.data[0].b64_json) : (item.bg_url || '');\nconst promoUrl = (item.promo_data && (item.promo_data.data?.[0]?.url || item.promo_data.data?.[0]?.b64_json)) ? (item.promo_data.data[0].url || item.promo_data.data[0].b64_json) : (item.promo_url || '');\nconst foto = item.foto;\nconst script = `\nimport sys, json, io, base64, requests\nfrom PIL import Image\nbg_url, promo_url, foto_url = sys.argv[1], sys.argv[2], sys.argv[3]\ndef load(u):\n    if u.startswith('data:'):\n        b = base64.b64decode(u.split(',',1)[1]); return Image.open(io.BytesIO(b)).convert('RGBA')\n    r = requests.get(u, timeout=30); r.raise_for_status(); return Image.open(io.BytesIO(r.content)).convert('RGBA')\ndef composite(bg, fg, ratio):\n    bg = bg.resize((1080,1080), Image.LANCZOS)\n    w = int(1080*ratio); h = int(w*fg.height/fg.width)\n    if h>1080: h=1080; w=int(h*fg.width/fg.height)\n    fg = fg.resize((w,h), Image.LANCZOS)\n    c = bg.copy(); x=(1080-w)//2; y=(1080-h)//2\n    if fg.mode=='RGBA': c.paste(fg,(x,y),fg)\n    else: c.paste(fg,(x,y))\n    buf=io.BytesIO(); c.save(buf,format='PNG'); return base64.b64encode(buf.getvalue()).decode()\nbg=load(bg_url); promo=load(promo_url); foto=load(foto_url)\nslides=[]\nslides.append(composite(bg, foto, 0.62))\nslides.append(composite(bg, foto, 0.78))\nslides.append(composite(promo, foto, 0.5))\nprint(json.dumps({'slides':slides}))\n`;\nconst out = py.execSync('python3', [ '-c', script, bgUrl, promoUrl, foto ], { encoding: 'utf-8', maxBuffer: 1024*1024*50 });\nconst res = JSON.parse(out.trim());\nreturn [{ json: { ...item, slides: res.slides } }];"
+      },
+      "name": "Composite 3 Slides (PIL)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1500,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1wLqdaYcjdaxXD1nEXPIv9PHObFhQPCi80cSiUHqEG8w"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Sheet1"
+        },
+        "updateKey": "rowNumber",
+        "matchValue": "={{ $json.docId }}",
+        "columns": {
+          "mappingMode": "autoMapInputData"
+        }
+      },
+      "name": "Sheets: Mark Posted",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2500,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v19.0/975723622288353/photos",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": []
+        },
+        "sendBody": true,
+        "contentType": "multipartFormData",
+        "specifyBody": "json",
+        "jsonBody": "={\"message\":\"{{ $json.caption }}\\n\\n\ud83d\udd17 Link: {{ $json.link }}\",\"access_token\":\"{{ $env.FB_PAGE_TOKEN }}\"}",
+        "options": {},
+        "binaryProperty": "data"
+      },
+      "name": "FB: Post Photo + Link",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2000,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:20128/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.HERMES_CUSTOM_9ROUTER_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"model\":\"openrouter/auto\",\"messages\":[{\"role\":\"user\",\"content\":\"Buat caption promo Shopee Affiliate untuk produk {{ $json.kategori }}. Harga Rp{{ $json.harga }}, diskon {{ $json.diskon }}%. Max 2 kalimat, ada emoji, ada ajakan klik link. Jangan pakai hashtag.\"}],\"max_tokens\":200}",
+        "options": {}
+      },
+      "name": "AI: Generate Caption",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        900,
+        550
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v19.0/975723622288353/videos",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": []
+        },
+        "sendBody": true,
+        "contentType": "multipartFormData",
+        "specifyBody": "json",
+        "jsonBody": "={\"description\":\"{{ $json.caption }}\\n\\n\ud83d\udd17 Link: {{ $json.link_affiliate }}\",\"access_token\":\"{{ $env.FB_PAGE_TOKEN }}\"}",
+        "options": {}
+      },
+      "name": "FB: Upload Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2000,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "command": "={{ \"python3 -c \\\"import os,sys; from requests_oauthlib import OAuth1Session; CK=os.environ['X_CK']; CS=os.environ['X_CS']; AT=os.environ['X_AT']; ATS=os.environ['X_ATS']; o=OAuth1Session(CK,client_secret=CS,resource_owner_key=AT,resource_owner_secret=ATS); r=o.post('https://api.twitter.com/2/tweets', json={'text': '''\" + $json.caption + ' ' + $json.link_affiliate + \"'''}); print(r.status_code, r.text[:100])\\\"\" }}",
+        "env": {
+          "X_CK": "={{ $env.X_CONSUMER_KEY }}",
+          "X_CS": "={{ $env.X_CONSUMER_SECRET }}",
+          "X_AT": "={{ $env.X_ACCESS_TOKEN }}",
+          "X_ATS": "={{ $env.X_ACCESS_TOKEN_SECRET }}"
+        }
+      },
+      "name": "X: Post Tweet",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        2300,
+        400
+      ]
+    }
+  ],
+  "connections": {
+    "Schedule (tiap hari 09:00)": {
+      "main": [
+        [
+          {
+            "node": "Firestore: Ambil 1 belum posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Firestore: Ambil 1 belum posted": {
+      "main": [
+        [
+          {
+            "node": "Parse Firestore Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Firestore Doc": {
+      "main": [
+        [
+          {
+            "node": "AI: Generate Caption",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Prompts": {
+      "main": [
+        [
+          {
+            "node": "9router: Generate BG",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "9router: Generate Promo BG",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "9router: Generate BG": {
+      "main": [
+        [
+          {
+            "node": "Composite 3 Slides (PIL)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "9router: Generate Promo BG": {
+      "main": [
+        [
+          {
+            "node": "Composite 3 Slides (PIL)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FB: Post Photo + Link": {
+      "main": [
+        [
+          {
+            "node": "Sheets: Mark Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI: Generate Caption": {
+      "main": [
+        [
+          {
+            "node": "Build Prompts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Composite 3 Slides (PIL)": {
+      "main": [
+        [
+          {
+            "node": "FB: Post Photo + Link",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "FB: Upload Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FB: Upload Video": {
+      "main": [
+        [
+          {
+            "node": "Sheets: Mark Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

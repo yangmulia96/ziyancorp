@@ -1,0 +1,202 @@
+{
+  "name": "🎬 AutoTube Shorts Factory",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "id": "node-schedule",
+      "name": "⏰ Jadwal (Tiap 6 Jam)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "autotube-trigger",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "node-webhook",
+      "name": "🔔 Webhook Manual Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [100, 480],
+      "webhookId": "autotube-trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "// === TOPIC GENERATOR ===\n// Pilih topik secara acak atau ambil dari input webhook\nconst topics = [\n  \"5 Fakta AI yang Mengubah Dunia\",\n  \"Cara Cepat Belajar Coding Tanpa Kelas\",\n  \"Rahasia Produktivitas Orang Sukses\",\n  \"Tips Trading Crypto untuk Pemula\",\n  \"Teknologi yang Akan Menggantikan Pekerjaan Manusia\",\n  \"5 Aplikasi AI Gratis yang Wajib Kamu Coba\",\n  \"Cara Passive Income dari Internet\",\n  \"Hack Otak untuk Belajar 2x Lebih Cepat\"\n];\n\n// Ambil dari webhook body jika ada, atau random\nconst webhookBody = $input.first()?.json?.body || {};\nconst topic = webhookBody.topic || topics[Math.floor(Math.random() * topics.length)];\nconst niche = webhookBody.niche || 'teknologi & produktivitas';\nconst voice = webhookBody.voice || 'id-ID-ArdiNeural';\nconst platforms = webhookBody.platforms || ['telegram', 'facebook'];\n\nreturn [{\n  json: {\n    topic,\n    niche,\n    voice,\n    platforms\n  }\n}];"
+      },
+      "id": "node-topic",
+      "name": "🎯 Pilih Topik",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [340, 390]
+    },
+    {
+      "parameters": {
+        "jsCode": "// === SCRIPTWRITER ===\n// Generate naskah dengan struktur hook + scenes + CTA\nconst { topic, niche, voice, platforms } = $input.first().json;\n\n// Template skrip berdasarkan topik\nconst scriptTemplates = {\n  default: [\n    {\n      text: `STOP SCROLLING! Ini fakta tentang ${topic} yang WAJIB kamu tahu!`,\n      image_prompt: `dramatic cinematic opener, dark background, glowing text effect, 9:16 portrait, ultra HD`\n    },\n    {\n      text: `Fakta pertama yang bikin kamu terkejut adalah ini. Dan kebanyakan orang belum tahu tentang ${topic}.`,\n      image_prompt: `shocked person looking at phone, vibrant colors, modern office, 9:16 portrait cinematic`\n    },\n    {\n      text: `Nomor dua yang paling penting. ${topic} bisa mengubah cara kamu bekerja selamanya.`,\n      image_prompt: `futuristic technology concept, blue neon lights, abstract digital waves, 9:16 portrait`\n    },\n    {\n      text: `Fakta ketiga yang bahkan para ahli pun akui. Ini bukan hype. Ini nyata.`,\n      image_prompt: `professional expert presenting data charts, modern minimal design, 9:16 portrait`\n    },\n    {\n      text: `Jika kamu suka konten seperti ini, follow sekarang dan klik notifikasi biar gak ketinggalan!`,\n      image_prompt: `subscribe button animation, like and follow icons, vibrant gradient background, 9:16 portrait`\n    }\n  ]\n};\n\nconst scenes = scriptTemplates.default;\nconst fullScript = scenes.map(s => s.text).join(' ');\nconst title = `${topic} | Tips ${niche} #shorts`;\nconst description = `${fullScript}\\n\\n#shorts #${niche.replace(/ /g,'').replace('&','')} #viral #tips`;\n\nreturn [{\n  json: {\n    topic,\n    niche,\n    voice,\n    platforms,\n    scenes,\n    title,\n    description\n  }\n}];"
+      },
+      "id": "node-scriptwriter",
+      "name": "✍️ Scriptwriter AI",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [580, 390]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:7860/generate-short",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={{ JSON.stringify({ scenes: $json.scenes, title: $json.title, description: $json.description, voice: $json.voice }) }}",
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "id": "node-render",
+      "name": "🎬 Render Video Engine",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [820, 390]
+    },
+    {
+      "parameters": {
+        "jsCode": "const renderResult = $input.first().json;\nconst prevData = $('✍️ Scriptwriter AI').first().json;\n\nif (renderResult.status !== 'success') {\n  throw new Error('Render gagal: ' + (renderResult.message || 'unknown error'));\n}\n\nreturn [{\n  json: {\n    video_path: renderResult.video_path,\n    title: prevData.title,\n    description: prevData.description,\n    platforms: prevData.platforms,\n    topic: prevData.topic\n  }\n}];"
+      },
+      "id": "node-check",
+      "name": "✅ Cek Hasil Render",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1060, 390]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:7860/publish",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={{ JSON.stringify({ video_path: $json.video_path, title: $json.title, description: $json.description, platforms: $json.platforms }) }}",
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "id": "node-publish",
+      "name": "🚀 Publish ke Platform",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1300, 390]
+    },
+    {
+      "parameters": {
+        "jsCode": "const publishResult = $input.first().json;\nconst prevData = $('✅ Cek Hasil Render').first().json;\n\nconst successPlatforms = Object.entries(publishResult.results || {})\n  .filter(([k, v]) => v === 'ok')\n  .map(([k]) => k);\n\nconst failedPlatforms = Object.entries(publishResult.results || {})\n  .filter(([k, v]) => v !== 'ok')\n  .map(([k, v]) => `${k}: ${v}`);\n\nconst report = [\n  `✅ *Video Berhasil Dipublish!*`,\n  `📌 Topik: ${prevData.topic}`,\n  `🎬 File: ${prevData.video_path}`,\n  `✅ Sukses: ${successPlatforms.join(', ') || 'tidak ada'}`,\n  failedPlatforms.length ? `❌ Gagal: ${failedPlatforms.join(', ')}` : '',\n].filter(Boolean).join('\\n');\n\nconsole.log(report);\nreturn [{ json: { report, ...publishResult } }];"
+      },
+      "id": "node-report",
+      "name": "📊 Laporan Hasil",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1540, 390]
+    },
+    {
+      "parameters": {
+        "chatId": "-1004373452633",
+        "text": "={{ $json.report }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "node-telegram-report",
+      "name": "📱 Notif ke Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1780, 390],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-bot-cred",
+          "name": "Telegram Bot Ziyan"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "⏰ Jadwal (Tiap 6 Jam)": {
+      "main": [
+        [{ "node": "🎯 Pilih Topik", "type": "main", "index": 0 }]
+      ]
+    },
+    "🔔 Webhook Manual Trigger": {
+      "main": [
+        [{ "node": "🎯 Pilih Topik", "type": "main", "index": 0 }]
+      ]
+    },
+    "🎯 Pilih Topik": {
+      "main": [
+        [{ "node": "✍️ Scriptwriter AI", "type": "main", "index": 0 }]
+      ]
+    },
+    "✍️ Scriptwriter AI": {
+      "main": [
+        [{ "node": "🎬 Render Video Engine", "type": "main", "index": 0 }]
+      ]
+    },
+    "🎬 Render Video Engine": {
+      "main": [
+        [{ "node": "✅ Cek Hasil Render", "type": "main", "index": 0 }]
+      ]
+    },
+    "✅ Cek Hasil Render": {
+      "main": [
+        [{ "node": "🚀 Publish ke Platform", "type": "main", "index": 0 }]
+      ]
+    },
+    "🚀 Publish ke Platform": {
+      "main": [
+        [{ "node": "📊 Laporan Hasil", "type": "main", "index": 0 }]
+      ]
+    },
+    "📊 Laporan Hasil": {
+      "main": [
+        [{ "node": "📱 Notif ke Telegram", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "versionId": "autotube-v1",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}

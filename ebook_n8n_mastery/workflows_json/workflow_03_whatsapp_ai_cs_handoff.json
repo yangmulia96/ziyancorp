@@ -1,0 +1,193 @@
+{
+  "name": "03 - WhatsApp AI Customer Service (WAHA + Human Handoff)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "waha-incoming-message",
+        "options": {}
+      },
+      "id": "node-waha-webhook",
+      "name": "WAHA Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.body.fromMe }}",
+              "value2": false
+            }
+          ]
+        }
+      },
+      "id": "node-ignore-self",
+      "name": "Ignore Own Messages",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        420,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "dataType": "string",
+        "value1": "={{ $json.body.body.toLowerCase() }}",
+        "rules": {
+          "rules": [
+            {
+              "value2": "komplain|marah|admin|batal|penipu|cs manusia",
+              "operation": "regex",
+              "output": 0
+            }
+          ]
+        },
+        "fallbackOutput": 1
+      },
+      "id": "node-switch-intent",
+      "name": "Check Complaint / Escalation",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 2,
+      "position": [
+        640,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "-1001234567890",
+        "text": "=\ud83d\udea8 *ESKALASI CS DIPERLUKAN*\n\n*Pelanggan:* {{ $('WAHA Webhook Trigger').item.json.body.from }}\n*Pesan:* \"{{ $('WAHA Webhook Trigger').item.json.body.body }}\"\n*Waktu:* {{ $now.setZone('Asia/Jakarta').toFormat('dd LLL yyyy, HH:mm') }} WIB\n\n_Segera balas secara manual di WhatsApp!_",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "node-notify-admin-telegram",
+      "name": "Alert Admin via Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        900,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gemini-1.5-flash",
+        "options": {
+          "systemMessage": "Kamu adalah Customer Service ramah dari ZiyanCorp. Jawab dengan sopan, singkat (maksimal 2-3 kalimat), dan bahasa Indonesia yang hangat. SOP: Pengiriman 1-2 hari kerja, Garansi 30 hari ganti baru. Jika ada kendala teknis berat, tawarkan mereka untuk menunggu dihubungkan ke teknisi."
+        }
+      },
+      "id": "node-gemini-agent",
+      "name": "Gemini AI CS Engine",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        900,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3,
+        "unit": "seconds"
+      },
+      "id": "node-wait-typing",
+      "name": "Wait Human Typing (3s)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1140,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:3000/api/sendText",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"chatId\": \"{{ $('WAHA Webhook Trigger').item.json.body.from }}\",\n  \"text\": \"{{ $json.output }}\",\n  \"session\": \"default\"\n}",
+        "options": {}
+      },
+      "id": "node-waha-reply",
+      "name": "Send Reply via WAHA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1360,
+        420
+      ]
+    }
+  ],
+  "connections": {
+    "WAHA Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Ignore Own Messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ignore Own Messages": {
+      "main": [
+        [
+          {
+            "node": "Check Complaint / Escalation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Complaint / Escalation": {
+      "main": [
+        [
+          {
+            "node": "Alert Admin via Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gemini AI CS Engine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini AI CS Engine": {
+      "main": [
+        [
+          {
+            "node": "Wait Human Typing (3s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait Human Typing (3s)": {
+      "main": [
+        [
+          {
+            "node": "Send Reply via WAHA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

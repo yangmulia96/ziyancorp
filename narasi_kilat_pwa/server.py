@@ -62,7 +62,7 @@ NICHE_VOCAB = {
     },
     "gadget": {
         "benefits": ["daya tahannya badak dan materialnya super presisi", "suaranya jernih dengan bass bulat no delay", "pengisian dayanya ngebut dan gak bikin device panas", "desain minimalis modern yang gampang dibawa kemana-mana", "proteksi maksimal dari benturan dan jatuh"],
-        "pain_points": ["sering apes beli aksesoris murah tapi seminggu udah rusak", "suara headset kresek-kresek pas diajak gaming atau meeting", "baterai gampang drop dan kabel cepet putus"],
+        "pain_points": ["sering apes beli aksesoris abal-abal tapi seminggu udah rusak", "suara headset kresek-kresek pas diajak gaming atau meeting", "baterai gampang drop dan kabel cepet putus"],
         "proofs": ["chipset cerdas dengan kompatibilitas universal", "material anti-scratch yang beneran kokoh", "ribuan review bintang lima membuktikan"]
     },
     "home": {
@@ -76,18 +76,18 @@ NICHE_VOCAB = {
         "proofs": ["sekali coba dijamin susah berhenti ngunyah", "best seller yang selalu sold out ribuan pcs", "favorit keluarga buat nemenin santai"]
     },
     "general": {
-        "benefits": ["kualitas bahan terjamin dan awet pemakaian jangka panjang", "desain praktis multifungsi bikin hidup makin simpel", "harga terjangkau dengan mutu yang jauh di atas ekspektasi", "finishing rapi dan detailnya beneran premium"],
-        "pain_points": ["capek buang uang buat barang yang kualitasnya zonk", "bingung cari produk yang beneran terbukti bagus dan awet", "butuh solusi praktis yang hemat tapi gak murahan"],
+        "benefits": ["kualitas bahan terjamin dan awet pemakaian jangka panjang", "desain praktis multifungsi bikin hidup makin simpel", "kualitas premium dengan mutu yang jauh di atas ekspektasi", "finishing rapi dan detailnya beneran premium"],
+        "pain_points": ["capek buang uang buat barang yang kualitasnya zonk", "bingung cari produk yang beneran terbukti bagus dan awet", "butuh solusi praktis yang teruji dan berkualitas premium"],
         "proofs": ["ribuan pembeli udah kasih ulasan bintang 5", "seller terpercaya dengan pengiriman super cepat", "garansi kepuasan yang bikin hati tenang"]
     }
 }
 
 CTA_LIST = [
-    "Yuk mumpung lagi ada promo voucher diskon dan gratis ongkir, langsung tap keranjang kuning sekarang sebelum kehabisan!",
-    "Jangan tunggu sampai kuota diskonnya habis ya, buruan amankan pesananmu di keranjang kuning sekarang juga!",
-    "Biar gak nyesel pas promo berakhir, langsung amankan di keranjang kuning mumpung stoknya masih lengkap!",
-    "Yang mau dapetin harga termurahnya hari ini, langsung serbu keranjang kuning di pojok kiri bawah ya!",
-    "Mumpung sellernya lagi bagi-bagi voucher khusus, yuk langsung klik keranjang kuning sekarang!"
+    "Biar gak kehabisan varian favoritmu, langsung tap keranjang kuning di pojok kiri bawah sekarang juga!",
+    "Jangan tunggu sampai stoknya ludes ya, buruan amankan produk incaranmu di keranjang kuning sekarang!",
+    "Mumpung barangnya ready dan siap kirim, yuk langsung checkout di keranjang kuning sekarang juga!",
+    "Biar penampilan makin stylish dan rapi seharian, langsung serbu keranjang kuning sebelum kehabisan!",
+    "Yang mau samaan dan ngerasain kenyamanannya, yuk langsung klik keranjang kuning di bawah sekarang!"
 ]
 
 def generate_dynamic_naskah_matrix(product_raw, hook_type="auto", strategy="AIDA", duration=10, category="auto"):
@@ -115,31 +115,31 @@ def generate_dynamic_naskah_matrix(product_raw, hook_type="auto", strategy="AIDA
             f"Stop buang uang dan waktu! Kalau kamu sering ngalamin {p1}, wajib tonton ini sampai habis."
         ],
         "shock": [
-            f"Jujur pas unboxing {prod} ini, aku sempat mikir sellernya salah pasang harga!",
-            f"Plot twist ter-epic bulan ini! Modal receh tapi dapet {prod} se-mewah ini?"
+            f"Jujur pas unboxing {prod} ini, aku beneran speechless sama kualitas detailnya!",
+            f"Plot twist ter-epic bulan ini! Akhirnya nemu {prod} dengan estetika se-mewah ini!"
         ],
         "secret": [
             f"Pantesan toko sebelah ketar-ketir, ternyata rahasia {prod} ini karena {b1}!",
             f"Aku sebenernya mau simpan rahasia ini sendiri, tapi {prod} ini beneran terlalu bagus buat gak di-spill!"
         ],
         "fomo": [
-            f"Bocoran info penting! Promo flash sale {prod} ini sisa kuotanya tinggal hitungan jam!",
-            f"Kabar gawat buat yang lagi incer {prod} viral ini! Stok diskonnya makin menipis parah!"
+            f"Bocoran info penting! Varian favorit {prod} ini sisa kuotanya tinggal sedikit banget!",
+            f"Kabar gawat buat yang lagi incer {prod} viral ini! Stok batch produksinya makin menipis parah!"
         ],
         "story": [
             f"Kemarin pas lagi kumpul, tiba-tiba temen-temenku pada salfok nanyain {prod} yang aku bawa...",
             f"Awalnya cuma iseng checkout {prod} ini karena penasaran, eh taunya malah jadi barang paling kepakai tiap hari!"
         ],
         "debunk": [
-            f"Banyak yang ngira {prod} berkualitas itu harus mahal jutaan, padahal mereka belum tahu ini...",
-            f"Siapa bilang barang bagus itu bikin dompet nangis? Coba liat {prod} yang satu ini!"
+            f"Banyak yang ngira {prod} se-estetik ini susah dicari, padahal rahasianya ada di sini...",
+            f"Siapa bilang barang berkualitas itu susah dicari? Coba liat {prod} yang satu ini!"
         ],
         "niche": [
-            f"Khusus buat kamu yang pengen tampil percaya diri dengan budget hemat, sini merapat!",
+            f"Khusus buat kamu yang pengen tampil percaya diri dan elegan seharian, sini merapat!",
             f"Panggilan buat pejuang sat-set yang butuh {prod} praktis dan anti ribet!"
         ],
         "battle": [
-            f"Battle jujur! Barang mahal mall vs {prod} viral keranjang kuning, kira-kira menang mana?",
+            f"Battle jujur! Brand ternama mall vs {prod} viral keranjang kuning, kira-kira menang mana?",
             f"Gak nyangka kualitas {prod} ini berani diadu sama brand mahal ternama!"
         ],
         "transform": [
@@ -173,7 +173,7 @@ def generate_dynamic_naskah_matrix(product_raw, hook_type="auto", strategy="AIDA
     var_3 = f"{v3_hook} Pas dicoba, beneran juara banget karena {b2}. Nyesel banget kalau gak tahu dari dulu. {cta3}"
 
     # VARIATION 4: Value Stacking & Urgensi / Smart Shopper (Hook D + Daily Benefit + Flash Sale + CTA)
-    var_4 = f"{v4_hook} Kapan lagi dapet {prod} yang {b1} dengan harga se-hemat ini? {cta4}"
+    var_4 = f"{v4_hook} Kapan lagi dapet {prod} yang {b1} dan beneran awet dipakai? {cta4}"
 
     return {
         "category_detected": cat,
@@ -209,7 +209,7 @@ def generate_ugc_studio_package(product_raw, num_scenes=2, model_style="Hijab Ca
             "camera": "Eye-level handheld, slow push-in mengikuti langkah model, vertical 9:16 framing.",
             "lighting": "Natural soft daylight dengan warm cinematic glow.",
             "background": f"{setting} dengan bokeh lembut di latar belakang.",
-            "vo": f"Outfit senyaman ini beneran bikin percaya diri seharian! {prod} kualitas juara, yuk tap keranjang kuning sekarang mumpung lagi diskon!",
+            "vo": f"Outfit senyaman ini beneran bikin percaya diri seharian! {prod} kualitas juara, yuk tap keranjang kuning sekarang mumpung stok masih ready!",
             "omni_prompt": f"UGC TikTok video recorded on iPhone 15 Pro, vertical 9:16, photorealistic. A gorgeous {model_style} wearing {prod} walking gracefully towards camera in {setting}. Realistic soft fabric movement and flow as she turns and smiles naturally at camera. Eye level handheld camera tracking with slow push in. Soft warm natural daylight, authentic influencer lifestyle aesthetic, crisp 4k 60fps."
         })
     elif num_scenes == 2:
@@ -271,7 +271,7 @@ def generate_ugc_studio_package(product_raw, num_scenes=2, model_style="Hijab Ca
             "camera": "Close-up to medium handheld shot.",
             "lighting": "Soft focus portrait lighting.",
             "background": f"{setting}.",
-            "vo": f"Jahitan dan detailnya se-mewah ini tapi harganya terjangkau! Yuk buruan klaim promonya di keranjang kuning sekarang juga!",
+            "vo": f"Jahitan dan detailnya se-mewah ini dengan finishing rapi! Yuk buruan amankan di keranjang kuning sekarang juga sebelum kehabisan!",
             "omni_prompt": f"Scene 3 continuous video, 9:16 vertical, photorealistic. Close-up shot of {model_style} model touching the sleeve and collar details of {prod} in {setting}. She smiles cheerfully at camera and gestures to bottom left corner. Crisp 4k, natural daylight, authentic creator look."
         })
 
