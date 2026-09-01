@@ -5,6 +5,14 @@ build/
 .next/
 .vercel/
 
+# Heavy binaries & large assets
+imagemagick/
+research/
+assets/
+*.zip
+*.tar.gz
+*.exe
+
 # Python & virtual environments
 __pycache__/
 *.py[cod]
