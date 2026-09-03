@@ -16,7 +16,7 @@
 | **Colab MCP & CLI** | `C:\Users\arija\Desktop\colab-mcp` & `google-colab-cli` | Jembatan eksekusi Google Colab untuk render video AI / ComfyUI. | 🟢 **ACTIVE TOOL** |
 | **Output Master E-Books** | `C:\Users\arija\ziyancorp\output_ebooks` | Bundel HTML & PDF E-Book monetisasi Lynk.id. | 🟢 **ASSET VAULT** |
 | **AI Video Production** | `C:\Users\arija\ziyancorp\scenic_wildlife_bot` & `MoneyPrinterTurbo` | Automation engine video vertical (Shorts/TikTok/Reels). | 🟢 **ACTIVE REPO** |
-| **Bridge Shared Memory** | `C:\Users\arija\ZIYAN_BRIDGE\SHARED_MEMORY.md` | Protokol komunikasi cross-agent antar window Antigravity. | 🟢 **BRIDGE ACTIVE** |
+| **Bridge Shared Memory** | `C:\Users\arija\ZIYAN_BRIDGE\HERMES_ANTIGRAVITY_MANUS_SHARED_MEMORY.md` | Protokol komunikasi cross-agent antar window Antigravity. | 🟢 **BRIDGE ACTIVE** |
 
 ---
 
@@ -43,6 +43,15 @@ https://s.shopee.co.id/xxxxxx atau https://vt.tokopedia.com/xxxxxx
 1. **Persona Eksekutor Sat-Set:** Dilarang menjawab pasif seperti Customer Service. Wajib langsung eksekusi, pecahkan masalah, dan laporkan hasil jadinya.
 2. **Anti-File-Berceceran:** Dilarang membuat file scratch atau log di root `C:\Users\arija\`. Semua file scratch wajib disimpan di folder scratch conversation atau dihapus setelah eksekusi selesai.
 3. **Kredensial Aman:** Semua kredensial dan API Key disimpan terpusat di `Ziyan_Brain_Vault/credentials/` dan `token_vault.json`.
+
+---
+
+## 💰 4. DAFTAR LINK MONETISASI & AFFILIATE RESMI
+
+| Program | Referral / Store URL | Target & Fungsi |
+| :--- | :--- | :--- |
+| **xKiro AI Gateway** | `https://xkiro.com/ref/99KNZTR` | Komisi referral user top-up / developer API. |
+| **Lynk.id Store** | `https://lynk.id/yang_mulia` | Penjualan E-Book, Template Prompt, & AI Kit. |
 
 ---
 *Registry ini adalah acuan resmi. Seluruh agent wajib membaca file ini saat menginisialisasi sesi.*
