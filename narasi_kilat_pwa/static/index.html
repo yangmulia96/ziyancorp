@@ -375,11 +375,25 @@
       <!-- Hasil UGC Studio -->
       <div id="res-ugc" class="hidden space-y-4 animate-fade-in">
         <div class="glass-card p-4 rounded-2xl border border-teal-500/30">
-          <h3 class="text-xs font-bold text-teal-400 mb-1">Analisis Visual & Strategi:</h3>
-          <p id="txt-u-analysis" class="text-xs text-slate-300 mb-2"></p>
-          <p id="txt-u-strategy" class="text-xs text-slate-400"></p>
+          <div class="flex items-center justify-between mb-1.5">
+            <h3 class="text-xs font-bold text-teal-400">Analisis Visual & Strategi:</h3>
+            <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-teal-500/10 text-teal-300 border border-teal-500/20">UGC Blueprint</span>
+          </div>
+          <p id="txt-u-analysis" class="text-xs text-slate-300 mb-2 leading-relaxed"></p>
+          <p id="txt-u-strategy" class="text-xs text-slate-400 leading-relaxed text-[11px]"></p>
         </div>
-        <div id="ugc-scenes-container" class="space-y-3"></div>
+
+        <!-- Toolbar Salin Terstruktur Cepat -->
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="copyAllScript()" class="p-3 rounded-xl bg-teal-500/10 hover:bg-teal-500/20 border border-teal-500/30 text-teal-300 font-bold text-xs flex items-center justify-center gap-1.5 tap-scale transition-all">
+            <i data-lucide="file-text" class="w-4 h-4"></i> Salin Semua Naskah
+          </button>
+          <button onclick="copyAllPrompts()" class="p-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 font-bold text-xs flex items-center justify-center gap-1.5 tap-scale transition-all">
+            <i data-lucide="video" class="w-4 h-4"></i> Salin Semua Prompt AI
+          </button>
+        </div>
+
+        <div id="ugc-scenes-container" class="space-y-3.5"></div>
       </div>
     </main>
 
@@ -621,6 +635,17 @@
     function playTTS(id) {
       const text = document.getElementById(id).innerText;
       if(!text) return;
+      playRawTTS(text);
+    }
+
+    function copyRawText(txt, msg = 'Berhasil disalin!') {
+      if(!txt) return;
+      navigator.clipboard.writeText(txt);
+      showToast(msg);
+    }
+
+    function playRawTTS(text) {
+      if(!text) return;
       if('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         const utter = new SpeechSynthesisUtterance(text);
@@ -628,10 +653,21 @@
         utter.rate = 1.08;
         utter.pitch = 1.05;
         window.speechSynthesis.speak(utter);
-        showToast('Memutar suara naskah...');
+        showToast('Memutar suara...');
       } else {
         showToast('Fitur suara tidak didukung browser ini.');
       }
+    }
+
+    let CURRENT_UGC_DATA = null;
+    function copyAllScript() {
+      if(!CURRENT_UGC_DATA || !CURRENT_UGC_DATA.copyable_script) return showToast('Belum ada data naskah!');
+      copyRawText(CURRENT_UGC_DATA.copyable_script, 'Semua Naskah Storyboard Disalin!');
+    }
+
+    function copyAllPrompts() {
+      if(!CURRENT_UGC_DATA || !CURRENT_UGC_DATA.copyable_prompts) return showToast('Belum ada data prompt AI!');
+      copyRawText(CURRENT_UGC_DATA.copyable_prompts, 'Semua Prompt AI Video Disalin!');
     }
 
     function saveKey() {
@@ -800,22 +836,61 @@ Output HANYA JSON murni:
           })
         });
         const j = await res.json();
-        document.getElementById('txt-u-analysis').innerText = j.product_analysis;
-        document.getElementById('txt-u-strategy').innerText = j.promo_strategy;
+        CURRENT_UGC_DATA = j;
+        document.getElementById('txt-u-analysis').innerText = j.product_analysis || '';
+        document.getElementById('txt-u-strategy').innerText = j.promo_strategy || '';
 
         const cont = document.getElementById('ugc-scenes-container');
         cont.innerHTML = '';
-        j.scenes.forEach(s => {
+        (j.scenes || []).forEach(s => {
           const card = document.createElement('div');
-          card.className = "glass-card p-4 rounded-2xl border border-teal-500/30 space-y-2";
+          card.className = "glass-card p-4 rounded-2xl border border-teal-500/30 space-y-3";
+          
+          // Escape quotes for onclick string handlers
+          const safeVo = JSON.stringify(s.vo || '');
+          const safePrompt = JSON.stringify(s.omni_prompt || '');
+
           card.innerHTML = `
-            <div class="flex justify-between items-center">
-              <span class="text-xs font-bold text-teal-400">${s.title} (${s.duration})</span>
+            <div class="flex justify-between items-center pb-2 border-b dark:border-slate-800 border-slate-200">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-black text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded-lg border border-teal-500/20">${s.title}</span>
+                <span class="text-[11px] font-bold text-slate-400">${s.phase || ''} (${s.duration})</span>
+              </div>
             </div>
-            <p class="text-xs text-slate-300"><strong class="text-white">Visual:</strong> ${s.visual}</p>
-            <p class="text-xs text-emerald-400"><strong class="text-white">Naskah VO:</strong> "${s.vo}"</p>
-            <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 text-[11px] font-mono text-slate-400 break-words">
-              <strong>Prompt AI:</strong> ${s.omni_prompt}
+
+            <!-- Arahan Visual -->
+            <div>
+              <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-1">🎬 Arahan Kamera & Visual:</span>
+              <p class="text-xs text-slate-200 leading-relaxed bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/80">${s.visual}</p>
+            </div>
+
+            <!-- Naskah Voiceover -->
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-400">🎙️ Naskah Voiceover:</span>
+                <div class="flex items-center gap-1.5">
+                  <button onclick='playRawTTS(${safeVo})' class="text-[10px] font-bold text-slate-300 hover:text-white px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 tap-scale flex items-center gap-1 transition-colors">
+                    <i data-lucide="volume-2" class="w-3 h-3"></i> Dengar
+                  </button>
+                  <button onclick='copyRawText(${safeVo}, "Naskah VO Scene ${s.scene_num} disalin!")' class="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 px-2 py-0.5 rounded-md border border-emerald-500/20 tap-scale flex items-center gap-1 transition-colors">
+                    <i data-lucide="copy" class="w-3 h-3"></i> Salin VO
+                  </button>
+                </div>
+              </div>
+              <p class="text-xs text-emerald-300 italic leading-relaxed bg-emerald-950/20 p-2.5 rounded-xl border border-emerald-500/20">"${s.vo}"</p>
+            </div>
+
+            <!-- Prompt AI Generator -->
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-[10px] uppercase font-bold tracking-wider text-teal-400">🤖 Prompt AI Video (Midjourney / Kling / Luma):</span>
+                <button onclick='copyRawText(${safePrompt}, "Prompt AI Scene ${s.scene_num} disalin!")' class="text-[10px] font-bold text-teal-300 bg-teal-500/10 hover:bg-teal-500/20 px-2 py-0.5 rounded-md border border-teal-500/20 tap-scale flex items-center gap-1 transition-colors">
+                  <i data-lucide="copy" class="w-3 h-3"></i> Salin Prompt AI
+                </button>
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-[11px] font-mono text-slate-300 break-words leading-relaxed select-all">
+                ${s.omni_prompt}
+              </div>
             </div>
           `;
           cont.appendChild(card);
