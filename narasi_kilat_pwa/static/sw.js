@@ -1,4 +1,4 @@
-const CACHE_NAME = 'narasikilat-v23-feedback-center';
+const CACHE_NAME = 'narasikilat-v24-zero-setup-guide';
 
 // Network-First: Always fetch latest version from internet
 self.addEventListener('install', (event) => {
