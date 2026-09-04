@@ -84,7 +84,7 @@ def run_qc_evaluation(rows, access_token=None, auto_update=False):
     data_rows = rows[1:]
 
     total = len(data_rows)
-    successes = [r for r in data_rows if len(r) > 4 and r[4].strip().upper() == "SUCCESS"]
+    successes = [r for r in data_rows if len(r) > 4 and r[4].strip().upper() in ["SUCCESS", "SUBMITTED"]]
     errors = [r for r in data_rows if len(r) > 4 and r[4].strip().upper() == "ERROR"]
     
     success_rate = (len(successes) / total * 100) if total > 0 else 0
@@ -103,11 +103,11 @@ def run_qc_evaluation(rows, access_token=None, auto_update=False):
             features[feat] = {"total": 0, "success": 0, "error": 0, "latencies": []}
         features[feat]["total"] += 1
         st = r[4].strip().upper() if len(r) > 4 else "UNKNOWN"
-        if st == "SUCCESS":
+        if st in ["SUCCESS", "SUBMITTED"]:
             features[feat]["success"] += 1
             if lat > 0:
                 features[feat]["latencies"].append(lat)
-        else:
+        elif st == "ERROR":
             features[feat]["error"] += 1
 
     avg_lat = sum(latencies) / len(latencies) if latencies else 0

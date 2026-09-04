@@ -68,6 +68,9 @@
       </div>
       
       <div class="flex items-center gap-2">
+        <button onclick="openFeedbackModal()" title="Kirim Saran / Keluhan" class="p-2.5 dark:bg-slate-900/90 bg-slate-100 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl tap-scale transition-colors flex items-center gap-1 text-sky-400">
+          <i data-lucide="message-square" class="w-4 h-4"></i>
+        </button>
         <button onclick="toggleTheme()" class="p-2.5 dark:bg-slate-900/90 bg-slate-100 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl tap-scale transition-colors">
           <i id="theme-icon" data-lucide="sun" class="w-4 h-4 text-amber-400"></i>
         </button>
@@ -131,6 +134,20 @@
           </div>
           <h3 class="text-base font-bold mt-3 mb-1 group-hover:text-purple-400 transition-colors">Caption & SEO Generator</h3>
           <p class="text-xs text-slate-400 leading-relaxed">Judul SEO produk, storytelling deskripsi, hashtag tren, dan deretan 10+ SEO search keywords siap copy.</p>
+        </div>
+
+        <!-- Card 5: Pusat Saran & Keluhan Pengguna -->
+        <div onclick="openFeedbackModal()" class="glass-card p-4 rounded-3xl cursor-pointer hover:border-sky-500/50 tap-scale transition-all flex items-center justify-between border border-dashed border-sky-500/30 bg-sky-500/5">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-sky-500/10 text-sky-400 flex items-center justify-center border border-sky-500/20">
+              <i data-lucide="message-square-heart" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold text-slate-200">Ada Saran, Ide, atau Keluhan?</h4>
+              <p class="text-[11px] text-slate-400">Masukanmu terkirim otomatis ke tim QC & pengembang 24/7.</p>
+            </div>
+          </div>
+          <span class="text-xs font-bold text-sky-400 flex items-center gap-1">Kirim <i data-lucide="chevron-right" class="w-4 h-4"></i></span>
         </div>
       </div>
     </main>
@@ -531,6 +548,53 @@
       </div>
     </nav>
 
+    <!-- MODAL: SARAN & KELUHAN PENGGUNA -->
+    <div id="modal-feedback" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-4">
+      <div class="glass-card w-full max-w-md p-6 rounded-3xl border border-sky-500/30 space-y-4 shadow-2xl relative animate-fade-in">
+        <button onclick="closeFeedbackModal()" class="absolute top-4 right-4 p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white tap-scale">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-sky-500/10 text-sky-400 flex items-center justify-center border border-sky-500/20">
+            <i data-lucide="message-square" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold">Pusat Bantuan & Saran</h3>
+            <p class="text-xs text-slate-400">Masukanmu langsung diterima tim QC & pengembang.</p>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <div>
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Kategori Pesan:</label>
+            <select id="fb-category" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-sky-500">
+              <option value="Saran & Ide Fitur">💡 Saran & Ide Fitur Baru</option>
+              <option value="Lapor Kendala / Bug">🐞 Lapor Kendala / Bug / Error</option>
+              <option value="Pertanyaan & Bantuan">❓ Pertanyaan & Cara Pakai</option>
+              <option value="Apresiasi & Testimoni">⭐ Apresiasi & Ulasan Pengguna</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Nama / WhatsApp / Telegram (Opsional):</label>
+            <input id="fb-sender" type="text" placeholder="Misal: Budi / @budi_affiliate" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-sky-500" />
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Detail Saran atau Keluhan:</label>
+            <textarea id="fb-message" rows="4" placeholder="Tuliskan saran perbaikan, fitur baru yang diinginkan, atau kendala yang dialami secara jelas..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-sky-500 resize-none"></textarea>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 pt-1">
+          <button id="btn-submit-fb" onclick="submitFeedback()" class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 text-white font-bold text-xs flex items-center justify-center gap-2 tap-scale shadow-lg shadow-sky-500/20 hover:opacity-95">
+            <i data-lucide="send" class="w-4 h-4"></i> KIRIM MASUKAN
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- TOAST NOTIFICATION -->
     <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 dark:bg-slate-900 bg-slate-800 text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-2xl border border-slate-700 transition-all duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2">
       <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400"></i>
@@ -546,6 +610,50 @@
       const isDark = document.documentElement.classList.toggle('dark');
       document.getElementById('theme-icon').setAttribute('data-lucide', isDark ? 'sun' : 'moon');
       lucide.createIcons();
+    }
+
+    // --- FEEDBACK & KELUHAN HANDLERS ---
+    function openFeedbackModal() {
+      document.getElementById('modal-feedback').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeFeedbackModal() {
+      document.getElementById('modal-feedback').classList.add('hidden');
+    }
+
+    async function submitFeedback() {
+      const category = document.getElementById('fb-category').value;
+      const sender = document.getElementById('fb-sender').value.trim() || 'Anonim';
+      const message = document.getElementById('fb-message').value.trim();
+
+      if (!message) return showToast('Tuliskan saran atau keluhanmu dulu!');
+
+      const btn = document.getElementById('btn-submit-fb');
+      btn.disabled = true;
+      btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin-slow"></i> MENGIRIM...`;
+
+      try {
+        const res = await fetch('/api/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ category, sender, message })
+        });
+        const d = await res.json();
+        if (d.ok) {
+          showToast('Terima kasih! Masukan berhasil dikirim.');
+          document.getElementById('fb-message').value = '';
+          closeFeedbackModal();
+        } else {
+          showToast('Gagal mengirim masukan: ' + (d.error || 'Server error'));
+        }
+      } catch (err) {
+        showToast('Gagal mengirim. Periksa koneksi internet.');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i> KIRIM MASUKAN`;
+        lucide.createIcons();
+      }
     }
 
     let API_KEY = localStorage.getItem('nk_api_key') || '';

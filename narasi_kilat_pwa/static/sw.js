@@ -1,4 +1,4 @@
-const CACHE_NAME = 'narasikilat-v22-qc-telemetry';
+const CACHE_NAME = 'narasikilat-v23-feedback-center';
 
 // Network-First: Always fetch latest version from internet
 self.addEventListener('install', (event) => {
