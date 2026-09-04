@@ -699,6 +699,20 @@
       }
     });
 
+    // --- TELEMETRY / QC RECORDER (24/7 LOG TO GOOGLE SHEETS & TELEGRAM) ---
+    function sendTelemetry(data) {
+      try {
+        fetch('/api/telemetry', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+          keepalive: true
+        }).catch(err => console.debug('[telemetry] non-critical sync:', err));
+      } catch (e) {
+        // Non-blocking, failsafe
+      }
+    }
+
     // --- 1. DYNAMIC MATRIX NASKAH GENERATOR ---
     async function genNaskahMatrix() {
       const prod = document.getElementById('n-prod').value.trim();
@@ -708,6 +722,7 @@
       const cat = document.getElementById('n-cat').value;
       if(!prod) return showToast("Isi deskripsi produk dulu!");
 
+      const t0 = performance.now();
       const btn = document.getElementById('btn-naskah');
       btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin-slow"></i> MEMPROSES 4 VARIASI...`;
       btn.disabled = true;
@@ -803,8 +818,31 @@ Output HANYA JSON murni:
 
         document.getElementById('res-naskah').classList.remove('hidden');
         showToast("4 Variasi Naskah Siap!");
+
+        // Auto-Telemetry QC (24/7 Google Sheets)
+        const latency = Math.round(performance.now() - t0);
+        const v1 = document.getElementById('txt-n1').innerText.slice(0, 100);
+        sendTelemetry({
+          feature: 'Naskah Matrix Ads',
+          input: prod,
+          params: `Hook: ${hook} | Strat: ${strat} | Dur: ${dur}s | Cat: ${cat} | Prov: ${API_PROV}`,
+          status: 'SUCCESS',
+          latency_ms: latency,
+          output_summary: `[V1]: ${v1}...`,
+          error: '-'
+        });
       } catch(e) {
         showToast("Gagal memuat naskah: " + e.message);
+        const latency = Math.round(performance.now() - t0);
+        sendTelemetry({
+          feature: 'Naskah Matrix Ads',
+          input: prod,
+          params: `Hook: ${hook} | Strat: ${strat} | Dur: ${dur}s | Cat: ${cat} | Prov: ${API_PROV}`,
+          status: 'ERROR',
+          latency_ms: latency,
+          output_summary: '-',
+          error: e.message || String(e)
+        });
       } finally {
         btn.innerHTML = `<i data-lucide="sparkles" class="w-4 h-4"></i> GENERATE 4 VARIASI NASKAH MATRIX`;
         btn.disabled = false;
@@ -819,6 +857,7 @@ Output HANYA JSON murni:
       const scenes = document.getElementById('u-scenes').value;
       if(!prod) return showToast("Isi nama pakaian!");
 
+      const t0 = performance.now();
       const btn = document.getElementById('btn-ugc');
       btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin-slow"></i> MEMPROSES...`;
       btn.disabled = true;
@@ -898,8 +937,30 @@ Output HANYA JSON murni:
 
         document.getElementById('res-ugc').classList.remove('hidden');
         showToast("Storyboard UGC Siap!");
+
+        // Auto-Telemetry QC
+        const latency = Math.round(performance.now() - t0);
+        sendTelemetry({
+          feature: 'UGC Fashion Studio',
+          input: prod,
+          params: `Model: ${model} | Scenes: ${scenes} | Setting: Cafe Outdoor`,
+          status: 'SUCCESS',
+          latency_ms: latency,
+          output_summary: `Analisis: ${(j.product_analysis||'').slice(0, 60)}... | Total: ${(j.scenes||[]).length} scenes`,
+          error: '-'
+        });
       } catch(e) {
         showToast(e.message);
+        const latency = Math.round(performance.now() - t0);
+        sendTelemetry({
+          feature: 'UGC Fashion Studio',
+          input: prod,
+          params: `Model: ${model} | Scenes: ${scenes}`,
+          status: 'ERROR',
+          latency_ms: latency,
+          output_summary: '-',
+          error: e.message || String(e)
+        });
       } finally {
         btn.innerHTML = `<i data-lucide="video" class="w-4 h-4"></i> GENERATE STORYBOARD UGC`;
         btn.disabled = false;
@@ -914,6 +975,8 @@ Output HANYA JSON murni:
       const cam = document.getElementById('p-cam').value;
       if(!rawObj) return showToast("Fokus objek wajib diisi!");
 
+      const t0 = performance.now();
+
       // Bersihkan URL dan simbol liar agar Midjourney/Video AI fokus ke produk murni
       const cleanObj = rawObj.replace(/https?:\/\/\S+/g, '').replace(/[^\w\s\d%-]/g, ' ').replace(/\s+/g, ' ').trim() || 'produk pilihan ini';
 
@@ -921,6 +984,18 @@ Output HANYA JSON murni:
       document.getElementById('txt-pt').innerText = promptText;
       document.getElementById('res-prompt').classList.remove('hidden');
       showToast("Prompt visual siap!");
+
+      // Auto-Telemetry QC
+      const latency = Math.round(performance.now() - t0);
+      sendTelemetry({
+        feature: 'Prompt Visual Generator',
+        input: rawObj,
+        params: `Scene: ${scene} | Cam: ${cam}`,
+        status: 'SUCCESS',
+        latency_ms: latency,
+        output_summary: promptText.slice(0, 150),
+        error: '-'
+      });
     }
 
     // --- 4. CAPTION & SEO GENERATOR (BULLETPROOF AUTO-FALLBACK) ---
@@ -928,6 +1003,7 @@ Output HANYA JSON murni:
       const prod = document.getElementById('s-prod').value.trim();
       if(!prod) return showToast("Isi detail produk & link!");
 
+      const t0 = performance.now();
       const btn = document.getElementById('btn-seo');
       btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin-slow"></i> MEMPROSES CAPTION...`;
       btn.disabled = true;
@@ -1049,8 +1125,31 @@ Output HANYA JSON murni:
 
         document.getElementById('res-seo').classList.remove('hidden');
         showToast("Caption & SEO Siap!");
+
+        // Auto-Telemetry QC
+        const latency = Math.round(performance.now() - t0);
+        const postSummary = (document.getElementById('txt-post-ready').innerText || '').slice(0, 150);
+        sendTelemetry({
+          feature: 'Caption & SEO Affiliate',
+          input: prod,
+          params: `Prov: ${API_PROV} | Link: ${link}`,
+          status: 'SUCCESS',
+          latency_ms: latency,
+          output_summary: postSummary,
+          error: '-'
+        });
       } catch(e) {
         showToast("Gagal memproses caption: " + e.message);
+        const latency = Math.round(performance.now() - t0);
+        sendTelemetry({
+          feature: 'Caption & SEO Affiliate',
+          input: prod,
+          params: `Prov: ${API_PROV}`,
+          status: 'ERROR',
+          latency_ms: latency,
+          output_summary: '-',
+          error: e.message || String(e)
+        });
       } finally {
         btn.innerHTML = `<i data-lucide="sparkles" class="w-4 h-4"></i> GENERATE CAPTION & SEO`;
         btn.disabled = false;
