@@ -1,4 +1,4 @@
-const CACHE_NAME = 'narasikilat-v24-zero-setup-guide';
+const CACHE_NAME = 'narasikilat-v26-studio-placeholders';
 
 // Network-First: Always fetch latest version from internet
 self.addEventListener('install', (event) => {
