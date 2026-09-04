@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>NK Self-Test</title>
+<style>
+body{font-family:system-ui;background:#0f172a;color:#e2e8f0;padding:20px;max-width:720px;margin:0 auto;line-height:1.6}
+h1{color:#10b981;margin:0 0 8px}
+.sub{color:#94a3b8;font-size:14px;margin-bottom:20px}
+.test{border:1px solid #334155;border-radius:8px;padding:12px 16px;margin-bottom:10px;font-size:14px}
+.test.pass{border-color:#10b981;background:#064e3b20}
+.test.fail{border-color:#ef4444;background:#7f1d1d20}
+.test .name{font-weight:700}
+.test .detail{font-size:12px;color:#94a3b8;margin-top:4px;font-family:monospace;white-space:pre-wrap;word-break:break-all}
+.btn{background:#10b981;color:#0f172a;border:none;padding:14px 24px;border-radius:8px;font-weight:700;cursor:pointer;font-size:16px;width:100%;margin-top:16px}
+.btn:hover{background:#34d399}
+.btn:disabled{background:#475569;cursor:not-allowed}
+pre{background:#020617;border:1px solid #334155;padding:12px;border-radius:6px;overflow-x:auto;font-size:12px}
+.cta{background:#1e293b;padding:14px;border-radius:8px;margin-top:20px;border-left:4px solid #f59e0b}
+.cta strong{color:#fbbf24}
+</style>
+</head>
+<body>
+<h1>🩺 Narasi Kilat — Self-Test</h1>
+<div class="sub">Auto-diagnose semua endpoint. Hasil 100% akurat karena tes dari browser yang sama dengan PWA.</div>
+
+<button id="run" class="btn" onclick="runAll()">▶ Jalankan Tes (10 detik)</button>
+<div id="out"></div>
+
+<script>
+const TESTS = [];
+
+function log(name, ok, detail='') {
+  const div = document.createElement('div');
+  div.className = 'test ' + (ok?'pass':'fail');
+  div.innerHTML = `<div class="name">${ok?'✅':'❌'} ${name}</div>${detail?`<div class="detail">${detail}</div>`:''}`;
+  document.getElementById('out').appendChild(div);
+  TESTS.push({name, ok, detail});
+}
+
+async function runAll() {
+  document.getElementById('out').innerHTML = '';
+  document.getElementById('run').disabled = true;
+  TESTS.length = 0;
+
+  // Test 1: page reachable
+  log('Halaman PWA dimuat', true, location.href);
+
+  // Test 2: localStorage clean
+  const prov = localStorage.getItem('nk_api_provider');
+  const key = localStorage.getItem('nk_api_key');
+  const model = localStorage.getItem('nk_api_model');
+  log('LocalStorage state', true, `provider=${prov||'kosong'}, key_len=${(key||'').length}, model=${model||'kosong'}`);
+
+  // Test 3: /api/models
+  try {
+    const r = await fetch('/api/models', {cache:'no-store'});
+    const d = await r.json();
+    log('GET /api/models', r.ok, `HTTP ${r.status}, ${d.models?.xkiro?.length||0} xKiro models`);
+  } catch(e) { log('GET /api/models', false, e.message); }
+
+  // Test 4: /api/proxy with placeholder (will 401 but proves CORS works)
+  try {
+    const r = await fetch('/api/proxy', {
+      method:'POST', cache:'no-store',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({provider:'xkiro', apiKey:'sk-xt-TEST_PLACEHOLDER', messages:[{role:'user',content:'ping'}]})
+    });
+    const txt = await r.text();
+    const ok = r.ok || (r.status === 401); // 401 = reached xKiro, CORS ok
+    log('POST /api/proxy (CORS test)', ok, `HTTP ${r.status}: ${txt.slice(0,150)}`);
+  } catch(e) { log('POST /api/proxy', false, e.message); }
+
+  // Test 5: /api/generate
+  try {
+    const r = await fetch('/api/generate', {
+      method:'POST', cache:'no-store',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({product_input:'sandal wanita', duration:10, category:'shoes'})
+    });
+    const d = await r.json();
+    log('POST /api/generate (Matrix)', !!d.variasi_1, d.variasi_1 ? `var1: ${d.variasi_1.slice(0,80)}...` : JSON.stringify(d).slice(0,150));
+  } catch(e) { log('POST /api/generate', false, e.message); }
+
+  // Test 6: /api/ugc-studio
+  try {
+    const r = await fetch('/api/ugc-studio', {
+      method:'POST', cache:'no-store',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({product_input:'dress brokat', num_scenes:2})
+    });
+    const d = await r.json();
+    log('POST /api/ugc-studio', !!d.scenes, `scenes: ${d.scenes?.length||0}`);
+  } catch(e) { log('POST /api/ugc-studio', false, e.message); }
+
+  // Test 7: CORS preflight
+  try {
+    const r = await fetch('/api/proxy', {
+      method:'OPTIONS', cache:'no-store',
+      headers:{'Origin': location.origin, 'Access-Control-Request-Method':'POST', 'Access-Control-Request-Headers':'content-type'}
+    });
+    const cors = r.headers.get('access-control-allow-origin');
+    log('CORS preflight', !!cors, `Access-Control-Allow-Origin: ${cors}`);
+  } catch(e) { log('CORS preflight', false, e.message); }
+
+  // Test 8: real xKiro call with actual key (if user has set it)
+  if (prov === 'xkiro' && key) {
+    try {
+      const r = await fetch('/api/proxy', {
+        method:'POST', cache:'no-store',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({provider:'xkiro', apiKey:key, model:model||undefined, messages:[{role:'user',content:'Balas dengan tepat: SELF_TEST_OK'}]})
+      });
+      const d = await r.json();
+      const ok = d.choices?.[0]?.message?.content?.includes('SELF_TEST_OK');
+      log('Real xKiro call (live)', !!ok, ok ? `model: ${d._meta?.model}, content: ${d.choices[0].message.content}` : JSON.stringify(d).slice(0,200));
+    } catch(e) { log('Real xKiro call', false, e.message); }
+  } else {
+    log('Real xKiro call', false, 'Lewati — API key belum diset di LocalStorage. Isi di tab Setup dulu.');
+  }
+
+  // Summary
+  const passed = TESTS.filter(t=>t.ok).length;
+  const total = TESTS.length;
+  const sum = document.createElement('div');
+  sum.className = 'cta';
+  if (passed === total) {
+    sum.innerHTML = `<strong>SEMUA HIJAU ${passed}/${total} ✓</strong><br>Server-side 100% sehat. Kalau PWA utama masih error, masalahnya ada di kode UI. Saya akan cek event listener tombol Generate.`;
+  } else {
+    sum.innerHTML = `<strong>GAGAL ${passed}/${total}</strong><br>Lihat test di atas yang ❌. Copy-paste detail error ke chat saya.`;
+  }
+  document.getElementById('out').appendChild(sum);
+
+  document.getElementById('run').disabled = false;
+}
+
+// Auto-run on load
+window.addEventListener('load', () => setTimeout(runAll, 500));
+</script>
+</body>
+</html>

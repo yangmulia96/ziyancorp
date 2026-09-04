@@ -1,4 +1,4 @@
-const CACHE_NAME = 'narasikilat-v17-live-clean';
+const CACHE_NAME = 'narasikilat-v20-bulletproof';
 
 // Network-First: Always fetch latest version from internet
 self.addEventListener('install', (event) => {

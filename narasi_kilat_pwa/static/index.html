@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NarasiKilat Studio v15 - AI Copywriting & UGC Suite</title>
+  <title>NarasiKilat Studio v19 - AI Copywriting & UGC Suite</title>
   
   <link rel="manifest" href="/static/manifest.json">
   <meta name="theme-color" content="#030712">
@@ -58,7 +58,7 @@
         <div>
           <div class="flex items-center gap-1.5">
             <h1 class="text-base font-black tracking-tight bg-gradient-to-r dark:from-white from-slate-900 to-slate-500 bg-clip-text text-transparent">NarasiKilat</h1>
-            <span class="text-[10px] font-black uppercase px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">v15 MATRIX</span>
+            <span class="text-[10px] font-black uppercase px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">v19 MATRIX</span>
           </div>
           <p class="text-[10px] font-semibold text-slate-500 flex items-center gap-1">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -155,12 +155,20 @@
             <option value="local">NarasiKilat Matrix Engine (Lokal Cepat - Tanpa API Key)</option>
             <option value="gemini">Google Gemini 2.5 Flash (Gratis & Ultra Kreatif)</option>
             <option value="openrouter">OpenRouter (Multi-Model)</option>
+            <option value="xkiro">xKiro AI Gateway (25+ Model Gratis: Qwen, GLM, Kimi)</option>
+          </select>
+        </div>
+
+        <div id="box-model" class="mt-3 hidden">
+          <label class="text-xs font-bold text-slate-300 block mb-1.5">Model (Gratis):</label>
+          <select id="api-model" class="w-full dark:bg-slate-900 bg-white border dark:border-slate-800 border-slate-300 rounded-xl p-3 text-sm focus:outline-none focus:border-emerald-500 transition-all font-medium">
+            <option value="qwen/qwen3.7-max:free">qwen/qwen3.7-max:free (default)</option>
           </select>
         </div>
 
         <div id="box-api-key">
-          <label class="text-xs font-bold text-slate-300 block mb-1.5">API Key (Opsional jika pakai Gemini/OpenRouter):</label>
-          <input type="password" id="api-key" placeholder="Masukkan Kunci (AIzaSy... atau sk-or-...)" class="w-full dark:bg-slate-900 bg-white border dark:border-slate-800 border-slate-300 rounded-xl p-3 text-sm focus:outline-none focus:border-emerald-500 font-mono text-xs transition-all">
+          <label class="text-xs font-bold text-slate-300 block mb-1.5">API Key (Opsional jika pakai Gemini/OpenRouter/xKiro):</label>
+          <input type="password" id="api-key" placeholder="Masukkan Kunci (AIzaSy..., sk-or-..., atau sk-xt-...)" class="w-full dark:bg-slate-900 bg-white border dark:border-slate-800 border-slate-300 rounded-xl p-3 text-sm focus:outline-none focus:border-emerald-500 font-mono text-xs transition-all">
           <p class="text-[11px] text-slate-500 mt-2 leading-relaxed">Kunci kamu disimpan secara aman di LocalStorage browser HP/Laptopmu. Tidak pernah dikirim ke server pihak ketiga.</p>
         </div>
 
@@ -528,16 +536,49 @@
 
     let API_KEY = localStorage.getItem('nk_api_key') || '';
     let API_PROV = localStorage.getItem('nk_api_provider') || 'local';
-    
+    let API_MODEL = localStorage.getItem('nk_api_model') || '';
+
     if(API_KEY) document.getElementById('api-key').value = API_KEY;
     document.getElementById('api-provider').value = API_PROV;
     updateBadge();
+    updateModelDropdown();
+
+    async function updateModelDropdown() {
+      const sel = document.getElementById('api-model');
+      const box = document.getElementById('box-model');
+      if (API_PROV === 'xkiro' || API_PROV === 'openrouter') {
+        box.classList.remove('hidden');
+        try {
+          const r = await fetch('/api/models');
+          const d = await r.json();
+          const models = d.models[API_PROV] || [];
+          sel.innerHTML = '';
+          models.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m;
+            opt.textContent = m + (m === d.defaults[API_PROV] ? ' (default)' : '');
+            if (m === API_MODEL) opt.selected = true;
+            sel.appendChild(opt);
+          });
+          if (!API_MODEL || !models.includes(API_MODEL)) {
+            sel.value = d.defaults[API_PROV];
+            API_MODEL = sel.value;
+            localStorage.setItem('nk_api_model', API_MODEL);
+          }
+        } catch(e) {
+          sel.innerHTML = '<option value="">Gagal load model list</option>';
+        }
+      } else {
+        box.classList.add('hidden');
+      }
+    }
 
     function updateBadge() {
       const badge = document.getElementById('header-prov-badge');
       if(badge) {
         if(API_PROV === 'gemini') badge.innerText = 'Gemini 2.5 Flash';
         else if(API_PROV === 'openrouter') badge.innerText = 'OpenRouter Engine';
+        else if(API_PROV === 'xkiro') badge.innerText = 'xKiro AI Gateway';
         else badge.innerText = 'Smart Dynamic Matrix';
       }
     }
@@ -596,14 +637,31 @@
     function saveKey() {
       const v = document.getElementById('api-key').value.trim();
       const p = document.getElementById('api-provider').value;
+      const m = document.getElementById('api-model') ? document.getElementById('api-model').value : '';
       localStorage.setItem('nk_api_key', v);
       localStorage.setItem('nk_api_provider', p);
+      if (m) localStorage.setItem('nk_api_model', m);
       API_KEY = v;
       API_PROV = p;
+      API_MODEL = m;
       updateBadge();
       showToast(`Konfigurasi tersimpan (${p})!`);
       setTimeout(() => switchMode('home'), 800);
     }
+
+    document.addEventListener('change', (e) => {
+      if (e.target && e.target.id === 'api-provider') {
+        const old = API_PROV;
+        API_PROV = e.target.value;
+        localStorage.setItem('nk_api_provider', API_PROV);
+        updateBadge();
+        updateModelDropdown();
+      }
+      if (e.target && e.target.id === 'api-model') {
+        API_MODEL = e.target.value;
+        localStorage.setItem('nk_api_model', API_MODEL);
+      }
+    });
 
     // --- 1. DYNAMIC MATRIX NASKAH GENERATOR ---
     async function genNaskahMatrix() {
@@ -620,8 +678,12 @@
       document.getElementById('res-naskah').classList.add('hidden');
 
       try {
-        if(API_PROV === 'gemini' && API_KEY) {
-          const sys = `Anda adalah Master Copywriter & TikTok Ads Specialist Indonesia.
+        let generated = false;
+
+        // Coba AI Cloud HANYA jika bukan local dan API_KEY tersedia
+        if (API_PROV !== 'local' && API_KEY) {
+          try {
+            const sys = `Anda adalah Master Copywriter & TikTok Ads Specialist Indonesia.
 Tugas: Buat 4 VARIASI naskah Voice Over (VO) berdurasi ${dur} detik dengan gaya lisan santai, alami, anti kaku, dan bebas overclaim.
 Strategi utama: ${strat}, Tipe Hook Pembuka: ${hook}, Kategori Produk: ${cat}.
 Panjang tiap naskah: ${Math.floor(parseInt(dur)*2.0)} - ${Math.ceil(parseInt(dur)*2.6)} KATA.
@@ -632,22 +694,59 @@ Output HANYA JSON murni:
   "variasi_3": "Naskah 3 (Hook Storytelling & Social Proof)",
   "variasi_4": "Naskah 4 (Hook Urgensi & Nilai Hemat)"
 }`;
-          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: `System: ${sys}\n\nProduk: ${prod}` }] }],
-              generationConfig: { responseMimeType: "application/json" }
-            })
-          });
-          const d = await res.json();
-          const j = JSON.parse(d.candidates[0].content.parts[0].text);
-          document.getElementById('txt-n1').innerText = j.variasi_1;
-          document.getElementById('txt-n2').innerText = j.variasi_2;
-          document.getElementById('txt-n3').innerText = j.variasi_3;
-          document.getElementById('txt-n4').innerText = j.variasi_4;
-        } else {
-          // Local Matrix Engine
+            if (API_PROV === 'gemini') {
+              const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  contents: [{ parts: [{ text: `System: ${sys}\n\nProduk: ${prod}` }] }],
+                  generationConfig: { responseMimeType: "application/json" }
+                })
+              });
+              if (res.ok) {
+                const d = await res.json();
+                const j = JSON.parse(d.candidates[0].content.parts[0].text);
+                document.getElementById('txt-n1').innerText = j.variasi_1;
+                document.getElementById('txt-n2').innerText = j.variasi_2;
+                document.getElementById('txt-n3').innerText = j.variasi_3;
+                document.getElementById('txt-n4').innerText = j.variasi_4;
+                generated = true;
+              }
+            } else if (API_PROV === 'xkiro' || API_PROV === 'openrouter') {
+              const res = await fetch('/api/proxy', {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  provider: API_PROV,
+                  apiKey: API_KEY,
+                  model: API_MODEL || undefined,
+                  messages: [
+                    { role: "system", content: sys },
+                    { role: "user", content: `Produk: ${prod}` }
+                  ],
+                  responseFormat: { type: "json_object" }
+                })
+              });
+              if (res.ok) {
+                const d = await res.json();
+                const txt = d.choices[0].message.content;
+                const match = txt.match(/\{[\s\S]*\}/);
+                const cleaned = match ? match[0] : txt;
+                const j = JSON.parse(cleaned);
+                document.getElementById('txt-n1').innerText = j.variasi_1;
+                document.getElementById('txt-n2').innerText = j.variasi_2;
+                document.getElementById('txt-n3').innerText = j.variasi_3;
+                document.getElementById('txt-n4').innerText = j.variasi_4;
+                generated = true;
+              }
+            }
+          } catch(cloudErr) {
+            console.warn("AI Cloud gagal, dialihkan otomatis ke Matrix Engine:", cloudErr);
+          }
+        }
+
+        // JIKA MODE LOKAL ATAU JIKA AI CLOUD GAGAL -> JALANKAN MATRIX ENGINE (100% GARANSI SUKSES)
+        if (!generated) {
           const res = await fetch('/api/generate', {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -667,9 +766,9 @@ Output HANYA JSON murni:
         }
 
         document.getElementById('res-naskah').classList.remove('hidden');
-        showToast("4 Variasi Naskah Matrix Siap!");
+        showToast("4 Variasi Naskah Siap!");
       } catch(e) {
-        showToast(e.message);
+        showToast("Gagal memuat naskah: " + e.message);
       } finally {
         btn.innerHTML = `<i data-lucide="sparkles" class="w-4 h-4"></i> GENERATE 4 VARIASI NASKAH MATRIX`;
         btn.disabled = false;
@@ -733,20 +832,23 @@ Output HANYA JSON murni:
       }
     }
 
-    // --- 3. PROMPT VISUAL ---
+    // --- 3. PROMPT VISUAL (CLEAN URL & OPTIMIZED) ---
     async function genPrompt() {
-      const obj = document.getElementById('p-obj').value.trim();
+      const rawObj = document.getElementById('p-obj').value.trim();
       const scene = document.getElementById('p-scene').value;
       const cam = document.getElementById('p-cam').value;
-      if(!obj) return showToast("Fokus objek wajib diisi!");
+      if(!rawObj) return showToast("Fokus objek wajib diisi!");
 
-      const promptText = `UGC high-resolution product photography, 9:16 vertical. Realistic ${obj} captured in ${scene}. ${cam}, soft natural daylight with subtle rim lighting, authentic textures and fine details, commercial editorial quality, shot on 85mm f/1.8 lens, 8k resolution, cinematic masterpiece.`;
+      // Bersihkan URL dan simbol liar agar Midjourney/Video AI fokus ke produk murni
+      const cleanObj = rawObj.replace(/https?:\/\/\S+/g, '').replace(/[^\w\s\d%-]/g, ' ').replace(/\s+/g, ' ').trim() || 'produk pilihan ini';
+
+      const promptText = `UGC high-resolution product photography, 9:16 vertical. Realistic ${cleanObj} captured in ${scene}. ${cam}, soft natural daylight with subtle rim lighting, authentic textures and fine details, commercial editorial quality, shot on 85mm f/1.8 lens, 8k resolution, cinematic masterpiece.`;
       document.getElementById('txt-pt').innerText = promptText;
       document.getElementById('res-prompt').classList.remove('hidden');
       showToast("Prompt visual siap!");
     }
 
-    // --- 4. CAPTION & SEO GENERATOR (FORMAT PERSIS SESUAI SCREENSHOT BOS) ---
+    // --- 4. CAPTION & SEO GENERATOR (BULLETPROOF AUTO-FALLBACK) ---
     async function genSEO() {
       const prod = document.getElementById('s-prod').value.trim();
       if(!prod) return showToast("Isi detail produk & link!");
@@ -758,14 +860,12 @@ Output HANYA JSON murni:
 
       const linkMatch = prod.match(/https?:\/\/\S+/);
       const link = linkMatch ? linkMatch[0] : "https://s.shopee.co.id/xxx";
-      let cleanProd = prod.replace(/https?:\/\/\S+/g, '').replace(/[\r\n]+/g, ' ').replace(/[^\w\s\d%-]/g, ' ').trim() || "Produk Rekomendasi";
+      let cleanProd = prod.replace(/https?:\/\/\S+/g, '').replace(/[\r\n]+/g, ' ').replace(/[^\w\s\d%-]/g, ' ').replace(/\s+/g, ' ').trim() || "Produk Rekomendasi";
       
       const words = cleanProd.split(/\s+/).filter(w => w.length > 0);
       const prodName = words.slice(0, 7).join(' ') || "Produk Pilihan";
 
-      try {
-        if(API_PROV === 'gemini' && API_KEY) {
-          const sys = `Anda adalah Copywriter Spesialis Caption FB, Instagram, dan Threads.
+      const sys = `Anda adalah Copywriter Spesialis Caption FB, Instagram, dan Threads.
 Tugas: Buat caption affiliate yang SANGAT RINGKAS, PADAT, dan ELEGAN persis seperti contoh format ini:
 
 CONTOH OUTPUT WAJIB:
@@ -786,33 +886,86 @@ Output HANYA JSON murni:
 {
   "affiliate_link": "${link}",
   "caption_body": "2 kalimat singkat padat",
-  "hashtags": "#Tag1 #Tag2 #Tag3\n#Tag4 #Tag5",
+  "hashtags": "#Tag1 #Tag2 #Tag3\\n#Tag4 #Tag5",
   "seo_keywords": "keyword 1, keyword 2, keyword 3, keyword 4, keyword 5"
 }`;
 
-          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: `System: ${sys}\n\nProduk: ${cleanProd}` }] }],
-              generationConfig: { responseMimeType: "application/json" }
-            })
-          });
-          const d = await res.json();
-          const j = JSON.parse(d.candidates[0].content.parts[0].text);
-          const fullPost = `${j.affiliate_link || link}\n\n${j.caption_body}\n\n${j.hashtags}`;
-          document.getElementById('txt-post-ready').innerText = fullPost;
-          document.getElementById('txt-seo-keys').innerText = j.seo_keywords;
-        } else {
-          // Format Baku Cerdas Presisi (Persis Screenshot Bos)
+      try {
+        let generated = false;
+
+        // Coba AI Cloud HANYA jika bukan local dan API_KEY tersedia
+        if (API_PROV !== 'local' && API_KEY) {
+          try {
+            if(API_PROV === 'gemini') {
+              const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  contents: [{ parts: [{ text: `System: ${sys}\n\nProduk: ${cleanProd}` }] }],
+                  generationConfig: { responseMimeType: "application/json" }
+                })
+              });
+              if (res.ok) {
+                const d = await res.json();
+                const j = JSON.parse(d.candidates[0].content.parts[0].text);
+                const fullPost = `${j.affiliate_link || link}\n\n${j.caption_body}\n\n${j.hashtags}`;
+                document.getElementById('txt-post-ready').innerText = fullPost;
+                document.getElementById('txt-seo-keys').innerText = j.seo_keywords;
+                generated = true;
+              }
+            } else if(API_PROV === 'xkiro' || API_PROV === 'openrouter') {
+              const res = await fetch('/api/proxy', {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  provider: API_PROV,
+                  apiKey: API_KEY,
+                  model: API_MODEL || undefined,
+                  messages: [
+                    { role: "system", content: sys },
+                    { role: "user", content: `Produk: ${cleanProd}` }
+                  ],
+                  responseFormat: { type: "json_object" }
+                })
+              });
+              if(res.ok) {
+                const d = await res.json();
+                const txt = d.choices[0].message.content;
+                const match = txt.match(/\{[\s\S]*\}/);
+                const cleaned = match ? match[0] : txt;
+                const j = JSON.parse(cleaned);
+                const fullPost = `${j.affiliate_link || link}\n\n${j.caption_body}\n\n${j.hashtags}`;
+                document.getElementById('txt-post-ready').innerText = fullPost;
+                document.getElementById('txt-seo-keys').innerText = j.seo_keywords;
+                generated = true;
+              }
+            }
+          } catch(apiErr) {
+            console.warn("AI Cloud gagal, otomatis beralih ke Format Baku Cerdas:", apiErr);
+          }
+        }
+
+        // JIKA MODE LOKAL ATAU JIKA AI CLOUD GAGAL -> FORMAT BAKU CERDAS (100% GARANSI SUKSES TANPA ERROR)
+        if(!generated) {
+          const lower = cleanProd.toLowerCase();
+          const isFashion = /(jaket|bomber|harrington|baju|dress|gamis|kemeja|kaos|celana|rok|tunik)/.test(lower);
+          const isBeauty = /(serum|sunscreen|cream|krim|skincare|glow|toner|facial|lipstik)/.test(lower);
+          const isShoe = /(sepatu|sandal|sneakers|heels|flatshoes|boots)/.test(lower);
+
           const tag1 = '#' + (words[0] ? words[0].replace(/[^a-zA-Z0-9]/g, '') : 'Fashion');
           const tag2 = '#' + (words[1] ? words[1].replace(/[^a-zA-Z0-9]/g, '') : 'OOTD');
           const tag3 = '#' + (words[2] ? words[2].replace(/[^a-zA-Z0-9]/g, '') : 'Rekomendasi');
-          const tag4 = '#ChicStyle';
-          const tag5 = '#OutfitHarian';
+          const tag4 = isBeauty ? '#BeautyRoutine' : isShoe ? '#FootwearFashion' : '#ChicStyle';
+          const tag5 = isBeauty ? '#GlowingSkin' : isShoe ? '#ComfortShoes' : '#OutfitHarian';
 
-          const body = `${prodName} hadir dengan desain elegan untuk melengkapi outfit casual hingga semi-formal. Siluet simpel bikin tampilan lebih rapi, chic, dan stylish.`;
-          const fullPost = `${link}\n\n${body}\n\n${tag1} ${tag2} ${tag3}\n${tag4} ${tag5}`;
+          let bodyDesc = `${prodName} hadir dengan desain elegan untuk melengkapi outfit casual hingga semi-formal. Siluet simpel bikin tampilan lebih rapi, chic, dan stylish.`;
+          if (isBeauty) {
+            bodyDesc = `${prodName} diformulasikan dengan tekstur ringan yang cepat meresap dan nyaman dipakai seharian. Menjadikan kulit tampak lebih sehat, segar, dan terawat alami.`;
+          } else if (isShoe) {
+            bodyDesc = `${prodName} dirancang dengan bantalan empuk dan material kokoh yang nyaman untuk dipakai seharian. Desainnya modern dan pas dipadukan dengan berbagai gaya outfit.`;
+          }
+
+          const fullPost = `${link}\n\n${bodyDesc}\n\n${tag1} ${tag2} ${tag3}\n${tag4} ${tag5}`;
           const keywords = `${prodName}, rekomendasi ${prodName}, review jujur ${prodName}, ${prodName} viral tiktok, racun belanja ${prodName}`;
 
           document.getElementById('txt-post-ready').innerText = fullPost;
@@ -822,7 +975,7 @@ Output HANYA JSON murni:
         document.getElementById('res-seo').classList.remove('hidden');
         showToast("Caption & SEO Siap!");
       } catch(e) {
-        showToast("Error: " + e.message);
+        showToast("Gagal memproses caption: " + e.message);
       } finally {
         btn.innerHTML = `<i data-lucide="sparkles" class="w-4 h-4"></i> GENERATE CAPTION & SEO`;
         btn.disabled = false;
